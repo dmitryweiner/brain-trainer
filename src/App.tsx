@@ -6,6 +6,8 @@ import type { GameId } from './types/game.types';
 import { GAMES_META, GAME_IDS } from './utils/constants';
 import { ReactionClick } from './components/games/ReactionClick';
 import { ColorTap } from './components/games/ColorTap';
+import { SymbolMatch } from './components/games/SymbolMatch';
+import { OddOneOut } from './components/games/OddOneOut';
 
 function AppContent() {
   const [currentGame, setCurrentGame] = useState<GameId | null>(null);
@@ -41,6 +43,10 @@ function AppContent() {
           <ReactionClick onBackToMenu={handleBackToMenu} />
         ) : currentGame === GAME_IDS.COLOR_TAP ? (
           <ColorTap onBackToMenu={handleBackToMenu} />
+        ) : currentGame === GAME_IDS.SYMBOL_MATCH ? (
+          <SymbolMatch onBackToMenu={handleBackToMenu} />
+        ) : currentGame === GAME_IDS.ODD_ONE_OUT ? (
+          <OddOneOut onBackToMenu={handleBackToMenu} />
         ) : (
           <div className="game-placeholder">
             <div className="card-custom text-center">

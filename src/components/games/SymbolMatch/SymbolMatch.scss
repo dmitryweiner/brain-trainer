@@ -1,0 +1,337 @@
+@use '../../../styles/variables.scss' as *;
+
+.symbol-match-intro {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+
+  .intro-card {
+    background: white;
+    border-radius: 16px;
+    padding: $spacing-xl;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+
+    h2 {
+      font-size: 32px;
+      margin-bottom: $spacing-lg;
+      color: $dark;
+    }
+
+    .lead {
+      font-size: 20px;
+      color: $gray;
+      margin-bottom: $spacing-lg;
+    }
+
+    .rules {
+      text-align: left;
+      margin: 0 auto $spacing-lg;
+      max-width: 400px;
+
+      h3 {
+        font-size: 20px;
+        margin-bottom: $spacing-sm;
+        color: $dark;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+          margin-bottom: $spacing-sm;
+          font-size: 18px;
+          line-height: 1.6;
+          padding-left: $spacing-md;
+          position: relative;
+
+          &::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: $primary;
+          }
+        }
+      }
+    }
+
+    .scoring-info {
+      background: $light;
+      border-radius: 12px;
+      padding: $spacing-md;
+      margin-bottom: $spacing-lg;
+
+      p {
+        margin-bottom: $spacing-xs;
+        font-size: 18px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+
+      strong {
+        color: $primary;
+      }
+    }
+
+    .text-muted {
+      color: $gray;
+      font-size: 16px;
+      margin-bottom: $spacing-lg;
+    }
+  }
+}
+
+.symbol-match-game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  gap: $spacing-xl;
+
+  .progress-container {
+    width: 100%;
+  }
+
+  .emojis-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-xl;
+    min-height: 200px;
+
+    .emoji {
+      font-size: 100px;
+      line-height: 1;
+      animation: emojiAppear 0.4s ease-out;
+      text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      user-select: none;
+
+      @keyframes emojiAppear {
+        from {
+          opacity: 0;
+          transform: scale(0.5) rotate(-10deg);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) rotate(0);
+        }
+      }
+
+      &.emoji-1 {
+        animation-delay: 0s;
+      }
+
+      &.emoji-2 {
+        animation-delay: 0.1s;
+      }
+    }
+
+    .emoji-divider {
+      font-size: 24px;
+      font-weight: 700;
+      color: $gray;
+      opacity: 0.5;
+    }
+  }
+
+  .answer-buttons {
+    display: flex;
+    gap: $spacing-md;
+    width: 100%;
+
+    .answer-btn {
+      flex: 1;
+      font-size: 20px;
+      font-weight: 700;
+      padding: $spacing-lg;
+      transition: all 0.2s ease;
+      border: none;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
+}
+
+.symbol-match-feedback {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  min-height: 300px;
+
+  .feedback-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-lg;
+    animation: feedbackAppear 0.3s ease-out;
+
+    @keyframes feedbackAppear {
+      from {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .feedback-icon {
+      font-size: 120px;
+      line-height: 1;
+      animation: pulse 0.5s ease-in-out;
+
+      @keyframes pulse {
+        0%, 100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.2);
+        }
+      }
+    }
+
+    .feedback-text {
+      font-size: 32px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    &.correct {
+      .feedback-icon {
+        color: $game-green;
+        text-shadow: 0 4px 12px rgba($game-green, 0.4);
+      }
+
+      .feedback-text {
+        color: $game-green;
+      }
+    }
+
+    &.incorrect {
+      .feedback-icon {
+        color: $game-red;
+        text-shadow: 0 4px 12px rgba($game-red, 0.4);
+      }
+
+      .feedback-text {
+        color: $game-red;
+      }
+    }
+  }
+}
+
+.game-stats {
+  display: flex;
+  justify-content: space-around;
+  gap: $spacing-lg;
+  font-size: 20px;
+  font-weight: 600;
+
+  span {
+    padding: $spacing-sm $spacing-md;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// Mobile responsiveness
+@media (max-width: $breakpoint-md) {
+  .symbol-match-intro .intro-card {
+    padding: $spacing-lg;
+
+    h2 {
+      font-size: 28px;
+    }
+
+    .rules ul li {
+      font-size: 16px;
+    }
+  }
+
+  .symbol-match-game {
+    .emojis-container {
+      gap: $spacing-lg;
+
+      .emoji {
+        font-size: 80px;
+      }
+
+      .emoji-divider {
+        font-size: 20px;
+      }
+    }
+
+    .answer-buttons .answer-btn {
+      font-size: 18px;
+      padding: $spacing-md;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .symbol-match-game {
+    gap: $spacing-lg;
+
+    .emojis-container {
+      gap: $spacing-md;
+      min-height: 150px;
+
+      .emoji {
+        font-size: 70px;
+      }
+
+      .emoji-divider {
+        font-size: 18px;
+      }
+    }
+
+    .answer-buttons {
+      flex-direction: column;
+      gap: $spacing-sm;
+
+      .answer-btn {
+        font-size: 18px;
+      }
+    }
+  }
+
+  .symbol-match-feedback {
+    .feedback-indicator {
+      .feedback-icon {
+        font-size: 100px;
+      }
+
+      .feedback-text {
+        font-size: 28px;
+      }
+    }
+  }
+
+  .game-stats {
+    flex-direction: column;
+    gap: $spacing-sm;
+
+    span {
+      font-size: 18px;
+    }
+  }
+}
+
