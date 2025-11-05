@@ -1,0 +1,110 @@
+@import '../../styles/variables.scss';
+
+.app-header {
+  background-color: $primary;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-sm $spacing-md;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 70px;
+}
+
+.back-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid white;
+  color: white;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  min-width: 100px;
+  
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.3);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.header-center {
+  flex: 1;
+  text-align: center;
+  padding: 0 $spacing-sm;
+}
+
+.app-title {
+  font-size: 24px;
+  margin: 0;
+  font-weight: 700;
+  
+  @media (max-width: $breakpoint-sm) {
+    font-size: 20px;
+  }
+}
+
+.score-display {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  background: rgba(255, 255, 255, 0.2);
+  padding: $spacing-xs $spacing-sm;
+  border-radius: 8px;
+  min-width: 100px;
+  justify-content: center;
+}
+
+.score-label {
+  font-size: 16px;
+  font-weight: 500;
+  
+  @media (max-width: $breakpoint-sm) {
+    display: none;
+  }
+}
+
+.score-value {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+// Адаптивность для маленьких экранов
+@media (max-width: $breakpoint-xs) {
+  .header-content {
+    padding: $spacing-xs $spacing-sm;
+    min-height: 60px;
+  }
+  
+  .back-button {
+    min-width: auto;
+    padding: $spacing-xs;
+    font-size: 16px;
+  }
+  
+  .app-title {
+    font-size: 18px;
+  }
+  
+  .score-display {
+    min-width: auto;
+    padding: $spacing-xs;
+  }
+  
+  .score-value {
+    font-size: 20px;
+  }
+}
+

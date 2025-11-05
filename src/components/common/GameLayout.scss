@@ -1,0 +1,65 @@
+@import '../../styles/variables.scss';
+
+.game-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 70px);
+  max-width: 800px;
+  margin: 0 auto;
+  padding: $spacing-md;
+}
+
+.game-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.game-title {
+  font-size: $font-size-large;
+  font-weight: 700;
+  text-align: center;
+  margin: 0 0 $spacing-md 0;
+  color: $dark;
+}
+
+.game-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: $spacing-md 0;
+}
+
+.game-footer {
+  padding: $spacing-md 0;
+  border-top: 2px solid $light;
+  margin-top: $spacing-md;
+}
+
+@media (max-width: $breakpoint-sm) {
+  .game-layout {
+    padding: $spacing-sm;
+  }
+  
+  .game-title {
+    font-size: 22px;
+  }
+  
+  .game-body {
+    padding: $spacing-sm 0;
+  }
+}
+
+@media (max-width: $breakpoint-xs) {
+  .game-layout {
+    padding: $spacing-xs;
+  }
+  
+  .game-title {
+    font-size: 20px;
+    margin-bottom: $spacing-sm;
+  }
+}
+

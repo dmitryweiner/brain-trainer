@@ -1,0 +1,116 @@
+@import '../../styles/variables.scss';
+
+.game-card {
+  background: white;
+  border-radius: $btn-border-radius;
+  padding: $spacing-md;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.game-card-icon {
+  font-size: 64px;
+  text-align: center;
+  margin-bottom: $spacing-sm;
+  line-height: 1;
+}
+
+.game-card-title {
+  font-size: $font-size-large;
+  font-weight: 700;
+  color: $dark;
+  margin: 0 0 $spacing-xs 0;
+  text-align: center;
+}
+
+.game-card-description {
+  font-size: 18px;
+  color: $gray;
+  margin: 0 0 $spacing-md 0;
+  text-align: center;
+  flex: 1;
+}
+
+.game-card-stats {
+  margin-bottom: $spacing-md;
+  padding: $spacing-sm;
+  background: $light;
+  border-radius: 8px;
+}
+
+.difficulty,
+.best-score {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-xs;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.stat-label {
+  font-size: 16px;
+  color: $gray;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 20px;
+  color: $primary;
+  font-weight: 700;
+}
+
+.difficulty-stars {
+  display: flex;
+  gap: 2px;
+}
+
+.star {
+  font-size: 18px;
+  line-height: 1;
+  
+  &.filled {
+    opacity: 1;
+  }
+  
+  &.empty {
+    opacity: 0.3;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .game-card {
+    padding: $spacing-sm;
+  }
+  
+  .game-card-icon {
+    font-size: 56px;
+  }
+  
+  .game-card-title {
+    font-size: 20px;
+  }
+  
+  .game-card-description {
+    font-size: 16px;
+  }
+  
+  .stat-label {
+    font-size: 14px;
+  }
+  
+  .stat-value {
+    font-size: 18px;
+  }
+}
+

@@ -1,0 +1,170 @@
+@import '../../styles/variables.scss';
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: $spacing-md;
+}
+
+.results-modal {
+  background: white;
+  border-radius: $btn-border-radius * 1.5;
+  padding: $spacing-lg;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.results-title {
+  font-size: $font-size-xl;
+  font-weight: 700;
+  color: $dark;
+  text-align: center;
+  margin: 0 0 $spacing-lg 0;
+}
+
+.score-container {
+  background: linear-gradient(135deg, $primary, darken($primary, 10%));
+  border-radius: $btn-border-radius;
+  padding: $spacing-lg;
+  text-align: center;
+  margin-bottom: $spacing-lg;
+  color: white;
+}
+
+.score-label {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: $spacing-xs;
+}
+
+.score-value {
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 1;
+  display: block;
+}
+
+.statistics {
+  background: $light;
+  border-radius: $btn-border-radius;
+  padding: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.statistics-title {
+  font-size: $font-size-large;
+  font-weight: 600;
+  color: $dark;
+  margin: 0 0 $spacing-sm 0;
+  text-align: center;
+}
+
+.statistics-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-xs;
+  background: white;
+  border-radius: 8px;
+}
+
+.stat-label {
+  font-size: 18px;
+  color: $gray;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 20px;
+  color: $primary;
+  font-weight: 700;
+}
+
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+@media (max-width: $breakpoint-sm) {
+  .modal-overlay {
+    padding: $spacing-sm;
+  }
+  
+  .results-modal {
+    padding: $spacing-md;
+  }
+  
+  .results-title {
+    font-size: 28px;
+  }
+  
+  .score-value {
+    font-size: 48px;
+  }
+  
+  .score-label {
+    font-size: 16px;
+  }
+  
+  .statistics-title {
+    font-size: 20px;
+  }
+  
+  .stat-label {
+    font-size: 16px;
+  }
+  
+  .stat-value {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: $breakpoint-xs) {
+  .results-modal {
+    padding: $spacing-sm;
+  }
+  
+  .results-title {
+    font-size: 24px;
+    margin-bottom: $spacing-md;
+  }
+  
+  .score-container {
+    padding: $spacing-md;
+  }
+  
+  .score-value {
+    font-size: 40px;
+  }
+}
+
