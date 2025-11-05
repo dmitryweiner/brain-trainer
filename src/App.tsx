@@ -5,6 +5,7 @@ import GameMenu from './components/GameMenu';
 import type { GameId } from './types/game.types';
 import { GAMES_META, GAME_IDS } from './utils/constants';
 import { ReactionClick } from './components/games/ReactionClick';
+import { ColorTap } from './components/games/ColorTap';
 
 function AppContent() {
   const [currentGame, setCurrentGame] = useState<GameId | null>(null);
@@ -38,6 +39,8 @@ function AppContent() {
           <GameMenu onGameSelect={handleGameSelect} />
         ) : currentGame === GAME_IDS.REACTION_CLICK ? (
           <ReactionClick onBackToMenu={handleBackToMenu} />
+        ) : currentGame === GAME_IDS.COLOR_TAP ? (
+          <ColorTap onBackToMenu={handleBackToMenu} />
         ) : (
           <div className="game-placeholder">
             <div className="card-custom text-center">

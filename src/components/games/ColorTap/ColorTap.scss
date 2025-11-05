@@ -1,0 +1,268 @@
+@use '../../../styles/variables.scss' as *;
+
+.color-tap-intro {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+
+  .intro-card {
+    background: white;
+    border-radius: 16px;
+    padding: $spacing-xl;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+
+    h2 {
+      font-size: 32px;
+      margin-bottom: $spacing-lg;
+      color: $dark;
+    }
+
+    .lead {
+      font-size: 20px;
+      color: $gray;
+      margin-bottom: $spacing-lg;
+    }
+
+    .rules {
+      text-align: left;
+      margin: 0 auto $spacing-lg;
+      max-width: 400px;
+
+      h3 {
+        font-size: 20px;
+        margin-bottom: $spacing-sm;
+        color: $dark;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+          margin-bottom: $spacing-sm;
+          font-size: 18px;
+          line-height: 1.6;
+          padding-left: $spacing-md;
+          position: relative;
+
+          &::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: $primary;
+          }
+        }
+      }
+    }
+
+    .scoring-info {
+      background: $light;
+      border-radius: 12px;
+      padding: $spacing-md;
+      margin-bottom: $spacing-lg;
+
+      p {
+        margin-bottom: $spacing-sm;
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+          padding: $spacing-xs 0;
+          font-size: 16px;
+        }
+      }
+    }
+
+    .text-muted {
+      color: $gray;
+      font-size: 16px;
+      margin-bottom: $spacing-lg;
+    }
+  }
+}
+
+.color-tap-game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  gap: $spacing-xl;
+
+  .round-indicator {
+    font-size: 24px;
+    font-weight: 600;
+    color: $dark;
+    text-align: center;
+  }
+
+  .color-circle {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease;
+    animation: appear 0.3s ease-out;
+
+    @keyframes appear {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    .circle-inner {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    &.green {
+      background: linear-gradient(135deg, $game-green 0%, #66bb6a 100%);
+      box-shadow: 0 8px 24px rgba($game-green, 0.4);
+    }
+
+    &.red {
+      background: linear-gradient(135deg, $game-red 0%, #e57373 100%);
+      box-shadow: 0 8px 24px rgba($game-red, 0.4);
+    }
+  }
+
+  .answer-buttons {
+    display: flex;
+    gap: $spacing-md;
+    width: 100%;
+
+    .answer-btn {
+      font-size: 24px;
+      font-weight: 700;
+      padding: $spacing-lg;
+      transition: all 0.2s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+
+    .yes-btn {
+      flex: 1;
+    }
+
+    .no-btn {
+      flex: 1;
+    }
+  }
+}
+
+.game-stats {
+  display: flex;
+  justify-content: space-around;
+  gap: $spacing-lg;
+  font-size: 20px;
+  font-weight: 600;
+
+  span {
+    padding: $spacing-sm $spacing-md;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// Mobile responsiveness
+@media (max-width: $breakpoint-md) {
+  .color-tap-intro .intro-card {
+    padding: $spacing-lg;
+
+    h2 {
+      font-size: 28px;
+    }
+
+    .rules ul li {
+      font-size: 16px;
+    }
+  }
+
+  .color-tap-game {
+    .color-circle {
+      width: 180px;
+      height: 180px;
+
+      .circle-inner {
+        width: 140px;
+        height: 140px;
+      }
+    }
+
+    .answer-buttons .answer-btn {
+      font-size: 20px;
+      padding: $spacing-md;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .color-tap-game {
+    gap: $spacing-lg;
+
+    .round-indicator {
+      font-size: 20px;
+    }
+
+    .color-circle {
+      width: 150px;
+      height: 150px;
+
+      .circle-inner {
+        width: 120px;
+        height: 120px;
+      }
+    }
+
+    .answer-buttons {
+      flex-direction: column;
+      gap: $spacing-sm;
+
+      .answer-btn {
+        font-size: 18px;
+      }
+    }
+  }
+
+  .game-stats {
+    flex-direction: column;
+    gap: $spacing-sm;
+
+    span {
+      font-size: 18px;
+    }
+  }
+}
+

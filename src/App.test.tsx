@@ -94,10 +94,10 @@ describe('App', () => {
     // Возврат в меню
     await user.click(screen.getByText('← Назад'));
 
-    // Переход ко второй игре (placeholder)
+    // Переход ко второй игре (ColorTap)
     playButtons = screen.getAllByText('Играть');
     await user.click(playButtons[1]);
-    expect(screen.getByText(/Игра: color-tap/)).toBeInTheDocument();
+    expect(screen.getByText('Тренировка реакции и внимания')).toBeInTheDocument();
   });
 });
 
