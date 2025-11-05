@@ -1,0 +1,370 @@
+@use 'sass:color';
+@use '../../../styles/variables' as *;
+
+.sequence-recall {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: $spacing-md;
+}
+
+// Intro screen
+.sequence-recall-intro {
+  text-align: center;
+
+  .game-icon {
+    font-size: 80px;
+    margin-bottom: $spacing-md;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  h2 {
+    font-size: 2rem;
+    margin-bottom: $spacing-sm;
+    color: $dark;
+  }
+
+  .game-description {
+    font-size: $font-size-large;
+    color: $gray;
+    margin-bottom: $spacing-lg;
+  }
+
+  .game-rules {
+    text-align: left;
+    background-color: color.adjust($secondary, $lightness: 45%);
+    padding: $spacing-md;
+    border-radius: $btn-border-radius;
+    margin-bottom: $spacing-lg;
+
+    h3 {
+      font-size: $font-size-large;
+      margin-bottom: $spacing-sm;
+      color: $dark;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        font-size: $font-size-base;
+        padding: $spacing-xs 0;
+        color: $dark;
+
+        &::before {
+          content: '🧠 ';
+          margin-right: $spacing-xs;
+        }
+      }
+    }
+  }
+}
+
+// Showing screen
+.sequence-recall-showing {
+  width: 100%;
+  text-align: center;
+
+  .sequence-info {
+    margin-bottom: $spacing-lg;
+
+    h3 {
+      font-size: $font-size-large;
+      color: $dark;
+      margin-bottom: $spacing-md;
+    }
+  }
+
+  .emoji-display {
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: $spacing-xl 0;
+
+    .emoji-large {
+      font-size: 120px;
+      line-height: 1;
+    }
+
+    .emoji-placeholder {
+      font-size: 60px;
+      color: $gray;
+    }
+  }
+
+  .showing-hint {
+    font-size: $font-size-large;
+    color: $gray;
+    margin-top: $spacing-md;
+  }
+}
+
+// Input screen
+.sequence-recall-input {
+  width: 100%;
+  text-align: center;
+
+  .sequence-info {
+    margin-bottom: $spacing-md;
+
+    h3 {
+      font-size: $font-size-large;
+      color: $dark;
+      margin-bottom: $spacing-md;
+    }
+  }
+
+  .user-sequence-display {
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-sm;
+    margin: $spacing-lg 0;
+    padding: $spacing-md;
+    background-color: color.adjust($secondary, $lightness: 48%);
+    border-radius: $btn-border-radius;
+    flex-wrap: wrap;
+
+    .user-emoji {
+      font-size: 48px;
+      line-height: 1;
+    }
+
+    .current-position {
+      font-size: 48px;
+      color: $secondary;
+      animation: blink 1s ease-in-out infinite;
+    }
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: $spacing-sm;
+    max-width: 500px;
+    margin: 0 auto;
+
+    .option-button {
+      aspect-ratio: 1;
+      min-height: 80px;
+      font-size: 48px;
+      background-color: white;
+      border: 3px solid $secondary;
+      border-radius: $btn-border-radius;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:active {
+        transform: scale(0.95);
+        background-color: color.adjust($secondary, $lightness: 45%);
+      }
+
+      @media (hover: hover) {
+        &:hover {
+          background-color: color.adjust($secondary, $lightness: 45%);
+          transform: scale(1.05);
+        }
+      }
+    }
+  }
+}
+
+// Feedback screen
+.sequence-recall-feedback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+
+  .feedback-indicator {
+    text-align: center;
+    animation: feedbackAppear 0.3s ease-out;
+
+    &.correct {
+      .feedback-icon {
+        color: $primary;
+        background-color: color.adjust($primary, $lightness: 40%);
+      }
+    }
+
+    &.incorrect {
+      .feedback-icon {
+        color: $danger;
+        background-color: color.adjust($danger, $lightness: 40%);
+      }
+    }
+
+    .feedback-icon {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto $spacing-md;
+      font-size: 80px;
+      font-weight: bold;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: feedbackPulse 0.5s ease-out;
+    }
+
+    .feedback-text {
+      font-size: $font-size-xl;
+      font-weight: bold;
+      color: $dark;
+    }
+  }
+}
+
+// Footer stats
+.sequence-recall-stats {
+  display: flex;
+  gap: $spacing-lg;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+  padding: $spacing-sm 0;
+
+  .stat-item {
+    display: flex;
+    gap: $spacing-xs;
+    align-items: center;
+
+    .stat-label {
+      font-size: $font-size-base;
+      color: $gray;
+    }
+
+    .stat-value {
+      font-size: $font-size-large;
+      font-weight: bold;
+      color: $secondary;
+    }
+  }
+}
+
+// Results details
+.sequence-recall-results-details {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+
+  .results-section {
+    background-color: color.adjust($secondary, $lightness: 45%);
+    padding: $spacing-md;
+    border-radius: $btn-border-radius;
+    text-align: center;
+
+    h4 {
+      font-size: $font-size-large;
+      margin-bottom: $spacing-sm;
+      color: $secondary;
+    }
+
+    .big-number {
+      font-size: $font-size-xl;
+      font-weight: bold;
+      color: $dark;
+      margin: $spacing-sm 0 0 0;
+    }
+  }
+}
+
+// Animations
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes feedbackAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes feedbackPulse {
+  0% {
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes animate-show {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-show {
+  animation: animate-show 0.3s ease-out;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .sequence-recall-input {
+    .options-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: $spacing-xs;
+
+      .option-button {
+        min-height: 70px;
+        font-size: 40px;
+      }
+    }
+
+    .user-sequence-display {
+      .user-emoji,
+      .current-position {
+        font-size: 40px;
+      }
+    }
+  }
+
+  .sequence-recall-showing {
+    .emoji-display {
+      .emoji-large {
+        font-size: 100px;
+      }
+    }
+  }
+}
+
