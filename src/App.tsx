@@ -3,7 +3,8 @@ import { ScoreProvider, useScoreContext } from './context/ScoreContext';
 import { Header } from './components/common';
 import GameMenu from './components/GameMenu';
 import type { GameId } from './types/game.types';
-import { GAMES_META } from './utils/constants';
+import { GAMES_META, GAME_IDS } from './utils/constants';
+import { ReactionClick } from './components/games/ReactionClick';
 
 function AppContent() {
   const [currentGame, setCurrentGame] = useState<GameId | null>(null);
@@ -35,11 +36,13 @@ function AppContent() {
       <div className="main-content">
         {currentGame === null ? (
           <GameMenu onGameSelect={handleGameSelect} />
+        ) : currentGame === GAME_IDS.REACTION_CLICK ? (
+          <ReactionClick onBackToMenu={handleBackToMenu} />
         ) : (
           <div className="game-placeholder">
             <div className="card-custom text-center">
               <h2>Игра: {currentGame}</h2>
-              <p>Компонент игры будет реализован на следующем этапе</p>
+              <p>Компонент игры будет реализован позже</p>
               <button 
                 className="btn-custom btn-primary btn-large"
                 onClick={handleBackToMenu}

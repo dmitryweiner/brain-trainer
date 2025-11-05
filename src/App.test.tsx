@@ -33,9 +33,9 @@ describe('App', () => {
     const playButtons = screen.getAllByText('Играть');
     await user.click(playButtons[0]);
 
-    // Должен отобразиться placeholder игры
-    expect(screen.getByText(/Игра:/)).toBeInTheDocument();
-    expect(screen.getByText('Компонент игры будет реализован на следующем этапе')).toBeInTheDocument();
+    // Должен отобразиться экран игры Reaction Click
+    expect(screen.getByText('Начать игру')).toBeInTheDocument();
+    expect(screen.getByText('Тренировка скорости реакции')).toBeInTheDocument();
   });
 
   it('should show back button when in game', async () => {
@@ -56,13 +56,13 @@ describe('App', () => {
     const playButtons = screen.getAllByText('Играть');
     await user.click(playButtons[0]);
 
-    expect(screen.getByText(/Игра:/)).toBeInTheDocument();
+    expect(screen.getByText('Начать игру')).toBeInTheDocument();
 
     // Возврат в меню
     await user.click(screen.getByText('← Назад'));
 
     expect(screen.getByText('Выберите игру')).toBeInTheDocument();
-    expect(screen.queryByText(/Игра:/)).not.toBeInTheDocument();
+    expect(screen.queryByText('Начать игру')).not.toBeInTheDocument();
   });
 
   it('should display game title in header when game is selected', async () => {
@@ -72,8 +72,9 @@ describe('App', () => {
     const playButtons = screen.getAllByText('Играть');
     await user.click(playButtons[0]);
 
-    // Заголовок должен содержать название игры
-    expect(screen.getByText(/⚡ Reaction Click/)).toBeInTheDocument();
+    // Заголовок должен содержать название игры (может быть несколько совпадений)
+    const titles = screen.getAllByText(/⚡ Reaction Click/);
+    expect(titles.length).toBeGreaterThan(0);
   });
 
   it('should display app title in header when in menu', () => {
@@ -85,15 +86,15 @@ describe('App', () => {
     const user = userEvent.setup();
     render(<App />);
 
-    // Переход к первой игре
+    // Переход к первой игре (Reaction Click)
     let playButtons = screen.getAllByText('Играть');
     await user.click(playButtons[0]);
-    expect(screen.getByText(/Игра: reaction-click/)).toBeInTheDocument();
+    expect(screen.getByText('Начать игру')).toBeInTheDocument();
 
     // Возврат в меню
     await user.click(screen.getByText('← Назад'));
 
-    // Переход ко второй игре
+    // Переход ко второй игре (placeholder)
     playButtons = screen.getAllByText('Играть');
     await user.click(playButtons[1]);
     expect(screen.getByText(/Игра: color-tap/)).toBeInTheDocument();
