@@ -1,0 +1,113 @@
+@use '../styles/variables.scss' as *;
+
+.game-menu {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: $spacing-lg $spacing-md;
+}
+
+.game-menu-header {
+  text-align: center;
+  margin-bottom: $spacing-xl;
+}
+
+.menu-title {
+  font-size: 36px;
+  font-weight: 700;
+  color: $dark;
+  margin: 0 0 $spacing-sm 0;
+}
+
+.menu-subtitle {
+  font-size: 20px;
+  color: $gray;
+  margin: 0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: $spacing-lg;
+  margin-bottom: $spacing-xl;
+}
+
+.menu-footer {
+  text-align: center;
+  padding: $spacing-lg 0;
+  border-top: 2px solid $light;
+}
+
+.footer-text {
+  font-size: 16px;
+  color: $gray;
+  margin: 0;
+}
+
+// Адаптивность
+@media (max-width: $breakpoint-md) {
+  .game-menu {
+    padding: $spacing-md $spacing-sm;
+  }
+
+  .menu-title {
+    font-size: 28px;
+  }
+
+  .menu-subtitle {
+    font-size: 18px;
+  }
+
+  .games-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: $spacing-md;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .game-menu {
+    padding: $spacing-sm;
+  }
+
+  .menu-title {
+    font-size: 24px;
+  }
+
+  .menu-subtitle {
+    font-size: 16px;
+  }
+
+  .games-grid {
+    grid-template-columns: 1fr;
+    gap: $spacing-sm;
+  }
+
+  .game-menu-header {
+    margin-bottom: $spacing-lg;
+  }
+}
+
+// Анимация появления карточек
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.games-grid > * {
+  animation: fadeInUp 0.4s ease-out backwards;
+}
+
+// Задержка для каждой карточки
+@for $i from 1 through 10 {
+  .games-grid > *:nth-child(#{$i}) {
+    animation-delay: #{$i * 0.05}s;
+  }
+}
+

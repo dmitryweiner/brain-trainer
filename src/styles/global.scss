@@ -1,4 +1,5 @@
-@import './variables.scss';
+@use './variables.scss' as *;
+@use 'sass:color';
 
 // Глобальные стили
 * {
@@ -61,7 +62,7 @@ button:focus-visible {
     color: white;
     
     &:hover:not(:disabled) {
-      background-color: darken($primary, 5%);
+      background-color: color.adjust($primary, $lightness: -5%);
     }
   }
   
@@ -70,7 +71,7 @@ button:focus-visible {
     color: white;
     
     &:hover:not(:disabled) {
-      background-color: darken($secondary, 5%);
+      background-color: color.adjust($secondary, $lightness: -5%);
     }
   }
   
@@ -79,7 +80,7 @@ button:focus-visible {
     color: white;
     
     &:hover:not(:disabled) {
-      background-color: darken($danger, 5%);
+      background-color: color.adjust($danger, $lightness: -5%);
     }
   }
   
@@ -88,7 +89,7 @@ button:focus-visible {
     color: white;
     
     &:hover:not(:disabled) {
-      background-color: darken($game-green, 5%);
+      background-color: color.adjust($game-green, $lightness: -5%);
     }
   }
   

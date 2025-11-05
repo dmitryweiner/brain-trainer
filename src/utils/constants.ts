@@ -1,4 +1,4 @@
-import { GameMeta } from '../types/game.types';
+import type { GameMeta } from '../types/game.types';
 
 // Идентификаторы игр
 export const GAME_IDS = {

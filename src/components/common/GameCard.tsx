@@ -1,5 +1,5 @@
 import React from 'react';
-import { GameMeta } from '../../types/game.types';
+import type { GameMeta } from '../../types/game.types';
 import Button from './Button';
 import './GameCard.scss';
 
