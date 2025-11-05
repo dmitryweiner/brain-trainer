@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { GameLayout, ResultsModal } from '../../common';
 import { useScoreContext } from '../../../context/ScoreContext';
 import { GAME_IDS, ROUNDS } from '../../../utils/constants';
@@ -12,6 +12,7 @@ export interface ReactionClickProps {
 
 export const ReactionClick: React.FC<ReactionClickProps> = ({ onBackToMenu, onNextGame }) => {
   const { addScore } = useScoreContext();
+  const scoreAddedRef = useRef(false);
   const {
     status,
     currentAttempt,
@@ -23,12 +24,18 @@ export const ReactionClick: React.FC<ReactionClickProps> = ({ onBackToMenu, onNe
     playAgain,
     getAverageTime,
     getBestTime,
+    getWorstTime,
   } = useReactionClick();
 
-  // Auto-add score when game ends
+  // Auto-add score when game ends (only once)
   useEffect(() => {
-    if (status === 'results' && currentScore > 0) {
+    if (status === 'results' && currentScore > 0 && !scoreAddedRef.current) {
       addScore(GAME_IDS.REACTION_CLICK, currentScore);
+      scoreAddedRef.current = true;
+    }
+    // Reset flag when starting a new game
+    if (status === 'intro' || status === 'waiting') {
+      scoreAddedRef.current = false;
     }
   }, [status, currentScore, addScore]);
 
@@ -115,26 +122,53 @@ export const ReactionClick: React.FC<ReactionClickProps> = ({ onBackToMenu, onNe
   };
 
   const renderDetails = () => {
-    if (reactionTimes.length === 0) return null;
+    if (reactionTimes.length === 0) {
+      return (
+        <div className="results-details">
+          <p className="text-muted">Нет успешных попыток</p>
+        </div>
+      );
+    }
 
     return (
       <div className="results-details">
+        <div className="results-summary">
+          <p className="summary-text">
+            Вы завершили {reactionTimes.length} из {ROUNDS.REACTION_CLICK} попыток
+            {tooEarlyCount > 0 && ` (${tooEarlyCount} слишком рано)`}
+          </p>
+        </div>
+
+        <div className="stat-item highlight">
+          <span className="stat-label">⚡ Лучшая реакция:</span>
+          <span className="stat-value stat-best">{getBestTime()}ms</span>
+        </div>
+        
         <div className="stat-item">
-          <span className="stat-label">Средняя реакция:</span>
+          <span className="stat-label">📊 Средняя реакция:</span>
           <span className="stat-value">{getAverageTime()}ms</span>
         </div>
-        <div className="stat-item">
-          <span className="stat-label">Лучшая реакция:</span>
-          <span className="stat-value">{getBestTime()}ms</span>
-        </div>
-        <div className="stat-item">
-          <span className="stat-label">Успешных попыток:</span>
-          <span className="stat-value">{reactionTimes.length}/{ROUNDS.REACTION_CLICK}</span>
-        </div>
-        {tooEarlyCount > 0 && (
+
+        {reactionTimes.length > 1 && (
           <div className="stat-item">
-            <span className="stat-label">Слишком рано:</span>
-            <span className="stat-value text-warning">{tooEarlyCount}</span>
+            <span className="stat-label">🐌 Худшая реакция:</span>
+            <span className="stat-value stat-worst">{getWorstTime()}ms</span>
+          </div>
+        )}
+
+        {reactionTimes.length > 0 && (
+          <div className="all-times">
+            <div className="stat-label">Все результаты:</div>
+            <div className="times-list">
+              {reactionTimes.map((time, index) => (
+                <span 
+                  key={index} 
+                  className={`time-chip ${time === getBestTime() ? 'best' : time === getWorstTime() && reactionTimes.length > 1 ? 'worst' : ''}`}
+                >
+                  {index + 1}. {time}ms
+                </span>
+              ))}
+            </div>
           </div>
         )}
       </div>
@@ -142,11 +176,18 @@ export const ReactionClick: React.FC<ReactionClickProps> = ({ onBackToMenu, onNe
   };
 
   const getMessage = () => {
+    if (reactionTimes.length === 0) {
+      return '😅 Попробуйте ещё раз!';
+    }
+    
     const avgTime = getAverageTime();
-    if (avgTime < 300) return '⚡ Невероятная реакция!';
-    if (avgTime < 500) return '🔥 Отличная скорость!';
-    if (avgTime < 700) return '👍 Хорошая работа!';
-    return '💪 Продолжайте тренироваться!';
+    const bestTime = getBestTime();
+    
+    if (bestTime < 250) return '⚡ Невероятная реакция! Вы молниеносны!';
+    if (avgTime < 300) return '🔥 Отличная скорость! Превосходный результат!';
+    if (avgTime < 500) return '👍 Хорошая работа! Продолжайте в том же духе!';
+    if (avgTime < 700) return '💪 Неплохо! Есть куда расти!';
+    return '🎯 Продолжайте тренироваться, скорость придёт!';
   };
 
   return (
@@ -165,7 +206,7 @@ export const ReactionClick: React.FC<ReactionClickProps> = ({ onBackToMenu, onNe
 
       <ResultsModal
         show={status === 'results'}
-        title="Игра завершена!"
+        title="🎮 Игра завершена!"
         score={currentScore}
         message={getMessage()}
         details={renderDetails()}

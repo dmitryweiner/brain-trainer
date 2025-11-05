@@ -1,121 +1,117 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ResultsModal } from './ResultsModal';
 
 describe('ResultsModal', () => {
-  const defaultProps = {
-    isOpen: true,
-    score: 100,
-    onPlayAgain: vi.fn(),
-    onBackToMenu: vi.fn(),
+  let mockProps: {
+    show: boolean;
+    title: string;
+    score: number;
+    message: string;
+    onPlayAgain: ReturnType<typeof vi.fn>;
+    onBackToMenu: ReturnType<typeof vi.fn>;
   };
 
-  it('should not render when isOpen is false', () => {
-    render(<ResultsModal {...defaultProps} isOpen={false} />);
-    
-    expect(screen.queryByText('🎉 Отличная работа!')).not.toBeInTheDocument();
+  beforeEach(() => {
+    mockProps = {
+      show: true,
+      title: '🎮 Игра завершена!',
+      score: 100,
+      message: '⚡ Отличная работа!',
+      onPlayAgain: vi.fn(),
+      onBackToMenu: vi.fn(),
+    };
   });
 
-  it('should render when isOpen is true', () => {
-    render(<ResultsModal {...defaultProps} />);
-    
-    expect(screen.getByText('🎉 Отличная работа!')).toBeInTheDocument();
+  it('should not render when show is false', () => {
+    const { container } = render(<ResultsModal {...mockProps} show={false} />);
+    expect(container.firstChild).toBeNull();
+  });
+
+  it('should render when show is true', () => {
+    render(<ResultsModal {...mockProps} />);
+    expect(screen.getByText('🎮 Игра завершена!')).toBeInTheDocument();
+  });
+
+  it('should display title', () => {
+    render(<ResultsModal {...mockProps} />);
+    expect(screen.getByText('🎮 Игра завершена!')).toBeInTheDocument();
   });
 
   it('should display score', () => {
-    render(<ResultsModal {...defaultProps} score={250} />);
-    
-    expect(screen.getByText('250')).toBeInTheDocument();
-    expect(screen.getByText('Заработано очков:')).toBeInTheDocument();
+    render(<ResultsModal {...mockProps} />);
+    expect(screen.getByText(/100 очков/)).toBeInTheDocument();
   });
 
-  it('should call onPlayAgain when play again button is clicked', async () => {
+  it('should display message', () => {
+    render(<ResultsModal {...mockProps} />);
+    expect(screen.getByText('⚡ Отличная работа!')).toBeInTheDocument();
+  });
+
+  it('should call onPlayAgain when button clicked', async () => {
     const user = userEvent.setup();
-    const handlePlayAgain = vi.fn();
-    
-    render(<ResultsModal {...defaultProps} onPlayAgain={handlePlayAgain} />);
+    render(<ResultsModal {...mockProps} />);
     
     await user.click(screen.getByText('Играть ещё раз'));
-    expect(handlePlayAgain).toHaveBeenCalledTimes(1);
+    
+    expect(mockProps.onPlayAgain).toHaveBeenCalledTimes(1);
   });
 
-  it('should call onBackToMenu when back to menu button is clicked', async () => {
+  it('should call onBackToMenu when button clicked', async () => {
     const user = userEvent.setup();
-    const handleBackToMenu = vi.fn();
-    
-    render(<ResultsModal {...defaultProps} onBackToMenu={handleBackToMenu} />);
+    render(<ResultsModal {...mockProps} />);
     
     await user.click(screen.getByText('В меню'));
-    expect(handleBackToMenu).toHaveBeenCalledTimes(1);
+    
+    expect(mockProps.onBackToMenu).toHaveBeenCalledTimes(1);
   });
 
-  it('should not show next game button by default', () => {
-    render(<ResultsModal {...defaultProps} />);
-    
-    expect(screen.queryByText('Следующая игра')).not.toBeInTheDocument();
-  });
-
-  it('should show next game button when onNextGame is provided', () => {
-    const handleNextGame = vi.fn();
-    
-    render(<ResultsModal {...defaultProps} onNextGame={handleNextGame} />);
+  it('should show next game button when onNextGame provided', () => {
+    const onNextGame = vi.fn();
+    render(<ResultsModal {...mockProps} onNextGame={onNextGame} />);
     
     expect(screen.getByText('Следующая игра')).toBeInTheDocument();
   });
 
-  it('should call onNextGame when next game button is clicked', async () => {
-    const user = userEvent.setup();
-    const handleNextGame = vi.fn();
+  it('should not show next game button when onNextGame not provided', () => {
+    render(<ResultsModal {...mockProps} />);
     
-    render(<ResultsModal {...defaultProps} onNextGame={handleNextGame} />);
+    expect(screen.queryByText('Следующая игра')).not.toBeInTheDocument();
+  });
+
+  it('should call onNextGame when button clicked', async () => {
+    const user = userEvent.setup();
+    const onNextGame = vi.fn();
+    render(<ResultsModal {...mockProps} onNextGame={onNextGame} />);
     
     await user.click(screen.getByText('Следующая игра'));
-    expect(handleNextGame).toHaveBeenCalledTimes(1);
+    
+    expect(onNextGame).toHaveBeenCalledTimes(1);
   });
 
-  it('should not show statistics when not provided', () => {
-    render(<ResultsModal {...defaultProps} />);
+  it('should render details when provided', () => {
+    const details = <div data-testid="custom-details">Custom Details</div>;
+    render(<ResultsModal {...mockProps} details={details} />);
     
-    expect(screen.queryByText('Статистика')).not.toBeInTheDocument();
+    expect(screen.getByTestId('custom-details')).toBeInTheDocument();
+    expect(screen.getByText('Custom Details')).toBeInTheDocument();
   });
 
-  it('should show statistics when provided', () => {
-    const statistics = [
-      { label: 'Точность', value: '80%' },
-      { label: 'Время', value: '2.5s' },
-    ];
+  it('should have close button', () => {
+    render(<ResultsModal {...mockProps} />);
     
-    render(<ResultsModal {...defaultProps} statistics={statistics} />);
-    
-    expect(screen.getByText('Статистика')).toBeInTheDocument();
-    expect(screen.getByText('Точность:')).toBeInTheDocument();
-    expect(screen.getByText('80%')).toBeInTheDocument();
-    expect(screen.getByText('Время:')).toBeInTheDocument();
-    expect(screen.getByText('2.5s')).toBeInTheDocument();
+    const closeButton = screen.getByRole('button', { name: /закрыть/i });
+    expect(closeButton).toBeInTheDocument();
   });
 
-  it('should render multiple statistics correctly', () => {
-    const statistics = [
-      { label: 'Попыток', value: 10 },
-      { label: 'Правильных', value: 8 },
-      { label: 'Ошибок', value: 2 },
-    ];
+  it('should call onBackToMenu when close button clicked', async () => {
+    const user = userEvent.setup();
+    render(<ResultsModal {...mockProps} />);
     
-    render(<ResultsModal {...defaultProps} statistics={statistics} />);
+    const closeButton = screen.getByRole('button', { name: /закрыть/i });
+    await user.click(closeButton);
     
-    statistics.forEach(stat => {
-      expect(screen.getByText(`${stat.label}:`)).toBeInTheDocument();
-      expect(screen.getByText(stat.value.toString())).toBeInTheDocument();
-    });
-  });
-
-  it('should have proper ARIA attributes', () => {
-    render(<ResultsModal {...defaultProps} />);
-    
-    const modal = screen.getByRole('dialog');
-    expect(modal).toHaveAttribute('aria-modal', 'true');
-    expect(modal).toHaveAttribute('aria-labelledby', 'results-title');
+    expect(mockProps.onBackToMenu).toHaveBeenCalledTimes(1);
   });
 });
-

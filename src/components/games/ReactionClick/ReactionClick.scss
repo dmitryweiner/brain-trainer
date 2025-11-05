@@ -179,27 +179,140 @@
 .results-details {
   display: flex;
   flex-direction: column;
-  gap: $spacing-sm;
+  gap: $spacing-md;
   margin-top: $spacing-md;
+  width: 100%;
+  max-width: 500px;
+
+  .results-summary {
+    text-align: center;
+    padding: $spacing-sm;
+    background: linear-gradient(135deg, rgba($primary, 0.1) 0%, rgba($secondary, 0.1) 100%);
+    border-radius: 8px;
+    margin-bottom: $spacing-sm;
+
+    .summary-text {
+      margin: 0;
+      font-size: 16px;
+      color: $dark;
+      font-weight: 500;
+    }
+  }
 
   .stat-item {
     display: flex;
     justify-content: space-between;
-    padding: $spacing-sm;
+    align-items: center;
+    padding: $spacing-md;
     background: $light;
     border-radius: 8px;
     font-size: 18px;
+    transition: transform 0.2s ease;
+
+    &.highlight {
+      background: linear-gradient(135deg, rgba($primary, 0.15) 0%, rgba($primary, 0.05) 100%);
+      border: 2px solid rgba($primary, 0.3);
+    }
+
+    &:hover {
+      transform: translateX(4px);
+    }
 
     .stat-label {
       color: $gray;
+      font-weight: 500;
     }
 
     .stat-value {
-      font-weight: 600;
+      font-weight: 700;
       color: $dark;
+      font-size: 20px;
+
+      &.stat-best {
+        color: $game-green;
+      }
+
+      &.stat-worst {
+        color: $warning;
+      }
 
       &.text-warning {
         color: $warning;
+      }
+    }
+  }
+
+  .all-times {
+    margin-top: $spacing-sm;
+    padding: $spacing-md;
+    background: $light;
+    border-radius: 8px;
+
+    .stat-label {
+      color: $gray;
+      font-weight: 500;
+      margin-bottom: $spacing-sm;
+      display: block;
+    }
+
+    .times-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: $spacing-xs;
+
+      .time-chip {
+        display: inline-block;
+        padding: $spacing-xs $spacing-sm;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        color: $dark;
+        transition: all 0.2s ease;
+
+        &.best {
+          background: linear-gradient(135deg, $game-green 0%, #66bb6a 100%);
+          color: white;
+          border-color: $game-green;
+          font-weight: 700;
+          box-shadow: 0 2px 4px rgba($game-green, 0.3);
+        }
+
+        &.worst {
+          background: linear-gradient(135deg, $warning 0%, #ffb74d 100%);
+          color: white;
+          border-color: $warning;
+          font-weight: 700;
+        }
+
+        &:not(.best):not(.worst):hover {
+          background: #f0f0f0;
+          transform: translateY(-1px);
+        }
+      }
+    }
+  }
+}
+
+// Mobile responsiveness
+@media (max-width: $breakpoint-sm) {
+  .results-details {
+    .stat-item {
+      font-size: 16px;
+      padding: $spacing-sm;
+
+      .stat-value {
+        font-size: 18px;
+      }
+    }
+
+    .all-times {
+      .times-list {
+        .time-chip {
+          font-size: 13px;
+          padding: 4px 8px;
+        }
       }
     }
   }

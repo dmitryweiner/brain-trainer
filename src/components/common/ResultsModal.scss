@@ -1,6 +1,26 @@
 @use '../../styles/variables.scss' as *;
 @use 'sass:color';
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -13,28 +33,42 @@
   justify-content: center;
   z-index: 1000;
   padding: $spacing-md;
+  animation: fadeIn 0.3s ease-out;
 }
 
 .results-modal {
+  position: relative;
   background: white;
-  border-radius: $btn-border-radius * 1.5;
-  padding: $spacing-lg;
-  max-width: 500px;
+  border-radius: 16px;
+  padding: $spacing-xl;
+  max-width: 600px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.3s ease;
-}
+  animation: slideUp 0.3s ease-out;
 
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  .modal-close {
+    position: absolute;
+    top: $spacing-md;
+    right: $spacing-md;
+    background: transparent;
+    border: none;
+    font-size: 32px;
+    line-height: 1;
+    color: $gray;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: $dark;
+    }
   }
 }
 
@@ -47,25 +81,35 @@
 }
 
 .score-container {
-  background: linear-gradient(135deg, $primary, color.adjust($primary, $lightness: -10%));
-  border-radius: $btn-border-radius;
-  padding: $spacing-lg;
   text-align: center;
   margin-bottom: $spacing-lg;
-  color: white;
+  padding: $spacing-lg;
+  background: linear-gradient(135deg, rgba($primary, 0.1) 0%, rgba($secondary, 0.1) 100%);
+  border-radius: 12px;
+
+  .score-label {
+    font-size: 18px;
+    color: $gray;
+    margin-bottom: $spacing-xs;
+  }
+
+  .score-value {
+    font-size: 36px;
+    font-weight: 700;
+    color: $primary;
+  }
 }
 
-.score-label {
-  font-size: 18px;
+.message {
+  text-align: center;
+  font-size: 20px;
+  margin: 0 0 $spacing-lg 0;
+  color: $dark;
   font-weight: 500;
-  margin-bottom: $spacing-xs;
 }
 
-.score-value {
-  font-size: 56px;
-  font-weight: 700;
-  line-height: 1;
-  display: block;
+.details-container {
+  margin-bottom: $spacing-lg;
 }
 
 .statistics {
@@ -114,6 +158,14 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-sm;
+
+  .btn {
+    margin: 0;
+  }
+
+  .mb-2 {
+    margin-bottom: $spacing-sm;
+  }
 }
 
 @media (max-width: $breakpoint-sm) {

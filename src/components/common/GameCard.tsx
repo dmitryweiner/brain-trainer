@@ -3,10 +3,12 @@ import type { GameMeta } from '../../types/game.types';
 import Button from './Button';
 import './GameCard.scss';
 
+import type { GameId } from '../../types/game.types';
+
 export interface GameCardProps {
   game: GameMeta;
   bestScore?: number;
-  onPlay: (gameId: string) => void;
+  onPlay: (gameId: GameId) => void;
 }
 
 export const GameCard: React.FC<GameCardProps> = ({

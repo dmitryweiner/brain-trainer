@@ -19,6 +19,7 @@ export interface UseReactionClickReturn extends ReactionClickState {
   playAgain: () => void;
   getAverageTime: () => number;
   getBestTime: () => number;
+  getWorstTime: () => number;
 }
 
 function useReactionClick(): UseReactionClickReturn {
@@ -43,11 +44,6 @@ function useReactionClick(): UseReactionClickReturn {
   }, []);
 
   const startNextRound = useCallback(() => {
-    if (currentAttempt >= totalRounds) {
-      setStatus('results');
-      return;
-    }
-
     setStatus('waiting');
 
     // Random delay between REACTION_MIN and REACTION_MAX
@@ -57,7 +53,7 @@ function useReactionClick(): UseReactionClickReturn {
       setStatus('ready');
       startTimeRef.current = Date.now();
     }, delay) as unknown as number;
-  }, [currentAttempt, totalRounds]);
+  }, []);
 
   const startGame = useCallback(() => {
     setStatus('waiting');
@@ -81,10 +77,18 @@ function useReactionClick(): UseReactionClickReturn {
       }
       setStatus('tooEarly');
       setTooEarlyCount(prev => prev + 1);
-      // After 1 second, start next round
+      
+      // Check if this was the last attempt
+      const nextAttempt = currentAttempt + 1;
+      setCurrentAttempt(nextAttempt);
+      
+      // After 1 second, start next round or end game
       setTimeout(() => {
-        setCurrentAttempt(prev => prev + 1);
-        startNextRound();
+        if (nextAttempt >= totalRounds) {
+          setStatus('results');
+        } else {
+          startNextRound();
+        }
       }, 1000);
       return;
     }
@@ -96,11 +100,18 @@ function useReactionClick(): UseReactionClickReturn {
 
       setReactionTimes(prev => [...prev, reactionTime]);
       setCurrentScore(prev => prev + points);
-      setCurrentAttempt(prev => prev + 1);
+
+      // Check if this was the last attempt BEFORE incrementing
+      const nextAttempt = currentAttempt + 1;
+      setCurrentAttempt(nextAttempt);
 
       // Brief pause before next round
       setTimeout(() => {
-        startNextRound();
+        if (nextAttempt >= totalRounds) {
+          setStatus('results');
+        } else {
+          startNextRound();
+        }
       }, 500);
     }
 
@@ -125,6 +136,11 @@ function useReactionClick(): UseReactionClickReturn {
     return Math.min(...reactionTimes);
   }, [reactionTimes]);
 
+  const getWorstTime = useCallback(() => {
+    if (reactionTimes.length === 0) return 0;
+    return Math.max(...reactionTimes);
+  }, [reactionTimes]);
+
   return {
     status,
     currentAttempt,
@@ -136,6 +152,7 @@ function useReactionClick(): UseReactionClickReturn {
     playAgain,
     getAverageTime,
     getBestTime,
+    getWorstTime,
   };
 }
 
