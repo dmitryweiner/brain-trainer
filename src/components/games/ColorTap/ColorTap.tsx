@@ -20,6 +20,7 @@ export const ColorTap: React.FC<ColorTapProps> = ({ onBackToMenu, onNextGame }) 
     correctAnswers,
     results,
     currentScore,
+    lastAnswerCorrect,
     startGame,
     handleAnswer,
     playAgain,
@@ -35,7 +36,7 @@ export const ColorTap: React.FC<ColorTapProps> = ({ onBackToMenu, onNextGame }) 
       scoreAddedRef.current = true;
     }
     // Reset flag when starting a new game
-    if (status === 'intro' || status === 'playing') {
+    if (status === 'intro' || status === 'playing' || status === 'feedback') {
       scoreAddedRef.current = false;
     }
   }, [status, currentScore, addScore]);
@@ -113,6 +114,26 @@ export const ColorTap: React.FC<ColorTapProps> = ({ onBackToMenu, onNextGame }) 
       );
     }
 
+    if (status === 'feedback') {
+      return (
+        <div className="color-tap-feedback">
+          <div className={`feedback-indicator ${lastAnswerCorrect ? 'correct' : 'incorrect'}`}>
+            {lastAnswerCorrect ? (
+              <>
+                <div className="feedback-icon">✓</div>
+                <div className="feedback-text">Правильно!</div>
+              </>
+            ) : (
+              <>
+                <div className="feedback-icon">✗</div>
+                <div className="feedback-text">Неправильно</div>
+              </>
+            )}
+          </div>
+        </div>
+      );
+    }
+
     return null;
   };
 
@@ -166,7 +187,7 @@ export const ColorTap: React.FC<ColorTapProps> = ({ onBackToMenu, onNextGame }) 
     <GameLayout
       title="🎨 Color Tap"
       footerContent={
-        status === 'playing' && (
+        (status === 'playing' || status === 'feedback') && (
           <div className="game-stats">
             <span>Правильно: {correctAnswers}/{currentRound}</span>
             <span>Очки: {currentScore.toFixed(1)}</span>

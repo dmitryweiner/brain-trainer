@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { ROUNDS } from '../../../utils/constants';
 
-export type GameStatus = 'intro' | 'playing' | 'results';
+export type GameStatus = 'intro' | 'playing' | 'feedback' | 'results';
 export type ColorType = 'green' | 'red';
 
 export interface RoundResult {
@@ -17,6 +17,7 @@ export interface ColorTapState {
   startTime: number;
   results: RoundResult[];
   currentScore: number;
+  lastAnswerCorrect: boolean | null;
 }
 
 export interface UseColorTapReturn extends ColorTapState {
@@ -36,6 +37,7 @@ function useColorTap(): UseColorTapReturn {
   const [startTime, setStartTime] = useState(0);
   const [results, setResults] = useState<RoundResult[]>([]);
   const [currentScore, setCurrentScore] = useState(0);
+  const [lastAnswerCorrect, setLastAnswerCorrect] = useState<boolean | null>(null);
 
   const totalRounds = ROUNDS.COLOR_TAP;
 
@@ -82,17 +84,25 @@ function useColorTap(): UseColorTapReturn {
 
     setCurrentScore(prev => prev + points);
     setResults(prev => [...prev, { correct: isCorrect, time: reactionTime }]);
+    setLastAnswerCorrect(isCorrect);
 
     const nextRound = currentRound + 1;
     setCurrentRound(nextRound);
 
+    // Show feedback state
+    setStatus('feedback');
+
     if (nextRound >= totalRounds) {
-      setStatus('results');
-    } else {
-      // Short delay before next round
+      // Show feedback, then go to results
       setTimeout(() => {
+        setStatus('results');
+      }, 800);
+    } else {
+      // Show feedback, then start next round
+      setTimeout(() => {
+        setStatus('playing');
         startNewRound();
-      }, 300);
+      }, 800);
     }
   }, [status, startTime, currentColor, currentRound, totalRounds, startNewRound]);
 
@@ -124,6 +134,7 @@ function useColorTap(): UseColorTapReturn {
     startTime,
     results,
     currentScore,
+    lastAnswerCorrect,
     startGame,
     handleAnswer,
     playAgain,
