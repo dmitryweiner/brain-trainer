@@ -1,0 +1,321 @@
+@use 'sass:color';
+@use '../../../styles/variables' as *;
+
+.memory-flip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: $spacing-md;
+}
+
+// Intro screen
+.memory-flip-intro {
+  text-align: center;
+
+  .game-icon {
+    font-size: 80px;
+    margin-bottom: $spacing-md;
+    animation: bounce 2s infinite;
+  }
+
+  h2 {
+    font-size: 2rem;
+    margin-bottom: $spacing-sm;
+    color: $dark;
+  }
+
+  .game-description {
+    font-size: $font-size-large;
+    color: $gray;
+    margin-bottom: $spacing-lg;
+  }
+
+  .game-rules {
+    text-align: left;
+    background-color: color.adjust($primary, $lightness: 45%);
+    padding: $spacing-md;
+    border-radius: $btn-border-radius;
+    margin-bottom: $spacing-lg;
+
+    h3 {
+      font-size: $font-size-large;
+      margin-bottom: $spacing-sm;
+      color: $dark;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        font-size: $font-size-base;
+        padding: $spacing-xs 0;
+        color: $dark;
+
+        &::before {
+          content: '✓ ';
+          color: $primary;
+          font-weight: bold;
+          margin-right: $spacing-xs;
+        }
+      }
+    }
+  }
+}
+
+// Playing screen
+.memory-flip-playing {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.memory-grid {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  max-width: 500px;
+  aspect-ratio: auto;
+}
+
+.memory-card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  perspective: 1000px;
+  min-height: 80px;
+
+  &:disabled {
+    cursor: default;
+  }
+
+  .card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+  }
+
+  &.flipped .card-inner,
+  &.matched .card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .card-front,
+  .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $btn-border-radius;
+    font-size: 2.5rem;
+    font-weight: bold;
+  }
+
+  .card-front {
+    background-color: $gray;
+    color: $light;
+    border: 3px solid color.adjust($gray, $lightness: -10%);
+  }
+
+  .card-back {
+    background-color: white;
+    color: $dark;
+    border: 3px solid $primary;
+    transform: rotateY(180deg);
+  }
+
+  &.matched {
+    .card-back {
+      background-color: color.adjust($primary, $lightness: 40%);
+      border-color: $primary;
+    }
+  }
+
+  // Hover эффект только для незакрытых карт на больших экранах
+  @media (hover: hover) {
+    &:not(.flipped):not(.matched):hover .card-front {
+      background-color: color.adjust($gray, $lightness: 5%);
+    }
+  }
+
+  // Active state для мобильных
+  &:not(.flipped):not(.matched):active .card-front {
+    background-color: color.adjust($gray, $lightness: 5%);
+  }
+}
+
+// Level complete screen
+.memory-flip-level-complete {
+  text-align: center;
+
+  .completion-icon {
+    font-size: 80px;
+    margin-bottom: $spacing-md;
+    animation: bounce 1s infinite;
+  }
+
+  h2 {
+    font-size: 2rem;
+    margin-bottom: $spacing-sm;
+    color: $primary;
+  }
+
+  .level-info {
+    margin-bottom: $spacing-md;
+
+    .level-size {
+      font-size: $font-size-large;
+      color: $gray;
+      margin: 0;
+    }
+  }
+
+  .level-stats {
+    display: flex;
+    gap: $spacing-md;
+    justify-content: center;
+    margin-bottom: $spacing-lg;
+
+    .stat-box {
+      background-color: color.adjust($primary, $lightness: 45%);
+      padding: $spacing-md;
+      border-radius: $btn-border-radius;
+      min-width: 120px;
+
+      .stat-label {
+        display: block;
+        font-size: $font-size-base;
+        color: $gray;
+        margin-bottom: $spacing-xs;
+      }
+
+      .stat-value {
+        display: block;
+        font-size: 2rem;
+        font-weight: bold;
+        color: $primary;
+      }
+    }
+  }
+}
+
+// Footer stats
+.memory-flip-stats {
+  display: flex;
+  gap: $spacing-lg;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+  padding: $spacing-sm 0;
+
+  .stat-item {
+    display: flex;
+    gap: $spacing-xs;
+    align-items: center;
+
+    .stat-label {
+      font-size: $font-size-base;
+      color: $gray;
+    }
+
+    .stat-value {
+      font-size: $font-size-large;
+      font-weight: bold;
+      color: $primary;
+    }
+  }
+}
+
+// Results details
+.memory-flip-results-details {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+
+  .results-section {
+    background-color: color.adjust($primary, $lightness: 45%);
+    padding: $spacing-md;
+    border-radius: $btn-border-radius;
+
+    h4 {
+      font-size: $font-size-large;
+      margin-bottom: $spacing-sm;
+      color: $primary;
+    }
+
+    p {
+      font-size: $font-size-base;
+      margin: $spacing-xs 0;
+      color: $dark;
+    }
+
+    &.results-total {
+      background-color: color.adjust($primary, $lightness: 35%);
+      border: 2px solid $primary;
+
+      h4 {
+        font-size: $font-size-xl;
+      }
+
+      .total-score {
+        font-size: $font-size-xl;
+        font-weight: bold;
+        color: $primary;
+        margin: $spacing-sm 0 0 0;
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .memory-grid {
+    max-width: 100%;
+    gap: 8px;
+  }
+
+  .memory-card {
+    min-height: 60px;
+
+    .card-front,
+    .card-back {
+      font-size: 2rem;
+    }
+  }
+
+  .memory-flip-level-complete {
+    .level-stats {
+      flex-direction: column;
+      gap: $spacing-sm;
+
+      .stat-box {
+        min-width: 100px;
+      }
+    }
+  }
+}
+

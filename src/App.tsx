@@ -8,6 +8,8 @@ import { ReactionClick } from './components/games/ReactionClick';
 import { ColorTap } from './components/games/ColorTap';
 import { SymbolMatch } from './components/games/SymbolMatch';
 import { OddOneOut } from './components/games/OddOneOut';
+import { HiddenNumber } from './components/games/HiddenNumber';
+import MemoryFlip from './components/games/MemoryFlip';
 
 function AppContent() {
   const [currentGame, setCurrentGame] = useState<GameId | null>(null);
@@ -47,6 +49,10 @@ function AppContent() {
           <SymbolMatch onBackToMenu={handleBackToMenu} />
         ) : currentGame === GAME_IDS.ODD_ONE_OUT ? (
           <OddOneOut onBackToMenu={handleBackToMenu} />
+        ) : currentGame === GAME_IDS.HIDDEN_NUMBER ? (
+          <HiddenNumber onBackToMenu={handleBackToMenu} />
+        ) : currentGame === GAME_IDS.MEMORY_FLIP ? (
+          <MemoryFlip onBack={handleBackToMenu} />
         ) : (
           <div className="game-placeholder">
             <div className="card-custom text-center">

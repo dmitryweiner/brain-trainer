@@ -1,0 +1,390 @@
+@use '../../../styles/variables.scss' as *;
+@use 'sass:color';
+
+.hidden-number-intro {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+
+  .intro-card {
+    background: white;
+    border-radius: 16px;
+    padding: $spacing-xl;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+
+    h2 {
+      font-size: 32px;
+      margin-bottom: $spacing-lg;
+      color: $dark;
+    }
+
+    .lead {
+      font-size: 20px;
+      color: $gray;
+      margin-bottom: $spacing-lg;
+    }
+
+    .rules {
+      text-align: left;
+      margin: 0 auto $spacing-lg;
+      max-width: 450px;
+
+      h3 {
+        font-size: 20px;
+        margin-bottom: $spacing-sm;
+        color: $dark;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+          margin-bottom: $spacing-sm;
+          font-size: 18px;
+          line-height: 1.6;
+          padding-left: $spacing-md;
+          position: relative;
+
+          &::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: $primary;
+          }
+        }
+      }
+    }
+
+    .scoring-info {
+      background: $light;
+      border-radius: 12px;
+      padding: $spacing-md;
+      margin-bottom: $spacing-lg;
+
+      h4 {
+        font-size: 18px;
+        margin-bottom: $spacing-sm;
+        color: $dark;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+          padding: $spacing-xs 0;
+          font-size: 16px;
+        }
+      }
+    }
+
+    .text-muted {
+      color: $gray;
+      font-size: 16px;
+      margin-bottom: $spacing-lg;
+    }
+  }
+}
+
+.hidden-number-game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  gap: $spacing-lg;
+
+  .progress-container {
+    width: 100%;
+  }
+
+  .instruction-text {
+    font-size: 24px;
+    font-weight: 600;
+    color: $dark;
+    text-align: center;
+
+    .target-number {
+      display: inline-block;
+      background: $primary;
+      color: white;
+      padding: $spacing-xs $spacing-md;
+      border-radius: 8px;
+      font-size: 32px;
+      font-weight: 700;
+      margin: 0 $spacing-xs;
+      min-width: 50px;
+      text-align: center;
+    }
+  }
+
+  .number-grid {
+    display: grid;
+    gap: $spacing-xs;
+    width: 100%;
+    max-width: 500px;
+    aspect-ratio: 6 / 5;
+
+    .grid-cell {
+      background: #f5f5f5;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 28px;
+      font-weight: 700;
+      color: $primary;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      animation: cellFadeIn 0.3s ease-out;
+      min-height: 60px;
+
+      @keyframes cellFadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      &:hover {
+        background: #ebebeb;
+        border-color: $primary;
+        transform: scale(1.05);
+      }
+
+      &:active {
+        transform: scale(0.98);
+      }
+
+      &:focus {
+        outline: none;
+        border-color: $primary;
+        box-shadow: 0 0 0 3px rgba($primary, 0.2);
+      }
+
+      &.has-target {
+        // Target cell has same appearance but can be styled differently if needed
+      }
+    }
+  }
+}
+
+.hidden-number-feedback {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  min-height: 300px;
+
+  .feedback-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-md;
+    animation: feedbackAppear 0.3s ease-out;
+
+    @keyframes feedbackAppear {
+      from {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .feedback-icon {
+      font-size: 100px;
+      line-height: 1;
+      color: $game-green;
+      text-shadow: 0 4px 12px rgba($game-green, 0.4);
+      animation: pulse 0.5s ease-in-out;
+
+      @keyframes pulse {
+        0%, 100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.2);
+        }
+      }
+    }
+
+    .feedback-time {
+      font-size: 48px;
+      font-weight: 700;
+      color: $dark;
+    }
+
+    .feedback-points {
+      font-size: 32px;
+      font-weight: 600;
+      color: $primary;
+      background: color.adjust($primary, $lightness: 45%);
+      padding: $spacing-sm $spacing-lg;
+      border-radius: 20px;
+    }
+  }
+}
+
+.game-stats {
+  display: flex;
+  justify-content: space-around;
+  gap: $spacing-lg;
+  font-size: 20px;
+  font-weight: 600;
+
+  span {
+    padding: $spacing-sm $spacing-md;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.speed-breakdown {
+  margin-top: $spacing-lg;
+  padding-top: $spacing-lg;
+  border-top: 2px solid $light;
+
+  h4 {
+    font-size: 18px;
+    margin-bottom: $spacing-md;
+    color: $dark;
+  }
+
+  .breakdown-item {
+    display: flex;
+    justify-content: space-between;
+    padding: $spacing-sm 0;
+    font-size: 16px;
+
+    span:first-child {
+      color: $gray;
+    }
+
+    span:last-child {
+      font-weight: 600;
+      color: $dark;
+    }
+  }
+}
+
+// Mobile responsiveness
+@media (max-width: $breakpoint-md) {
+  .hidden-number-intro .intro-card {
+    padding: $spacing-lg;
+
+    h2 {
+      font-size: 28px;
+    }
+
+    .rules ul li {
+      font-size: 16px;
+    }
+  }
+
+  .hidden-number-game {
+    .number-grid {
+      max-width: 450px;
+
+      .grid-cell {
+        font-size: 24px;
+        min-height: 55px;
+      }
+    }
+
+    .instruction-text {
+      font-size: 20px;
+
+      .target-number {
+        font-size: 28px;
+        min-width: 45px;
+      }
+    }
+  }
+
+  .hidden-number-feedback {
+    .feedback-content {
+      .feedback-icon {
+        font-size: 80px;
+      }
+
+      .feedback-time {
+        font-size: 40px;
+      }
+
+      .feedback-points {
+        font-size: 28px;
+      }
+    }
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .hidden-number-game {
+    gap: $spacing-md;
+
+    .number-grid {
+      max-width: 350px;
+      gap: 4px;
+
+      .grid-cell {
+        font-size: 20px;
+        min-height: 45px;
+        border-width: 1px;
+      }
+    }
+
+    .instruction-text {
+      font-size: 18px;
+
+      .target-number {
+        font-size: 24px;
+        min-width: 40px;
+        padding: 4px $spacing-sm;
+      }
+    }
+  }
+
+  .hidden-number-feedback {
+    .feedback-content {
+      .feedback-icon {
+        font-size: 70px;
+      }
+
+      .feedback-time {
+        font-size: 36px;
+      }
+
+      .feedback-points {
+        font-size: 24px;
+        padding: $spacing-xs $spacing-md;
+      }
+    }
+  }
+
+  .game-stats {
+    flex-direction: column;
+    gap: $spacing-sm;
+
+    span {
+      font-size: 18px;
+    }
+  }
+}
+

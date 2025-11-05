@@ -104,6 +104,8 @@ export const GRID_SIZES = {
   ODD_ONE_OUT: { rows: 2, cols: 2 },
   MEMORY_FLIP_L1: { rows: 2, cols: 3 },
   MEMORY_FLIP_L2: { rows: 3, cols: 4 },
+  MEMORY_FLIP_L3: { rows: 4, cols: 4 },
+  MEMORY_FLIP_L4: { rows: 4, cols: 5 },
 } as const;
 
 // Количество раундов

@@ -79,7 +79,7 @@ export interface Card {
 }
 
 export interface MemoryFlipState {
-  level: 1 | 2;
+  level: 1 | 2 | 3 | 4;
   cards: Card[];
   flippedCards: number[];
   matchedPairs: number;
