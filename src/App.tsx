@@ -12,6 +12,7 @@ import { HiddenNumber } from './components/games/HiddenNumber';
 import MemoryFlip from './components/games/MemoryFlip';
 import SequenceRecall from './components/games/SequenceRecall';
 import DualRuleReaction from './components/games/DualRuleReaction';
+import NBack from './components/games/NBack';
 
 function AppContent() {
   const [currentGame, setCurrentGame] = useState<GameId | null>(null);
@@ -59,6 +60,8 @@ function AppContent() {
           <SequenceRecall onBack={handleBackToMenu} />
         ) : currentGame === GAME_IDS.DUAL_RULE ? (
           <DualRuleReaction onBack={handleBackToMenu} />
+        ) : currentGame === GAME_IDS.N_BACK ? (
+          <NBack onBack={handleBackToMenu} />
         ) : (
           <div className="game-placeholder">
             <div className="card-custom text-center">
