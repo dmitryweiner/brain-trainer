@@ -1,0 +1,366 @@
+@use 'sass:color';
+@use '../../../styles/variables' as *;
+
+.logic-pair-concept {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: $spacing-md;
+}
+
+// Intro screen
+.logic-pair-intro {
+  text-align: center;
+
+  .game-icon {
+    font-size: 80px;
+    margin-bottom: $spacing-md;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  h2 {
+    font-size: 2rem;
+    margin-bottom: $spacing-sm;
+    color: $dark;
+  }
+
+  .game-description {
+    font-size: $font-size-large;
+    color: $gray;
+    margin-bottom: $spacing-lg;
+  }
+
+  .game-rules {
+    text-align: left;
+    background-color: color.adjust($secondary, $lightness: 45%);
+    padding: $spacing-md;
+    border-radius: $btn-border-radius;
+    margin-bottom: $spacing-lg;
+
+    h3 {
+      font-size: $font-size-large;
+      margin-bottom: $spacing-sm;
+      color: $dark;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        font-size: $font-size-base;
+        padding: $spacing-xs 0;
+        color: $dark;
+
+        &::before {
+          content: '💡 ';
+          margin-right: $spacing-xs;
+        }
+      }
+    }
+  }
+}
+
+// Playing screen
+.logic-pair-playing {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-lg;
+
+  .progress-section {
+    width: 100%;
+    margin-bottom: $spacing-sm;
+  }
+
+  .instruction {
+    text-align: center;
+    padding: $spacing-md;
+    background-color: color.adjust($primary, $lightness: 40%);
+    border-radius: $btn-border-radius;
+    width: 100%;
+
+    p {
+      margin: 0;
+      font-size: $font-size-large;
+      font-weight: bold;
+      color: $dark;
+    }
+  }
+
+  .items-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-md;
+    width: 100%;
+    max-width: 500px;
+
+    .item-button {
+      aspect-ratio: 1;
+      min-height: 120px;
+      font-size: $font-size-large;
+      font-weight: 500;
+      background-color: white;
+      border: 3px solid $secondary;
+      border-radius: $btn-border-radius;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: $spacing-sm;
+
+      &.selected {
+        background-color: color.adjust($primary, $lightness: 35%);
+        border-color: $primary;
+        transform: scale(0.95);
+        box-shadow: 0 0 0 4px color.adjust($primary, $lightness: 45%);
+      }
+
+      &:active {
+        transform: scale(0.93);
+      }
+
+      @media (hover: hover) {
+        &:hover:not(.selected) {
+          background-color: color.adjust($secondary, $lightness: 45%);
+          transform: scale(1.02);
+        }
+      }
+    }
+  }
+
+  .submit-section {
+    width: 100%;
+    text-align: center;
+
+    .submit-button {
+      min-width: 250px;
+      min-height: 70px;
+      font-size: $font-size-large;
+      font-weight: bold;
+      margin-bottom: $spacing-sm;
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+
+    .submit-hint {
+      font-size: $font-size-base;
+      color: $gray;
+      margin: 0;
+    }
+  }
+}
+
+// Feedback screen
+.logic-pair-feedback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-lg;
+  min-height: 300px;
+  width: 100%;
+
+  .feedback-indicator {
+    text-align: center;
+    animation: feedbackAppear 0.3s ease-out;
+
+    &.correct {
+      .feedback-icon {
+        color: $primary;
+        background-color: color.adjust($primary, $lightness: 40%);
+      }
+    }
+
+    &.incorrect {
+      .feedback-icon {
+        color: $danger;
+        background-color: color.adjust($danger, $lightness: 40%);
+      }
+    }
+
+    .feedback-icon {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto $spacing-md;
+      font-size: 60px;
+      font-weight: bold;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: feedbackPulse 0.5s ease-out;
+    }
+
+    .feedback-text {
+      font-size: $font-size-xl;
+      font-weight: bold;
+      color: $dark;
+    }
+  }
+
+  .selected-items-display {
+    width: 100%;
+    text-align: center;
+
+    .selected-label {
+      font-size: $font-size-large;
+      color: $gray;
+      margin-bottom: $spacing-md;
+    }
+
+    .selected-items {
+      display: flex;
+      gap: $spacing-md;
+      justify-content: center;
+      flex-wrap: wrap;
+
+      .selected-item {
+        font-size: $font-size-large;
+        font-weight: 500;
+        padding: $spacing-md $spacing-lg;
+        background-color: color.adjust($secondary, $lightness: 45%);
+        border: 3px solid $secondary;
+        border-radius: $btn-border-radius;
+      }
+    }
+  }
+
+  .continue-button {
+    min-width: 250px;
+    min-height: 70px;
+    font-size: $font-size-large;
+    font-weight: bold;
+  }
+}
+
+// Footer stats
+.logic-pair-stats {
+  display: flex;
+  gap: $spacing-lg;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+  padding: $spacing-sm 0;
+
+  .stat-item {
+    display: flex;
+    gap: $spacing-xs;
+    align-items: center;
+
+    .stat-label {
+      font-size: $font-size-base;
+      color: $gray;
+    }
+
+    .stat-value {
+      font-size: $font-size-large;
+      font-weight: bold;
+      color: $secondary;
+    }
+  }
+}
+
+// Results details
+.logic-pair-results-details {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+
+  .results-section {
+    background-color: color.adjust($secondary, $lightness: 45%);
+    padding: $spacing-md;
+    border-radius: $btn-border-radius;
+    text-align: center;
+
+    h4 {
+      font-size: $font-size-large;
+      margin-bottom: $spacing-sm;
+      color: $secondary;
+    }
+
+    .big-number {
+      font-size: $font-size-xl;
+      font-weight: bold;
+      color: $dark;
+      margin: $spacing-sm 0;
+    }
+
+    .stat-detail {
+      font-size: $font-size-base;
+      color: $gray;
+      margin: $spacing-xs 0 0 0;
+    }
+
+    &.results-total {
+      background-color: color.adjust($primary, $lightness: 40%);
+      
+      h4 {
+        color: $primary;
+      }
+
+      .big-number {
+        font-size: 2.5rem;
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes feedbackAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes feedbackPulse {
+  0% {
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .logic-pair-playing {
+    .items-grid {
+      gap: $spacing-sm;
+
+      .item-button {
+        min-height: 100px;
+        font-size: $font-size-base;
+      }
+    }
+  }
+}
+
