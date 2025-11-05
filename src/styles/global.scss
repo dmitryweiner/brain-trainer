@@ -1,0 +1,223 @@
+@import './variables.scss';
+
+// Глобальные стили
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px; // базовый размер для rem
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: $font-size-base;
+  color: $dark;
+  background-color: $light;
+  line-height: 1.6;
+}
+
+// Убираем outline для кликов, но оставляем для клавиатуры
+button:focus:not(:focus-visible) {
+  outline: none;
+}
+
+button:focus-visible {
+  outline: 3px solid $secondary;
+  outline-offset: 2px;
+}
+
+// Глобальные классы для кнопок
+.btn-custom {
+  min-height: $btn-min-height;
+  min-width: $btn-min-width;
+  font-size: $font-size-base;
+  font-weight: 600;
+  border-radius: $btn-border-radius;
+  border: none;
+  padding: $spacing-sm $spacing-md;
+  cursor: pointer;
+  transition: transform 0.1s ease, opacity 0.2s ease;
+  touch-action: manipulation;
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  &.btn-primary {
+    background-color: $primary;
+    color: white;
+    
+    &:hover:not(:disabled) {
+      background-color: darken($primary, 5%);
+    }
+  }
+  
+  &.btn-secondary {
+    background-color: $secondary;
+    color: white;
+    
+    &:hover:not(:disabled) {
+      background-color: darken($secondary, 5%);
+    }
+  }
+  
+  &.btn-danger {
+    background-color: $danger;
+    color: white;
+    
+    &:hover:not(:disabled) {
+      background-color: darken($danger, 5%);
+    }
+  }
+  
+  &.btn-success {
+    background-color: $game-green;
+    color: white;
+    
+    &:hover:not(:disabled) {
+      background-color: darken($game-green, 5%);
+    }
+  }
+  
+  &.btn-large {
+    min-height: 80px;
+    min-width: 200px;
+    font-size: $font-size-large;
+  }
+  
+  &.btn-full {
+    width: 100%;
+  }
+}
+
+// Контейнер приложения
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+// Основной контент
+.main-content {
+  flex: 1;
+  padding: $spacing-md;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+// Заголовки
+h1 {
+  font-size: $font-size-xl;
+  margin: $spacing-md 0;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: $font-size-large;
+  margin: $spacing-sm 0;
+  font-weight: 600;
+}
+
+// Эмодзи
+.emoji {
+  font-size: $emoji-size-medium;
+  line-height: 1;
+  user-select: none;
+  
+  &.emoji-small {
+    font-size: $emoji-size-small;
+  }
+  
+  &.emoji-large {
+    font-size: $emoji-size-large;
+  }
+}
+
+// Карточки
+.card-custom {
+  background: white;
+  border-radius: $btn-border-radius;
+  padding: $spacing-md;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: $spacing-md;
+}
+
+// Утилиты
+.text-center {
+  text-align: center;
+}
+
+.mt-1 { margin-top: $spacing-xs; }
+.mt-2 { margin-top: $spacing-sm; }
+.mt-3 { margin-top: $spacing-md; }
+.mt-4 { margin-top: $spacing-lg; }
+
+.mb-1 { margin-bottom: $spacing-xs; }
+.mb-2 { margin-bottom: $spacing-sm; }
+.mb-3 { margin-bottom: $spacing-md; }
+.mb-4 { margin-bottom: $spacing-lg; }
+
+.p-1 { padding: $spacing-xs; }
+.p-2 { padding: $spacing-sm; }
+.p-3 { padding: $spacing-md; }
+.p-4 { padding: $spacing-lg; }
+
+// Адаптивность
+@media (max-width: $breakpoint-sm) {
+  body {
+    font-size: 18px;
+  }
+  
+  .btn-custom {
+    min-width: 100px;
+    font-size: 18px;
+  }
+  
+  h1 {
+    font-size: 28px;
+  }
+  
+  h2 {
+    font-size: 22px;
+  }
+}
+
+@media (min-width: $breakpoint-md) {
+  .main-content {
+    padding: $spacing-lg;
+  }
+}
+
+// Убираем hover-эффекты на мобильных устройствах
+@media (hover: none) {
+  .btn-custom:hover:not(:disabled) {
+    background-color: inherit;
+  }
+}
+
+// Высокая контрастность
+@media (prefers-contrast: high) {
+  body {
+    color: #000;
+    background-color: #fff;
+  }
+  
+  .btn-custom {
+    border: 2px solid currentColor;
+  }
+}
+

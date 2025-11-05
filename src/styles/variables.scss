@@ -1,0 +1,42 @@
+// Цветовая палитра
+$primary: #4CAF50;      // зелёный для успеха
+$secondary: #2196F3;    // синий для информации
+$danger: #f44336;       // красный для ошибок
+$warning: #FF9800;      // оранжевый для предупреждений
+$light: #f5f5f5;        // фон
+$dark: #333333;         // текст
+$gray: #757575;         // второстепенный текст
+
+// Для игр
+$game-green: #4CAF50;
+$game-red: #f44336;
+
+// Размеры шрифтов
+$font-size-base: 20px;
+$font-size-large: 24px;
+$font-size-xl: 32px;
+
+// Размеры кнопок
+$btn-min-height: 60px;
+$btn-min-width: 120px;
+$btn-border-radius: 12px;
+
+// Размеры эмодзи
+$emoji-size-small: 48px;
+$emoji-size-medium: 80px;
+$emoji-size-large: 120px;
+
+// Breakpoints
+$breakpoint-xs: 320px;  // маленькие телефоны
+$breakpoint-sm: 576px;  // телефоны
+$breakpoint-md: 768px;  // планшеты
+$breakpoint-lg: 992px;  // десктопы
+$breakpoint-xl: 1200px; // большие экраны
+
+// Отступы
+$spacing-xs: 0.5rem;
+$spacing-sm: 1rem;
+$spacing-md: 1.5rem;
+$spacing-lg: 2rem;
+$spacing-xl: 3rem;
+
