@@ -11,6 +11,7 @@ import { OddOneOut } from './components/games/OddOneOut';
 import { HiddenNumber } from './components/games/HiddenNumber';
 import MemoryFlip from './components/games/MemoryFlip';
 import SequenceRecall from './components/games/SequenceRecall';
+import DualRuleReaction from './components/games/DualRuleReaction';
 
 function AppContent() {
   const [currentGame, setCurrentGame] = useState<GameId | null>(null);
@@ -56,6 +57,8 @@ function AppContent() {
           <MemoryFlip onBack={handleBackToMenu} />
         ) : currentGame === GAME_IDS.SEQUENCE_RECALL ? (
           <SequenceRecall onBack={handleBackToMenu} />
+        ) : currentGame === GAME_IDS.DUAL_RULE ? (
+          <DualRuleReaction onBack={handleBackToMenu} />
         ) : (
           <div className="game-placeholder">
             <div className="card-custom text-center">
