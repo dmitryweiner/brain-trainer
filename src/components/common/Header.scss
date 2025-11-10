@@ -16,7 +16,7 @@
   padding: $spacing-xs $spacing-md;
   max-width: 1200px;
   margin: 0 auto;
-  min-height: 56px;
+  min-height: 50px;
 }
 
 .back-button {
@@ -47,13 +47,9 @@
 }
 
 .app-title {
-  font-size: 20px;
+  font-size: 24px;
   margin: 0;
   font-weight: 700;
-  
-  @media (max-width: $breakpoint-sm) {
-    font-size: 18px;
-  }
 }
 
 .score-display {
@@ -68,7 +64,7 @@
 }
 
 .score-label {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   
   @media (max-width: $breakpoint-sm) {
@@ -77,34 +73,26 @@
 }
 
 .score-value {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
 }
 
 // Адаптивность для маленьких экранов
 @media (max-width: $breakpoint-xs) {
   .header-content {
-    padding: 6px $spacing-sm;
-    min-height: 48px;
+    padding: 4px $spacing-sm;
+    min-height: 42px;
   }
   
   .back-button {
     min-width: auto;
-    padding: 6px $spacing-xs;
-    font-size: 15px;
-  }
-  
-  .app-title {
-    font-size: 16px;
+    padding: 4px 8px;
+    font-size: 14px;
   }
   
   .score-display {
     min-width: auto;
-    padding: 4px $spacing-xs;
-  }
-  
-  .score-value {
-    font-size: 16px;
+    padding: 3px 8px;
   }
 }
 

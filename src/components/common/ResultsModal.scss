@@ -87,13 +87,13 @@
   background: linear-gradient(135deg, rgba($primary, 0.1) 0%, rgba($secondary, 0.1) 100%);
   border-radius: 12px;
 
-  .score-label {
+  .results-score-label {
     font-size: 18px;
     color: $gray;
     margin-bottom: $spacing-xs;
   }
 
-  .score-value {
+  .results-score-value {
     font-size: 36px;
     font-weight: 700;
     color: $primary;
@@ -181,11 +181,11 @@
     font-size: 28px;
   }
   
-  .score-value {
+  .results-score-value {
     font-size: 48px;
   }
   
-  .score-label {
+  .results-score-label {
     font-size: 16px;
   }
   
@@ -216,7 +216,7 @@
     padding: $spacing-md;
   }
   
-  .score-value {
+  .results-score-value {
     font-size: 40px;
   }
 }

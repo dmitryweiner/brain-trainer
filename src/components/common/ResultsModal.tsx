@@ -39,8 +39,8 @@ export const ResultsModal: React.FC<ResultsModalProps> = ({
         <h2 id="results-title" className="results-title">{title}</h2>
         
         <div className="score-container">
-          <div className="score-label">Ваш результат:</div>
-          <div className="score-value">🏆 {score} очков</div>
+          <div className="results-score-label">Ваш результат:</div>
+          <div className="results-score-value">🏆 {score} очков</div>
         </div>
 
         <p className="message">{message}</p>
