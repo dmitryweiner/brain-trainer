@@ -46,30 +46,45 @@ function useSymbolMatch(): UseSymbolMatchReturn {
 
   const totalRounds = ROUNDS.SYMBOL_MATCH;
 
-  const generateEmojis = useCallback(() => {
-    // 50% chance of match
+  const generateEmojis = useCallback((round: number) => {
+    // Выбираем уровень сложности в зависимости от раунда
+    let difficulty: 'easy' | 'medium' | 'hard';
+    if (round < 5) {
+      difficulty = 'easy';
+    } else if (round < 10) {
+      difficulty = 'medium';
+    } else {
+      difficulty = 'hard';
+    }
+    
+    const pairs = SYMBOL_MATCH_EMOJIS[difficulty];
+    
+    // 50% шанс на совпадение
     const shouldMatch = Math.random() < 0.5;
     
-    const randomIndex1 = getRandomInt(0, SYMBOL_MATCH_EMOJIS.length - 1);
-    const newEmoji1 = SYMBOL_MATCH_EMOJIS[randomIndex1];
+    // Выбираем случайную пару из текущего уровня сложности
+    const randomPairIndex = getRandomInt(0, pairs.length - 1);
+    const selectedPair = pairs[randomPairIndex];
     
+    let newEmoji1: string;
     let newEmoji2: string;
+    
     if (shouldMatch) {
+      // Одинаковые эмодзи - выбираем один из пары
+      const emojiIndex = getRandomInt(0, 1);
+      newEmoji1 = selectedPair.pair[emojiIndex];
       newEmoji2 = newEmoji1;
     } else {
-      // Get a different emoji
-      let randomIndex2 = getRandomInt(0, SYMBOL_MATCH_EMOJIS.length - 1);
-      while (randomIndex2 === randomIndex1) {
-        randomIndex2 = getRandomInt(0, SYMBOL_MATCH_EMOJIS.length - 1);
-      }
-      newEmoji2 = SYMBOL_MATCH_EMOJIS[randomIndex2];
+      // Разные эмодзи - берем оба из пары
+      newEmoji1 = selectedPair.pair[0];
+      newEmoji2 = selectedPair.pair[1];
     }
     
     return { newEmoji1, newEmoji2 };
   }, []);
 
-  const startNewRound = useCallback(() => {
-    const { newEmoji1, newEmoji2 } = generateEmojis();
+  const startNewRound = useCallback((round: number) => {
+    const { newEmoji1, newEmoji2 } = generateEmojis(round);
     setEmoji1(newEmoji1);
     setEmoji2(newEmoji2);
     setStartTime(Date.now());
@@ -82,7 +97,7 @@ function useSymbolMatch(): UseSymbolMatchReturn {
     setResults([]);
     setCurrentScore(0);
     setLastAnswerCorrect(null);
-    startNewRound();
+    startNewRound(0);
   }, [startNewRound]);
 
   const handleAnswer = useCallback((answer: boolean) => {
@@ -127,7 +142,7 @@ function useSymbolMatch(): UseSymbolMatchReturn {
       // Show feedback, then start next round
       setTimeout(() => {
         setStatus('playing');
-        startNewRound();
+        startNewRound(nextRound);
       }, 800);
     }
   }, [status, startTime, emoji1, emoji2, currentRound, totalRounds, startNewRound]);
