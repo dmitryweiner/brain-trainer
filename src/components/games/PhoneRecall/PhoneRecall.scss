@@ -1,0 +1,341 @@
+@use '../../../styles/variables.scss' as *;
+
+.phone-recall {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  padding: $spacing-md;
+}
+
+// Intro
+.phone-recall-intro {
+  text-align: center;
+  max-width: 400px;
+
+  .game-icon {
+    font-size: 64px;
+    margin-bottom: $spacing-sm;
+  }
+
+  h2 {
+    margin-bottom: $spacing-xs;
+  }
+
+  .game-description {
+    color: $gray;
+    margin-bottom: $spacing-md;
+  }
+
+  .game-rules {
+    text-align: left;
+    background: rgba(0, 0, 0, 0.03);
+    padding: $spacing-md;
+    border-radius: $btn-border-radius;
+    margin-bottom: $spacing-md;
+
+    h3 {
+      margin-bottom: $spacing-sm;
+      font-size: $font-size-base;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: $spacing-md;
+
+      li {
+        margin-bottom: $spacing-xs;
+      }
+    }
+  }
+}
+
+// Memorize
+.phone-recall-memorize {
+  text-align: center;
+  width: 100%;
+  max-width: 500px;
+
+  .memorize-info {
+    margin-bottom: $spacing-lg;
+
+    h3 {
+      margin-bottom: $spacing-sm;
+    }
+  }
+
+  .number-display {
+    margin-bottom: $spacing-lg;
+  }
+
+  .number-large {
+    font-size: clamp(32px, 8vw, 56px);
+    font-weight: bold;
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    letter-spacing: 0.15em;
+    color: $primary;
+    padding: $spacing-md;
+    background: rgba($primary, 0.1);
+    border-radius: $btn-border-radius;
+    
+    &.animate-show {
+      animation: numberAppear 0.3s ease-out;
+    }
+  }
+
+  .timer-display {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: $spacing-xs;
+
+    .timer-value {
+      font-size: 48px;
+      font-weight: bold;
+      color: $secondary;
+    }
+
+    .timer-label {
+      font-size: $font-size-base;
+      color: $gray;
+    }
+  }
+}
+
+// Input
+.phone-recall-input {
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+
+  .input-info {
+    margin-bottom: $spacing-md;
+
+    h3 {
+      margin-bottom: $spacing-sm;
+    }
+  }
+
+  .user-input-display {
+    margin-bottom: $spacing-md;
+  }
+
+  .input-digits {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .digit-slot {
+    width: 36px;
+    height: 48px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    background: white;
+    transition: all 0.2s ease;
+
+    &.filled {
+      border-color: $primary;
+      background: rgba($primary, 0.1);
+      color: $primary;
+    }
+
+    &.current {
+      border-color: $secondary;
+      animation: pulse 1s infinite;
+    }
+  }
+
+  .numpad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+
+  .numpad-button {
+    width: 100%;
+    height: 56px;
+    font-size: 24px;
+    font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    background: #f0f0f0;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &:hover {
+      background: #e0e0e0;
+    }
+
+    &:active {
+      transform: scale(0.95);
+      background: #d0d0d0;
+    }
+
+    &.backspace {
+      background: #ffebee;
+      color: $danger;
+    }
+
+    &.submit {
+      background: $primary;
+      color: white;
+
+      &:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+      }
+    }
+  }
+}
+
+// Feedback
+.phone-recall-feedback {
+  text-align: center;
+
+  .feedback-indicator {
+    padding: $spacing-lg;
+    border-radius: $btn-border-radius;
+
+    &.correct {
+      background: rgba($game-green, 0.1);
+      
+      .feedback-icon {
+        color: $game-green;
+      }
+    }
+
+    &.incorrect {
+      background: rgba($game-red, 0.1);
+      
+      .feedback-icon {
+        color: $game-red;
+      }
+    }
+  }
+
+  .feedback-icon {
+    font-size: 64px;
+    margin-bottom: $spacing-sm;
+  }
+
+  .feedback-text {
+    font-size: $font-size-large;
+    font-weight: bold;
+  }
+
+  .correct-answer {
+    margin-top: $spacing-sm;
+    font-size: $font-size-base;
+    color: $gray;
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  }
+}
+
+// Stats
+.phone-recall-stats {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-lg;
+  padding: $spacing-sm;
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .stat-label {
+    font-size: 14px;
+    color: $gray;
+  }
+
+  .stat-value {
+    font-size: $font-size-large;
+    font-weight: bold;
+  }
+}
+
+// Results
+.phone-recall-results-details {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+
+  .results-section {
+    text-align: center;
+
+    h4 {
+      margin-bottom: $spacing-xs;
+      color: $gray;
+      font-weight: normal;
+    }
+
+    .big-number {
+      font-size: $font-size-xl;
+      font-weight: bold;
+      margin: 0;
+    }
+  }
+}
+
+// Animations
+@keyframes numberAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba($secondary, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba($secondary, 0);
+  }
+}
+
+// Responsive
+@media (max-width: $breakpoint-sm) {
+  .phone-recall {
+    padding: $spacing-sm;
+  }
+
+  .phone-recall-memorize .number-large {
+    font-size: 28px;
+  }
+
+  .phone-recall-input {
+    .digit-slot {
+      width: 28px;
+      height: 40px;
+      font-size: 18px;
+    }
+
+    .numpad {
+      max-width: 240px;
+    }
+
+    .numpad-button {
+      height: 48px;
+      font-size: 20px;
+    }
+  }
+}
+

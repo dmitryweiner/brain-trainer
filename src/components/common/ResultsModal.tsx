@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import Button from './Button';
 import './ResultsModal.scss';
 
@@ -23,6 +24,8 @@ export const ResultsModal: React.FC<ResultsModalProps> = ({
   onNextGame,
   onBackToMenu,
 }) => {
+  const { t } = useTranslation();
+
   if (!show) return null;
 
   return (
@@ -31,7 +34,7 @@ export const ResultsModal: React.FC<ResultsModalProps> = ({
         <button 
           className="modal-close"
           onClick={onBackToMenu}
-          aria-label="Закрыть"
+          aria-label={t('app.back')}
         >
           ×
         </button>
@@ -39,8 +42,8 @@ export const ResultsModal: React.FC<ResultsModalProps> = ({
         <h2 id="results-title" className="results-title">{title}</h2>
         
         <div className="score-container">
-          <div className="results-score-label">Ваш результат:</div>
-          <div className="results-score-value">🏆 {score} очков</div>
+          <div className="results-score-label">{t('common.score')}:</div>
+          <div className="results-score-value">🏆 {score} {t('common.points')}</div>
         </div>
 
         <p className="message">{message}</p>
@@ -59,7 +62,7 @@ export const ResultsModal: React.FC<ResultsModalProps> = ({
               onClick={onNextGame}
               className="mb-2"
             >
-              Следующая игра
+              {t('common.nextGame')}
             </Button>
           )}
 
@@ -69,7 +72,7 @@ export const ResultsModal: React.FC<ResultsModalProps> = ({
             onClick={onPlayAgain}
             className="mb-2"
           >
-            Играть ещё раз
+            {t('common.playAgain')}
           </Button>
           
           <Button
@@ -77,7 +80,7 @@ export const ResultsModal: React.FC<ResultsModalProps> = ({
             fullWidth
             onClick={onBackToMenu}
           >
-            В меню
+            {t('common.backToMenu')}
           </Button>
         </div>
       </div>
@@ -86,4 +89,3 @@ export const ResultsModal: React.FC<ResultsModalProps> = ({
 };
 
 export default ResultsModal;
-

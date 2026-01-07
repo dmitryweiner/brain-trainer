@@ -10,7 +10,9 @@ export type GameId =
   | 'sequence-recall'
   | 'dual-rule-reaction'
   | 'n-back'
-  | 'logic-pair-concept';
+  | 'logic-pair-concept'
+  | 'phone-recall'
+  | 'emoji-hunt';
 
 export interface GameMeta {
   id: GameId;
@@ -128,5 +130,23 @@ export interface LogicPairConceptState {
   selectedItems: number[];
   correctAnswers: number;
   currentRoundData: LogicPairRoundData;
+}
+
+// Phone Recall
+export interface PhoneRecallState {
+  number: string;
+  userInput: string;
+  currentLength: number;
+}
+
+// Emoji Hunt
+export interface EmojiHuntState {
+  currentRound: number;
+  grid: string[];
+  targetEmoji: string;
+  targetIndex: number;
+  gridSize: number;
+  correctAnswers: number;
+  startTime: number;
 }
 

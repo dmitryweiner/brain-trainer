@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import type { LogicPairConceptState } from '../../../types/game.types';
+import { useState, useCallback, useMemo } from 'react';
+import { shuffleArray } from '../../../utils/randomUtils';
 
 type GameStatus = 'intro' | 'playing' | 'feedback' | 'results';
 
@@ -79,22 +79,79 @@ const ROUNDS: Round[] = [
 
 const TOTAL_ROUNDS = ROUNDS.length;
 
+// Создаёт перемешанную версию раунда с обновлёнными индексами пар
+function createShuffledRound(round: Round): { items: string[]; correctPairs: number[][] } {
+  // Создаём массив индексов [0, 1, 2, 3]
+  const indices = round.items.map((_, i) => i);
+  
+  // Перемешиваем индексы
+  const shuffledIndices = shuffleArray([...indices]);
+  
+  // Создаём перемешанный массив items
+  const shuffledItems = shuffledIndices.map(i => round.items[i]);
+  
+  // Создаём карту: старый индекс -> новый индекс
+  const indexMap = new Map<number, number>();
+  shuffledIndices.forEach((oldIndex, newIndex) => {
+    indexMap.set(oldIndex, newIndex);
+  });
+  
+  // Обновляем correctPairs с новыми индексами
+  const shuffledPairs = round.correctPairs.map(pair => {
+    return [indexMap.get(pair[0])!, indexMap.get(pair[1])!];
+  });
+  
+  return {
+    items: shuffledItems,
+    correctPairs: shuffledPairs,
+  };
+}
+
+interface GameState {
+  currentRound: number;
+  selectedItems: number[];
+  correctAnswers: number;
+  shuffledItems: string[];
+  shuffledPairs: number[][];
+}
+
 export function useLogicPairConcept(): UseLogicPairConceptReturn {
   const [status, setStatus] = useState<GameStatus>('intro');
-  const [state, setState] = useState<LogicPairConceptState>({
+  const [state, setState] = useState<GameState>({
     currentRound: 0,
     selectedItems: [],
     correctAnswers: 0,
+    shuffledItems: [],
+    shuffledPairs: [],
   });
   const [score, setScore] = useState(0);
   const [lastAnswerCorrect, setLastAnswerCorrect] = useState<boolean | null>(null);
 
+  // Инициализация раунда с перемешиванием
+  const initializeRound = useCallback((roundIndex: number) => {
+    const round = ROUNDS[roundIndex];
+    const { items, correctPairs } = createShuffledRound(round);
+    
+    setState(prev => ({
+      ...prev,
+      currentRound: roundIndex,
+      selectedItems: [],
+      shuffledItems: items,
+      shuffledPairs: correctPairs,
+    }));
+  }, []);
+
   // Начало игры
   const startGame = useCallback(() => {
+    const round = ROUNDS[0];
+    const { items, correctPairs } = createShuffledRound(round);
+    
     setState({
       currentRound: 0,
       selectedItems: [],
       correctAnswers: 0,
+      shuffledItems: items,
+      shuffledPairs: correctPairs,
     });
     setScore(0);
     setLastAnswerCorrect(null);
@@ -129,16 +186,16 @@ export function useLogicPairConcept(): UseLogicPairConceptReturn {
 
   // Проверка правильности выбора
   const checkAnswer = useCallback((): boolean => {
-    const currentRoundData = ROUNDS[state.currentRound];
     const [first, second] = state.selectedItems.sort((a, b) => a - b);
 
-    // Проверяем, есть ли такая пара в correctPairs
-    return currentRoundData.correctPairs.some(
-      (pair) => 
-        (pair[0] === first && pair[1] === second) ||
-        (pair[1] === first && pair[0] === second)
+    // Проверяем, есть ли такая пара в shuffledPairs
+    return state.shuffledPairs.some(
+      (pair) => {
+        const [p1, p2] = pair.sort((a, b) => a - b);
+        return p1 === first && p2 === second;
+      }
     );
-  }, [state.currentRound, state.selectedItems]);
+  }, [state.selectedItems, state.shuffledPairs]);
 
   // Подтверждение ответа
   const handleSubmit = useCallback(() => {
@@ -167,23 +224,17 @@ export function useLogicPairConcept(): UseLogicPairConceptReturn {
       // Игра завершена
       setStatus('results');
     } else {
-      // Следующий раунд
-      setState((prev) => ({
-        ...prev,
-        currentRound: nextRound,
-        selectedItems: [],
-      }));
+      // Следующий раунд с перемешиванием
+      initializeRound(nextRound);
       setLastAnswerCorrect(null);
       setStatus('playing');
     }
-  }, [state.currentRound]);
-
-  const currentRoundData = ROUNDS[state.currentRound] || ROUNDS[0];
+  }, [state.currentRound, initializeRound]);
 
   return {
     status,
     currentRound: state.currentRound + 1, // Для отображения (1-based)
-    items: currentRoundData.items,
+    items: state.shuffledItems.length > 0 ? state.shuffledItems : ROUNDS[0].items,
     selectedItems: state.selectedItems,
     correctAnswers: state.correctAnswers,
     score,
@@ -195,4 +246,3 @@ export function useLogicPairConcept(): UseLogicPairConceptReturn {
     handleContinue,
   };
 }
-

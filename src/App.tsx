@@ -14,6 +14,8 @@ import SequenceRecall from './components/games/SequenceRecall';
 import DualRuleReaction from './components/games/DualRuleReaction';
 import NBack from './components/games/NBack';
 import LogicPairConcept from './components/games/LogicPairConcept';
+import { PhoneRecall } from './components/games/PhoneRecall';
+import { EmojiHunt } from './components/games/EmojiHunt';
 
 function AppContent() {
   const [currentGame, setCurrentGame] = useState<GameId | null>(null);
@@ -65,6 +67,10 @@ function AppContent() {
           <NBack onBack={handleBackToMenu} />
         ) : currentGame === GAME_IDS.LOGIC_PAIR ? (
           <LogicPairConcept onBack={handleBackToMenu} />
+        ) : currentGame === GAME_IDS.PHONE_RECALL ? (
+          <PhoneRecall onBack={handleBackToMenu} />
+        ) : currentGame === GAME_IDS.EMOJI_HUNT ? (
+          <EmojiHunt onBack={handleBackToMenu} />
         ) : (
           <div className="game-placeholder">
             <div className="card-custom text-center">

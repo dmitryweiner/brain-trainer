@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useLogicPairConcept } from './useLogicPairConcept';
 
@@ -99,10 +99,19 @@ describe('useLogicPairConcept', () => {
       result.current.startGame();
     });
 
-    // Выбираем правильную пару (0 и 1 - фрукты в первом раунде)
+    // Items are shuffled, find fruit items (contain Яблоко, Апельсин, or Банан)
+    const items = result.current.items;
+    const fruitIndices = items.map((item, index) => {
+      if (item.includes('Яблоко') || item.includes('Апельсин') || item.includes('Банан')) {
+        return index;
+      }
+      return -1;
+    }).filter(i => i !== -1);
+
+    // Select any two fruits (they form a correct pair)
     act(() => {
-      result.current.handleItemClick(0);
-      result.current.handleItemClick(1);
+      result.current.handleItemClick(fruitIndices[0]);
+      result.current.handleItemClick(fruitIndices[1]);
     });
 
     act(() => {
@@ -122,10 +131,14 @@ describe('useLogicPairConcept', () => {
       result.current.startGame();
     });
 
-    // Выбираем неправильную пару (0 и 2 - яблоко и собака)
+    // Items are shuffled, find a fruit and the dog (incorrect pair)
+    const items = result.current.items;
+    const fruitIndex = items.findIndex(item => item.includes('Яблоко'));
+    const dogIndex = items.findIndex(item => item.includes('Собака'));
+
     act(() => {
-      result.current.handleItemClick(0);
-      result.current.handleItemClick(2);
+      result.current.handleItemClick(fruitIndex);
+      result.current.handleItemClick(dogIndex);
     });
 
     act(() => {
@@ -226,7 +239,7 @@ describe('useLogicPairConcept', () => {
 
     expect(result.current.correctAnswers).toBe(0);
 
-    // Выбираем пару (0 и 1 - фрукты в первом раунде)
+    // Items are shuffled, select any two items
     act(() => {
       result.current.handleItemClick(0);
     });

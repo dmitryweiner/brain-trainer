@@ -1,5 +1,4 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import type { NBackState } from '../../../types/game.types';
 import { N_BACK_EMOJIS } from '../../../utils/emojiSets';
 import { getRandomInt } from '../../../utils/randomUtils';
 import { TIMINGS } from '../../../utils/constants';
@@ -30,20 +29,24 @@ const TOTAL_BLOCKS = 3;
 
 export function useNBack(): UseNBackReturn {
   const [status, setStatus] = useState<GameStatus>('intro');
-  const [state, setState] = useState<NBackState>({
-    sequence: [],
-    currentIndex: -1,
-    currentBlock: 1,
-    hits: 0,
-    misses: 0,
-    falseAlarms: 0,
-  });
-  const [correctRejections, setCorrectRejections] = useState(0);
   const [currentEmoji, setCurrentEmoji] = useState<string | null>(null);
   const [canAnswer, setCanAnswer] = useState(false);
-
-  const intervalRef = useRef<number | null>(null);
+  
+  // Use refs for values that need to persist across closures
+  const sequenceRef = useRef<string[]>([]);
+  const currentIndexRef = useRef(-1);
+  const currentBlockRef = useRef(1);
+  const hitsRef = useRef(0);
+  const missesRef = useRef(0);
+  const falseAlarmsRef = useRef(0);
+  const correctRejectionsRef = useRef(0);
   const answerGivenRef = useRef(false);
+  const timeoutRef = useRef<number | null>(null);
+  const isPlayingRef = useRef(false);
+  
+  // State for UI updates (derived from refs)
+  const [, forceUpdate] = useState({});
+  const triggerUpdate = useCallback(() => forceUpdate({}), []);
 
   // Генерация последовательности для одного блока
   const generateSequence = useCallback((): string[] => {
@@ -51,17 +54,14 @@ export function useNBack(): UseNBackReturn {
     
     for (let i = 0; i < ITEMS_PER_BLOCK; i++) {
       if (i < N) {
-        // Первые N элементов - случайные
         const randomEmoji = N_BACK_EMOJIS[getRandomInt(0, N_BACK_EMOJIS.length - 1)];
         sequence.push(randomEmoji);
       } else {
-        // Остальные элементы: с некоторой вероятностью совпадают с N-м предыдущим
-        const shouldMatch = Math.random() < 0.3; // 30% вероятность совпадения
+        const shouldMatch = Math.random() < 0.3;
         
         if (shouldMatch) {
           sequence.push(sequence[i - N]);
         } else {
-          // Выбираем случайный эмодзи, но не тот, что был N шагов назад
           let randomEmoji;
           do {
             randomEmoji = N_BACK_EMOJIS[getRandomInt(0, N_BACK_EMOJIS.length - 1)];
@@ -80,141 +80,149 @@ export function useNBack(): UseNBackReturn {
     return sequence[index] === sequence[index - N];
   }, []);
 
-  // Начало игры
+  // Clear any pending timeout
+  const clearPendingTimeout = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  }, []);
+
+  // Show next emoji in sequence
+  const showNextEmoji = useCallback(() => {
+    if (!isPlayingRef.current) return;
+
+    const sequence = sequenceRef.current;
+    const nextIndex = currentIndexRef.current + 1;
+
+    // Check previous answer if we're past index 0
+    if (currentIndexRef.current >= 0 && !answerGivenRef.current) {
+      const wasMatch = checkIsMatch(currentIndexRef.current, sequence);
+      if (wasMatch) {
+        missesRef.current += 1;
+      } else {
+        correctRejectionsRef.current += 1;
+      }
+    }
+
+    if (nextIndex >= sequence.length) {
+      // Block completed
+      if (currentBlockRef.current < TOTAL_BLOCKS) {
+        // Transition to next block
+        isPlayingRef.current = false;
+        setStatus('blockPause');
+        setCurrentEmoji(null);
+        setCanAnswer(false);
+        triggerUpdate();
+
+        timeoutRef.current = window.setTimeout(() => {
+          const nextSequence = generateSequence();
+          sequenceRef.current = nextSequence;
+          currentIndexRef.current = -1;
+          currentBlockRef.current += 1;
+          answerGivenRef.current = false;
+          isPlayingRef.current = true;
+          setStatus('playing');
+          triggerUpdate();
+          
+          // Start showing next sequence
+          timeoutRef.current = window.setTimeout(showNextEmoji, 500);
+        }, TIMINGS.BLOCK_PAUSE);
+      } else {
+        // Game finished
+        isPlayingRef.current = false;
+        setStatus('results');
+        setCurrentEmoji(null);
+        setCanAnswer(false);
+        triggerUpdate();
+      }
+      return;
+    }
+
+    // Show next emoji
+    currentIndexRef.current = nextIndex;
+    setCurrentEmoji(sequence[nextIndex]);
+    setCanAnswer(nextIndex >= N); // Can only answer after N items
+    answerGivenRef.current = false;
+    triggerUpdate();
+
+    // Schedule next emoji
+    timeoutRef.current = window.setTimeout(showNextEmoji, TIMINGS.N_BACK_INTERVAL);
+  }, [checkIsMatch, generateSequence, triggerUpdate]);
+
+  // Start game
   const startGame = useCallback(() => {
-    const sequence = generateSequence();
+    clearPendingTimeout();
     
-    setState({
-      sequence,
-      currentIndex: -1,
-      currentBlock: 1,
-      hits: 0,
-      misses: 0,
-      falseAlarms: 0,
-    });
-    setCorrectRejections(0);
+    const sequence = generateSequence();
+    sequenceRef.current = sequence;
+    currentIndexRef.current = -1;
+    currentBlockRef.current = 1;
+    hitsRef.current = 0;
+    missesRef.current = 0;
+    falseAlarmsRef.current = 0;
+    correctRejectionsRef.current = 0;
+    answerGivenRef.current = false;
+    isPlayingRef.current = true;
+    
     setCurrentEmoji(null);
     setCanAnswer(false);
     setStatus('playing');
-    answerGivenRef.current = false;
-  }, [generateSequence]);
+    triggerUpdate();
 
-  // Обработка нажатия кнопки "Совпадает"
+    // Start showing sequence after a short delay
+    timeoutRef.current = window.setTimeout(showNextEmoji, 500);
+  }, [clearPendingTimeout, generateSequence, showNextEmoji, triggerUpdate]);
+
+  // Handle match button press
   const handleMatch = useCallback(() => {
-    if (!canAnswer || answerGivenRef.current) return;
+    if (!canAnswer || answerGivenRef.current || !isPlayingRef.current) return;
 
     answerGivenRef.current = true;
-    const isMatch = checkIsMatch(state.currentIndex, state.sequence);
+    const isMatch = checkIsMatch(currentIndexRef.current, sequenceRef.current);
 
     if (isMatch) {
-      // Правильное нажатие (HIT)
-      setState((prev) => ({
-        ...prev,
-        hits: prev.hits + 1,
-      }));
+      hitsRef.current += 1;
     } else {
-      // Ложная тревога (FALSE ALARM)
-      setState((prev) => ({
-        ...prev,
-        falseAlarms: prev.falseAlarms + 1,
-      }));
+      falseAlarmsRef.current += 1;
     }
-  }, [canAnswer, state.currentIndex, state.sequence, checkIsMatch]);
+    triggerUpdate();
+  }, [canAnswer, checkIsMatch, triggerUpdate]);
 
-  // Автоматический показ последовательности
+  // Cleanup on unmount
   useEffect(() => {
-    if (status === 'playing' && state.sequence.length > 0) {
-      const showNextEmoji = () => {
-        const nextIndex = state.currentIndex + 1;
-
-        if (nextIndex >= state.sequence.length) {
-          // Блок завершен
-          if (state.currentBlock < TOTAL_BLOCKS) {
-            // Переход к следующему блоку
-            setStatus('blockPause');
-            setCurrentEmoji(null);
-            setCanAnswer(false);
-
-            setTimeout(() => {
-              const nextSequence = generateSequence();
-              setState((prev) => ({
-                ...prev,
-                sequence: nextSequence,
-                currentIndex: -1,
-                currentBlock: prev.currentBlock + 1,
-              }));
-              setStatus('playing');
-            }, TIMINGS.BLOCK_PAUSE);
-          } else {
-            // Игра завершена
-            setStatus('results');
-            setCurrentEmoji(null);
-            setCanAnswer(false);
-          }
-          return;
-        }
-
-        // Проверяем предыдущий элемент, если не было ответа
-        if (state.currentIndex >= 0 && !answerGivenRef.current) {
-          const wasMatch = checkIsMatch(state.currentIndex, state.sequence);
-          if (wasMatch) {
-            // Пропуск совпадения (MISS)
-            setState((prev) => ({
-              ...prev,
-              misses: prev.misses + 1,
-            }));
-          } else {
-            // Правильный пропуск (CORRECT REJECTION)
-            setCorrectRejections((prev) => prev + 1);
-          }
-        }
-
-        // Показываем следующий элемент
-        setState((prev) => ({
-          ...prev,
-          currentIndex: nextIndex,
-        }));
-        setCurrentEmoji(state.sequence[nextIndex]);
-        setCanAnswer(true);
-        answerGivenRef.current = false;
-
-        intervalRef.current = window.setTimeout(showNextEmoji, TIMINGS.N_BACK_INTERVAL);
-      };
-
-      // Запускаем показ первого элемента
-      if (state.currentIndex === -1) {
-        intervalRef.current = window.setTimeout(showNextEmoji, 500);
-      }
-    }
-
     return () => {
-      if (intervalRef.current) {
-        clearTimeout(intervalRef.current);
-      }
+      clearPendingTimeout();
+      isPlayingRef.current = false;
     };
-  }, [status, state, generateSequence, checkIsMatch]);
+  }, [clearPendingTimeout]);
 
-  // История последних 3 элементов
-  const history = state.currentIndex >= 0
-    ? state.sequence.slice(Math.max(0, state.currentIndex - 2), state.currentIndex)
+  // Calculate derived values
+  const sequence = sequenceRef.current;
+  const currentIndex = currentIndexRef.current;
+  const currentBlock = currentBlockRef.current;
+  const hits = hitsRef.current;
+  const misses = missesRef.current;
+  const falseAlarms = falseAlarmsRef.current;
+  const correctRejections = correctRejectionsRef.current;
+
+  const history = currentIndex >= 0
+    ? sequence.slice(Math.max(0, currentIndex - 2), currentIndex)
     : [];
 
-  // Текущий элемент совпадает с N-м предыдущим?
-  const isMatch = state.currentIndex >= N && checkIsMatch(state.currentIndex, state.sequence);
-
-  // Подсчет очков
-  const score = state.hits * 1 + correctRejections * 0.5;
+  const isMatch = currentIndex >= N && checkIsMatch(currentIndex, sequence);
+  const score = hits * 1 + correctRejections * 0.5;
 
   return {
     status,
-    sequence: state.sequence,
-    currentIndex: state.currentIndex,
-    currentBlock: state.currentBlock,
+    sequence,
+    currentIndex,
+    currentBlock,
     currentEmoji,
     history,
-    hits: state.hits,
-    misses: state.misses,
-    falseAlarms: state.falseAlarms,
+    hits,
+    misses,
+    falseAlarms,
     correctRejections,
     score,
     isMatch,
@@ -223,4 +231,3 @@ export function useNBack(): UseNBackReturn {
     handleMatch,
   };
 }
-

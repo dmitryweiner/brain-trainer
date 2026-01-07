@@ -2,41 +2,39 @@ import React, { useEffect, useRef } from 'react';
 import { GameLayout, ResultsModal, ProgressBar } from '../../common';
 import { useScoreContext } from '../../../context/ScoreContext';
 import { GAME_IDS, ROUNDS } from '../../../utils/constants';
-import useOddOneOut from './useOddOneOut';
-import './OddOneOut.scss';
+import useEmojiHunt from './useEmojiHunt';
+import './EmojiHunt.scss';
 
-export interface OddOneOutProps {
-  onBackToMenu: () => void;
-  onNextGame?: () => void;
+export interface EmojiHuntProps {
+  onBack: () => void;
 }
 
-export const OddOneOut: React.FC<OddOneOutProps> = ({ onBackToMenu, onNextGame }) => {
+export const EmojiHunt: React.FC<EmojiHuntProps> = ({ onBack }) => {
   const { addScore } = useScoreContext();
   const scoreAddedRef = useRef(false);
   const {
     status,
     currentRound,
-    emojis,
+    grid,
+    gridSize,
+    targetEmoji,
     correctAnswers,
     results,
     currentScore,
     lastAnswerCorrect,
     currentDifficulty,
-    gridSize,
     startGame,
-    handleEmojiClick,
+    handleCellClick,
     playAgain,
     getAccuracy,
     getAverageTime,
-  } = useOddOneOut();
+  } = useEmojiHunt();
 
-  // Auto-add score when game ends (only once)
   useEffect(() => {
     if (status === 'results' && currentScore > 0 && !scoreAddedRef.current) {
-      addScore(GAME_IDS.ODD_ONE_OUT, currentScore);
+      addScore(GAME_IDS.EMOJI_HUNT, currentScore);
       scoreAddedRef.current = true;
     }
-    // Reset flag when starting a new game
     if (status === 'intro' || status === 'playing' || status === 'feedback') {
       scoreAddedRef.current = false;
     }
@@ -54,32 +52,31 @@ export const OddOneOut: React.FC<OddOneOutProps> = ({ onBackToMenu, onNextGame }
   const renderContent = () => {
     if (status === 'intro') {
       return (
-        <div className="odd-one-out-intro">
+        <div className="emoji-hunt-intro">
           <div className="intro-card">
-            <h2>🔍 Odd One Out</h2>
+            <h2>🔎 Emoji Hunt</h2>
             <div className="intro-instructions">
-              <p className="lead">Тренировка визуального анализа</p>
+              <p className="lead">Тренировка визуального поиска</p>
               <div className="rules">
                 <h3>Правила:</h3>
                 <ul>
-                  <li>Смотрите на сетку символов</li>
-                  <li>Найдите <strong>лишний</strong> символ</li>
-                  <li>Нажмите на него</li>
+                  <li>Найдите целевой эмодзи на сетке</li>
+                  <li>Нажмите на него как можно быстрее</li>
                   <li>С каждым раундом сложность растёт!</li>
                 </ul>
               </div>
               <div className="difficulty-info">
                 <h4>Уровни сложности:</h4>
                 <ul>
-                  <li>🟢 Раунды 1-3: <strong>3×3</strong> (легко)</li>
-                  <li>🟡 Раунды 4-7: <strong>4×4</strong> (средне)</li>
-                  <li>🔴 Раунды 8-10: <strong>5×5</strong> (сложно)</li>
+                  <li>🟢 Раунды 1-3: <strong>3×3</strong>, разные эмодзи</li>
+                  <li>🟡 Раунды 4-6: <strong>4×4</strong>, похожие смайлики</li>
+                  <li>🔴 Раунды 7-10: <strong>5×5</strong>, очень похожие</li>
                 </ul>
               </div>
               <div className="scoring-info">
-                <p><strong>Очки:</strong> +1 за правильный ответ</p>
+                <p><strong>Очки:</strong> размер сетки + бонус за скорость</p>
               </div>
-              <p className="text-muted">Всего раундов: {ROUNDS.ODD_ONE_OUT}</p>
+              <p className="text-muted">Всего раундов: {ROUNDS.EMOJI_HUNT}</p>
             </div>
             <button
               className="btn btn-primary btn-large"
@@ -94,12 +91,12 @@ export const OddOneOut: React.FC<OddOneOutProps> = ({ onBackToMenu, onNextGame }
 
     if (status === 'playing') {
       return (
-        <div className="odd-one-out-game">
+        <div className="emoji-hunt-game">
           <div className="progress-container">
             <ProgressBar 
               current={currentRound} 
-              total={ROUNDS.ODD_ONE_OUT}
-              label={`Раунд ${currentRound + 1} / ${ROUNDS.ODD_ONE_OUT}`}
+              total={ROUNDS.EMOJI_HUNT}
+              label={`Раунд ${currentRound + 1} / ${ROUNDS.EMOJI_HUNT}`}
             />
           </div>
 
@@ -109,23 +106,24 @@ export const OddOneOut: React.FC<OddOneOutProps> = ({ onBackToMenu, onNextGame }
             </span>
           </div>
 
-          <div className="instruction-text">
-            Найдите лишний символ
+          <div className="target-section">
+            <span className="target-label">Найдите:</span>
+            <span className="target-emoji">{targetEmoji}</span>
           </div>
 
           <div 
-            className={`emoji-grid grid-${gridSize}x${gridSize}`}
-            style={{
+            className="emoji-grid"
+            style={{ 
               gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
               gridTemplateRows: `repeat(${gridSize}, 1fr)`,
             }}
           >
-            {emojis.map((emoji, index) => (
+            {grid.map((emoji, index) => (
               <button
                 key={index}
                 className="emoji-cell"
-                onClick={() => handleEmojiClick(index)}
-                aria-label={`Выбрать символ ${index + 1}`}
+                onClick={() => handleCellClick(index)}
+                aria-label={`Ячейка ${index + 1}`}
               >
                 {emoji}
               </button>
@@ -137,7 +135,7 @@ export const OddOneOut: React.FC<OddOneOutProps> = ({ onBackToMenu, onNextGame }
 
     if (status === 'feedback') {
       return (
-        <div className="odd-one-out-feedback">
+        <div className="emoji-hunt-feedback">
           <div className={`feedback-indicator ${lastAnswerCorrect ? 'correct' : 'incorrect'}`}>
             {lastAnswerCorrect ? (
               <>
@@ -167,7 +165,7 @@ export const OddOneOut: React.FC<OddOneOutProps> = ({ onBackToMenu, onNextGame }
       <div className="results-details">
         <div className="results-summary">
           <p className="summary-text">
-            Правильных ответов: {correctAnswers} из {ROUNDS.ODD_ONE_OUT}
+            Правильных ответов: {correctAnswers} из {ROUNDS.EMOJI_HUNT}
           </p>
         </div>
 
@@ -188,11 +186,11 @@ export const OddOneOut: React.FC<OddOneOutProps> = ({ onBackToMenu, onNextGame }
             <span>{easyCorrect} / {results.filter(r => r.difficulty === 'easy').length}</span>
           </div>
           <div className="breakdown-item">
-            <span>🟡 4×4 (4-7):</span>
+            <span>🟡 4×4 (4-6):</span>
             <span>{mediumCorrect} / {results.filter(r => r.difficulty === 'medium').length}</span>
           </div>
           <div className="breakdown-item">
-            <span>🔴 5×5 (8-10):</span>
+            <span>🔴 5×5 (7-10):</span>
             <span>{hardCorrect} / {results.filter(r => r.difficulty === 'hard').length}</span>
           </div>
         </div>
@@ -204,7 +202,7 @@ export const OddOneOut: React.FC<OddOneOutProps> = ({ onBackToMenu, onNextGame }
     const accuracy = getAccuracy();
     
     if (accuracy === 100) {
-      return '🏆 Безупречно! Вы мастер визуального анализа!';
+      return '🏆 Безупречно! Вы мастер визуального поиска!';
     }
     if (accuracy >= 90) {
       return '⭐ Отлично! У вас очень зоркий глаз!';
@@ -220,8 +218,8 @@ export const OddOneOut: React.FC<OddOneOutProps> = ({ onBackToMenu, onNextGame }
 
   return (
     <GameLayout
-      title="🔍 Odd One Out"
-      footerContent={
+      title="🔎 Emoji Hunt"
+      footer={
         (status === 'playing' || status === 'feedback') && (
           <div className="game-stats">
             <span>Правильно: {correctAnswers}/{currentRound}</span>
@@ -239,12 +237,11 @@ export const OddOneOut: React.FC<OddOneOutProps> = ({ onBackToMenu, onNextGame }
         message={getMessage()}
         details={renderDetails()}
         onPlayAgain={playAgain}
-        onBackToMenu={onBackToMenu}
-        onNextGame={onNextGame}
+        onBackToMenu={onBack}
       />
     </GameLayout>
   );
 };
 
-export default OddOneOut;
+export default EmojiHunt;
 

@@ -53,7 +53,8 @@ describe('ResultsModal', () => {
     const user = userEvent.setup();
     render(<ResultsModal {...mockProps} />);
     
-    await user.click(screen.getByText('Играть ещё раз'));
+    // i18n translates 'common.playAgain' to 'Играть снова'
+    await user.click(screen.getByText('Играть снова'));
     
     expect(mockProps.onPlayAgain).toHaveBeenCalledTimes(1);
   });
@@ -62,6 +63,7 @@ describe('ResultsModal', () => {
     const user = userEvent.setup();
     render(<ResultsModal {...mockProps} />);
     
+    // i18n translates 'common.backToMenu' to 'В меню'
     await user.click(screen.getByText('В меню'));
     
     expect(mockProps.onBackToMenu).toHaveBeenCalledTimes(1);
@@ -99,17 +101,18 @@ describe('ResultsModal', () => {
   });
 
   it('should have close button', () => {
-    render(<ResultsModal {...mockProps} />);
+    const { container } = render(<ResultsModal {...mockProps} />);
     
-    const closeButton = screen.getByRole('button', { name: /закрыть/i });
+    // Close button has class 'modal-close' and aria-label from t('app.back') = 'Назад'
+    const closeButton = container.querySelector('.modal-close');
     expect(closeButton).toBeInTheDocument();
   });
 
   it('should call onBackToMenu when close button clicked', async () => {
     const user = userEvent.setup();
-    render(<ResultsModal {...mockProps} />);
+    const { container } = render(<ResultsModal {...mockProps} />);
     
-    const closeButton = screen.getByRole('button', { name: /закрыть/i });
+    const closeButton = container.querySelector('.modal-close') as HTMLElement;
     await user.click(closeButton);
     
     expect(mockProps.onBackToMenu).toHaveBeenCalledTimes(1);

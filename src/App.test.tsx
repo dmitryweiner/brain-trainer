@@ -22,15 +22,15 @@ describe('App', () => {
   });
 
   it('should not show back button in menu', () => {
-    render(<App />);
-    expect(screen.queryByText('← Назад')).not.toBeInTheDocument();
+    const { container } = render(<App />);
+    expect(container.querySelector('.back-button')).not.toBeInTheDocument();
   });
 
   it('should navigate to game when card is clicked', async () => {
     const user = userEvent.setup();
     render(<App />);
 
-    const playButtons = screen.getAllByText('Играть');
+    const playButtons = screen.getAllByRole('button', { name: /играть/i });
     await user.click(playButtons[0]);
 
     // Должен отобразиться экран игры Reaction Click
@@ -40,26 +40,27 @@ describe('App', () => {
 
   it('should show back button when in game', async () => {
     const user = userEvent.setup();
-    render(<App />);
+    const { container } = render(<App />);
 
-    const playButtons = screen.getAllByText('Играть');
+    const playButtons = screen.getAllByRole('button', { name: /играть/i });
     await user.click(playButtons[0]);
 
-    expect(screen.getByText('← Назад')).toBeInTheDocument();
+    expect(container.querySelector('.back-button')).toBeInTheDocument();
   });
 
   it('should navigate back to menu from game', async () => {
     const user = userEvent.setup();
-    render(<App />);
+    const { container } = render(<App />);
 
     // Переход в игру
-    const playButtons = screen.getAllByText('Играть');
+    const playButtons = screen.getAllByRole('button', { name: /играть/i });
     await user.click(playButtons[0]);
 
     expect(screen.getByText('Начать игру')).toBeInTheDocument();
 
     // Возврат в меню
-    await user.click(screen.getByText('← Назад'));
+    const backButton = container.querySelector('.back-button') as HTMLElement;
+    await user.click(backButton);
 
     expect(screen.getByText('Выберите игру')).toBeInTheDocument();
     expect(screen.queryByText('Начать игру')).not.toBeInTheDocument();
@@ -69,7 +70,7 @@ describe('App', () => {
     const user = userEvent.setup();
     render(<App />);
 
-    const playButtons = screen.getAllByText('Играть');
+    const playButtons = screen.getAllByRole('button', { name: /играть/i });
     await user.click(playButtons[0]);
 
     // Заголовок должен содержать название игры (может быть несколько совпадений)
@@ -79,23 +80,25 @@ describe('App', () => {
 
   it('should display app title in header when in menu', () => {
     render(<App />);
-    expect(screen.getByText('🧠 Brain Trainer')).toBeInTheDocument();
+    // i18n translates 'app.title' to 'Тренажёр мозга'
+    expect(screen.getByText(/Тренажёр мозга/)).toBeInTheDocument();
   });
 
   it('should handle navigation to different games', async () => {
     const user = userEvent.setup();
-    render(<App />);
+    const { container } = render(<App />);
 
     // Переход к первой игре (Reaction Click)
-    let playButtons = screen.getAllByText('Играть');
+    let playButtons = screen.getAllByRole('button', { name: /играть/i });
     await user.click(playButtons[0]);
     expect(screen.getByText('Начать игру')).toBeInTheDocument();
 
     // Возврат в меню
-    await user.click(screen.getByText('← Назад'));
+    const backButton = container.querySelector('.back-button') as HTMLElement;
+    await user.click(backButton);
 
     // Переход ко второй игре (ColorTap)
-    playButtons = screen.getAllByText('Играть');
+    playButtons = screen.getAllByRole('button', { name: /играть/i });
     await user.click(playButtons[1]);
     expect(screen.getByText('Тренировка реакции и внимания')).toBeInTheDocument();
   });

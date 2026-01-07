@@ -84,7 +84,38 @@
   }
 
   .game-menu-header {
-    margin-bottom: $spacing-lg;
+    margin-bottom: $spacing-md;
+  }
+}
+
+// Экстра-маленькие экраны
+@media (max-width: 400px) {
+  .game-menu {
+    padding: $spacing-xs;
+  }
+
+  .menu-title {
+    font-size: 20px;
+  }
+
+  .menu-subtitle {
+    font-size: 14px;
+  }
+
+  .games-grid {
+    gap: $spacing-xs;
+  }
+
+  .game-menu-header {
+    margin-bottom: $spacing-sm;
+  }
+
+  .menu-footer {
+    padding: $spacing-sm 0;
+  }
+
+  .footer-text {
+    font-size: 14px;
   }
 }
 

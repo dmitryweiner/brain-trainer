@@ -57,7 +57,7 @@ describe('useNBack', () => {
     vi.useFakeTimers();
   });
 
-  it('should enable answer after showing emoji', async () => {
+  it('should enable answer after showing N items', async () => {
     vi.useRealTimers();
     const { result } = renderHook(() => useNBack());
 
@@ -65,15 +65,17 @@ describe('useNBack', () => {
       result.current.startGame();
     });
 
+    // Need to wait for index 2 (after N=2 items shown)
+    // 500ms initial delay + 2*2500ms = 5500ms minimum
     await waitFor(
       () => {
         expect(result.current.canAnswer).toBe(true);
       },
-      { timeout: 1000 }
+      { timeout: 8000 }
     );
 
     vi.useFakeTimers();
-  });
+  }, 10000);
 
   it('should handle match button click', () => {
     const { result } = renderHook(() => useNBack());
@@ -143,11 +145,12 @@ describe('useNBack', () => {
       result.current.startGame();
     });
 
+    // Need to wait for index 2 (after N=2 items shown)
     await waitFor(
       () => {
         expect(result.current.canAnswer).toBe(true);
       },
-      { timeout: 1000 }
+      { timeout: 8000 }
     );
 
     const initialHits = result.current.hits;
@@ -173,7 +176,7 @@ describe('useNBack', () => {
     expect(result.current.falseAlarms).toBe(afterFirstClick.falseAlarms);
 
     vi.useFakeTimers();
-  });
+  }, 10000);
 
   it('should prevent answering when canAnswer is false', () => {
     const { result } = renderHook(() => useNBack());

@@ -155,18 +155,38 @@
 
   .emoji-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: $spacing-md;
+    gap: $spacing-sm;
     width: 100%;
-    max-width: 300px;
+    max-width: 400px;
+
+    // Dynamic sizing based on grid
+    &.grid-3x3 {
+      max-width: 320px;
+      .emoji-cell {
+        font-size: clamp(36px, 10vw, 56px);
+      }
+    }
+
+    &.grid-4x4 {
+      max-width: 360px;
+      .emoji-cell {
+        font-size: clamp(28px, 8vw, 44px);
+      }
+    }
+
+    &.grid-5x5 {
+      max-width: 400px;
+      gap: 6px;
+      .emoji-cell {
+        font-size: clamp(22px, 6vw, 36px);
+      }
+    }
 
     .emoji-cell {
       aspect-ratio: 1;
-      min-height: 120px;
       background: white;
-      border: 3px solid $light;
-      border-radius: 12px;
-      font-size: 70px;
+      border: 2px solid $light;
+      border-radius: 10px;
       cursor: pointer;
       transition: all 0.2s ease;
       display: flex;
@@ -175,6 +195,7 @@
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       user-select: none;
       animation: cellAppear 0.3s ease-out;
+      padding: 0;
 
       @keyframes cellAppear {
         from {
@@ -352,15 +373,36 @@
 
 @media (max-width: $breakpoint-sm) {
   .odd-one-out-game {
-    gap: $spacing-md;
+    gap: $spacing-sm;
 
     .emoji-grid {
-      max-width: 250px;
-      gap: $spacing-sm;
+      gap: 4px;
+
+      &.grid-3x3 {
+        max-width: 260px;
+        .emoji-cell {
+          font-size: clamp(28px, 8vw, 42px);
+        }
+      }
+
+      &.grid-4x4 {
+        max-width: 280px;
+        .emoji-cell {
+          font-size: clamp(22px, 6vw, 32px);
+        }
+      }
+
+      &.grid-5x5 {
+        max-width: 300px;
+        gap: 3px;
+        .emoji-cell {
+          font-size: clamp(18px, 5vw, 26px);
+        }
+      }
 
       .emoji-cell {
-        font-size: 50px;
-        min-height: 100px;
+        border-radius: 8px;
+        border-width: 2px;
       }
     }
 

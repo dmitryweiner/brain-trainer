@@ -1,0 +1,299 @@
+@use '../../../styles/variables.scss' as *;
+
+.emoji-hunt-intro {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  padding: $spacing-md;
+
+  .intro-card {
+    text-align: center;
+    max-width: 450px;
+    background: white;
+    border-radius: 16px;
+    padding: $spacing-lg;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+    h2 {
+      font-size: 28px;
+      margin-bottom: $spacing-sm;
+    }
+
+    .lead {
+      color: $gray;
+      margin-bottom: $spacing-md;
+    }
+
+    .rules, .difficulty-info, .scoring-info {
+      text-align: left;
+      margin-bottom: $spacing-md;
+
+      h3, h4 {
+        font-size: 16px;
+        margin-bottom: $spacing-xs;
+      }
+
+      ul {
+        margin: 0;
+        padding-left: $spacing-md;
+
+        li {
+          margin-bottom: 4px;
+        }
+      }
+    }
+
+    .text-muted {
+      color: $gray;
+      font-size: 14px;
+      margin-bottom: $spacing-md;
+    }
+
+    .btn-large {
+      min-height: 56px;
+      min-width: 180px;
+      font-size: 18px;
+      background: $primary;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.1s;
+
+      &:hover {
+        transform: scale(1.02);
+      }
+
+      &:active {
+        transform: scale(0.98);
+      }
+    }
+  }
+}
+
+.emoji-hunt-game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing-md;
+
+  .progress-container {
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: $spacing-sm;
+  }
+
+  .difficulty-badge {
+    margin-bottom: $spacing-sm;
+
+    .badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+
+      &.badge-easy {
+        background: rgba($game-green, 0.15);
+        color: $game-green;
+      }
+
+      &.badge-medium {
+        background: rgba($warning, 0.15);
+        color: $warning;
+      }
+
+      &.badge-hard {
+        background: rgba($danger, 0.15);
+        color: $danger;
+      }
+    }
+  }
+
+  .target-section {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-md;
+    padding: $spacing-sm $spacing-md;
+    background: rgba($secondary, 0.1);
+    border-radius: 12px;
+
+    .target-label {
+      font-size: 16px;
+      color: $gray;
+    }
+
+    .target-emoji {
+      font-size: 48px;
+    }
+  }
+
+  .emoji-grid {
+    display: grid;
+    gap: 8px;
+    max-width: 350px;
+    width: 100%;
+  }
+
+  .emoji-cell {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(24px, 8vw, 40px);
+    background: #f5f5f5;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    padding: 0;
+
+    &:hover {
+      background: #eeeeee;
+      border-color: $secondary;
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+}
+
+.emoji-hunt-feedback {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  padding: $spacing-md;
+
+  .feedback-indicator {
+    text-align: center;
+    padding: $spacing-lg;
+    border-radius: 16px;
+
+    &.correct {
+      background: rgba($game-green, 0.1);
+
+      .feedback-icon {
+        color: $game-green;
+      }
+    }
+
+    &.incorrect {
+      background: rgba($game-red, 0.1);
+
+      .feedback-icon {
+        color: $game-red;
+      }
+    }
+
+    .feedback-icon {
+      font-size: 64px;
+      margin-bottom: $spacing-sm;
+    }
+
+    .feedback-text {
+      font-size: 24px;
+      font-weight: bold;
+    }
+  }
+}
+
+.game-stats {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-lg;
+  padding: $spacing-sm;
+  font-size: 16px;
+}
+
+.results-details {
+  .results-summary {
+    text-align: center;
+    margin-bottom: $spacing-md;
+
+    .summary-text {
+      font-size: 18px;
+      margin: 0;
+    }
+  }
+
+  .stat-item {
+    display: flex;
+    justify-content: space-between;
+    padding: $spacing-xs 0;
+    border-bottom: 1px solid #eee;
+
+    &.highlight {
+      background: rgba($primary, 0.05);
+      padding: $spacing-sm;
+      border-radius: 8px;
+      margin-bottom: $spacing-sm;
+      border: none;
+    }
+
+    .stat-label {
+      color: $gray;
+    }
+
+    .stat-value {
+      font-weight: bold;
+
+      &.stat-best {
+        color: $primary;
+        font-size: 20px;
+      }
+    }
+  }
+
+  .difficulty-breakdown {
+    margin-top: $spacing-md;
+    padding-top: $spacing-md;
+    border-top: 1px solid #eee;
+
+    h4 {
+      margin-bottom: $spacing-sm;
+      font-size: 14px;
+      color: $gray;
+    }
+
+    .breakdown-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      font-size: 14px;
+    }
+  }
+}
+
+// Responsive
+@media (max-width: $breakpoint-sm) {
+  .emoji-hunt-intro .intro-card {
+    padding: $spacing-md;
+  }
+
+  .emoji-hunt-game {
+    padding: $spacing-sm;
+
+    .target-section {
+      padding: $spacing-xs $spacing-sm;
+
+      .target-emoji {
+        font-size: 36px;
+      }
+    }
+
+    .emoji-grid {
+      gap: 6px;
+      max-width: 300px;
+    }
+
+    .emoji-cell {
+      font-size: clamp(20px, 6vw, 32px);
+      border-radius: 8px;
+    }
+  }
+}
+

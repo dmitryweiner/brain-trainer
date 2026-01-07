@@ -96,7 +96,7 @@ describe('NBack Component', () => {
     });
   });
 
-  it('should enable match button when emoji is shown', async () => {
+  it('should enable match button after N emojis are shown', async () => {
     const user = userEvent.setup();
     const onBack = vi.fn();
     renderWithProvider(<NBack onBack={onBack} />);
@@ -106,14 +106,15 @@ describe('NBack Component', () => {
 
     const matchButton = await screen.findByRole('button', { name: /Совпадает/i });
 
-    // Кнопка должна стать активной после показа эмодзи
+    // Кнопка должна стать активной после показа N (2) эмодзи
+    // 500ms initial + 2*2500ms = 5500ms
     await waitFor(
       () => {
         expect(matchButton).not.toBeDisabled();
       },
-      { timeout: 2000 }
+      { timeout: 8000 }
     );
-  });
+  }, 10000);
 
   it('should show answer hint', async () => {
     const user = userEvent.setup();

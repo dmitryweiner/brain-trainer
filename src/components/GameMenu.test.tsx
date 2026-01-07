@@ -20,15 +20,14 @@ describe('GameMenu', () => {
     expect(screen.getByText('Тренируйте свой мозг с помощью увлекательных мини-игр')).toBeInTheDocument();
   });
 
-  it('should render all 10 games', () => {
+  it('should render all games', () => {
     const handleGameSelect = vi.fn();
     
     render(<GameMenu onGameSelect={handleGameSelect} />, { wrapper });
     
-    // Проверяем, что все игры отображаются
-    GAMES_META.forEach((game) => {
-      expect(screen.getByText(game.title)).toBeInTheDocument();
-    });
+    // Проверяем, что количество игр соответствует GAMES_META
+    const playButtons = screen.getAllByRole('button', { name: /играть/i });
+    expect(playButtons).toHaveLength(GAMES_META.length);
   });
 
   it('should call onGameSelect when game card is clicked', async () => {
@@ -77,8 +76,8 @@ describe('GameMenu', () => {
     
     render(<GameMenu onGameSelect={handleGameSelect} />, { wrapper });
     
-    const playButtons = screen.getAllByText('Играть');
-    expect(playButtons).toHaveLength(10);
+    const playButtons = screen.getAllByRole('button', { name: /играть/i });
+    expect(playButtons).toHaveLength(GAMES_META.length);
   });
 
   it('should display best scores when available', async () => {
@@ -102,7 +101,7 @@ describe('GameMenu', () => {
     
     const gamesGrid = container.querySelector('.games-grid');
     expect(gamesGrid).toBeInTheDocument();
-    expect(gamesGrid?.children).toHaveLength(10);
+    expect(gamesGrid?.children).toHaveLength(GAMES_META.length);
   });
 
   it('should handle multiple game selections', async () => {

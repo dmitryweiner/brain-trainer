@@ -23,6 +23,7 @@ export interface OddOneOutState {
   currentScore: number;
   lastAnswerCorrect: boolean | null;
   currentDifficulty: Difficulty;
+  gridSize: number;
 }
 
 export interface UseOddOneOutReturn extends OddOneOutState {
@@ -44,13 +45,14 @@ function useOddOneOut(): UseOddOneOutReturn {
   const [currentScore, setCurrentScore] = useState(0);
   const [lastAnswerCorrect, setLastAnswerCorrect] = useState<boolean | null>(null);
   const [currentDifficulty, setCurrentDifficulty] = useState<Difficulty>('easy');
+  const [gridSize, setGridSize] = useState(3);
 
   const totalRounds = ROUNDS.ODD_ONE_OUT;
 
   const getDifficultyForRound = useCallback((round: number): Difficulty => {
-    // Rounds 0-2 (1-3): easy
-    // Rounds 3-6 (4-7): medium
-    // Rounds 7-9 (8-10): hard
+    // Rounds 0-2 (1-3): easy (3x3)
+    // Rounds 3-6 (4-7): medium (4x4)
+    // Rounds 7-9 (8-10): hard (5x5)
     if (round < 3) return 'easy';
     if (round < 7) return 'medium';
     return 'hard';
@@ -60,22 +62,32 @@ function useOddOneOut(): UseOddOneOutReturn {
     const difficulty = getDifficultyForRound(round);
     setCurrentDifficulty(difficulty);
 
-    // Get sets for current difficulty
-    const sets = ODD_ONE_OUT_EMOJIS[difficulty].sets;
-    const randomSetIndex = getRandomInt(0, sets.length - 1);
-    const selectedSet = [...sets[randomSetIndex]];
+    // Get data for current difficulty
+    const difficultyData = ODD_ONE_OUT_EMOJIS[difficulty];
+    const size = difficultyData.gridSize;
+    setGridSize(size);
 
-    // Shuffle the array so odd one is in random position
-    const shuffled = shuffleArray(selectedSet);
+    const sets = difficultyData.sets;
+    const randomSetIndex = getRandomInt(0, sets.length - 1);
+    const selectedSet = sets[randomSetIndex];
+
+    // Create grid with main emojis and one odd emoji
+    const totalCells = size * size;
+    const grid: string[] = [];
     
-    // Find the odd one (the one that appears once)
-    const emojiCounts = new Map<string, number>();
-    shuffled.forEach(emoji => {
-      emojiCounts.set(emoji, (emojiCounts.get(emoji) || 0) + 1);
-    });
+    // Fill with main emoji
+    for (let i = 0; i < totalCells - 1; i++) {
+      grid.push(selectedSet.main);
+    }
     
-    const oddEmoji = Array.from(emojiCounts.entries()).find(([_, count]) => count === 1)?.[0];
-    const oddIndex = shuffled.findIndex(emoji => emoji === oddEmoji);
+    // Add the odd one
+    grid.push(selectedSet.odd);
+
+    // Shuffle the array
+    const shuffled = shuffleArray(grid);
+    
+    // Find the odd one's new position
+    const oddIndex = shuffled.findIndex(emoji => emoji === selectedSet.odd);
 
     setEmojis(shuffled);
     setOddOneIndex(oddIndex);
@@ -101,10 +113,10 @@ function useOddOneOut(): UseOddOneOutReturn {
     // Check if clicked emoji is the odd one
     const isCorrect = index === oddOneIndex;
 
-    // Calculate score
+    // Calculate score - more points for larger grids
     let points = 0;
     if (isCorrect) {
-      points = 1;
+      points = gridSize; // 3 points for 3x3, 4 for 4x4, 5 for 5x5
       setCorrectAnswers(prev => prev + 1);
     }
 
@@ -134,7 +146,7 @@ function useOddOneOut(): UseOddOneOutReturn {
         generateRound(nextRound);
       }, 800);
     }
-  }, [status, startTime, oddOneIndex, currentRound, totalRounds, currentDifficulty, generateRound]);
+  }, [status, startTime, oddOneIndex, currentRound, totalRounds, currentDifficulty, gridSize, generateRound]);
 
   const playAgain = useCallback(() => {
     startGame();
@@ -163,6 +175,7 @@ function useOddOneOut(): UseOddOneOutReturn {
     currentScore,
     lastAnswerCorrect,
     currentDifficulty,
+    gridSize,
     startGame,
     handleEmojiClick,
     playAgain,
@@ -172,4 +185,3 @@ function useOddOneOut(): UseOddOneOutReturn {
 }
 
 export default useOddOneOut;
-

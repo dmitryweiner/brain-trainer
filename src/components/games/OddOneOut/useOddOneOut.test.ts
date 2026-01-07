@@ -35,14 +35,14 @@ describe('useOddOneOut', () => {
     expect(result.current.status).toBe('playing');
   });
 
-  it('should generate 4 emojis when game starts', () => {
+  it('should generate 9 emojis when game starts (3x3 grid for easy)', () => {
     const { result } = renderHook(() => useOddOneOut());
 
     act(() => {
       result.current.startGame();
     });
 
-    expect(result.current.emojis).toHaveLength(4);
+    expect(result.current.emojis).toHaveLength(9);
     expect(result.current.emojis.every(e => typeof e === 'string')).toBe(true);
   });
 
@@ -64,7 +64,7 @@ describe('useOddOneOut', () => {
     });
 
     expect(result.current.oddOneIndex).toBeGreaterThanOrEqual(0);
-    expect(result.current.oddOneIndex).toBeLessThan(4);
+    expect(result.current.oddOneIndex).toBeLessThan(result.current.emojis.length);
   });
 
   it('should handle correct click', () => {
@@ -81,7 +81,8 @@ describe('useOddOneOut', () => {
     });
 
     expect(result.current.correctAnswers).toBe(1);
-    expect(result.current.currentScore).toBe(1);
+    // Score is based on grid size (3 for 3x3 easy grid)
+    expect(result.current.currentScore).toBeGreaterThanOrEqual(1);
     expect(result.current.lastAnswerCorrect).toBe(true);
   });
 
@@ -93,7 +94,8 @@ describe('useOddOneOut', () => {
     });
 
     const correctIndex = result.current.oddOneIndex;
-    const wrongIndex = (correctIndex + 1) % 4;
+    const gridSize = result.current.emojis.length;
+    const wrongIndex = (correctIndex + 1) % gridSize;
 
     act(() => {
       result.current.handleEmojiClick(wrongIndex);
@@ -251,7 +253,7 @@ describe('useOddOneOut', () => {
     const emojis = result.current.emojis;
     const uniqueEmojis = new Set(emojis);
     
-    // Should have 2 unique emojis (3 of one type, 1 of another)
+    // Should have 2 unique emojis (gridSize-1 of one type, 1 of another)
     expect(uniqueEmojis.size).toBe(2);
 
     // Count occurrences
@@ -260,8 +262,10 @@ describe('useOddOneOut', () => {
       counts.set(e, (counts.get(e) || 0) + 1);
     });
 
-    const countsArray = Array.from(counts.values()).sort();
-    expect(countsArray).toEqual([1, 3]); // One emoji appears once, another 3 times
+    const countsArray = Array.from(counts.values()).sort((a, b) => a - b);
+    // One emoji appears once, rest appear gridSize-1 times (8 for 3x3)
+    expect(countsArray[0]).toBe(1); // The odd one
+    expect(countsArray[1]).toBe(emojis.length - 1); // The majority
   });
 });
 

@@ -1,0 +1,206 @@
+{
+  "app": {
+    "title": "מאמן המוח",
+    "score": "ניקוד",
+    "back": "חזרה"
+  },
+  "menu": {
+    "title": "בחר משחק",
+    "subtitle": "אמן את המוח שלך עם משחקונים מהנים",
+    "footer": "כל התוצאות נשמרות אוטומטית"
+  },
+  "games": {
+    "reaction-click": {
+      "title": "לחיצת תגובה",
+      "description": "אימון מהירות תגובה"
+    },
+    "color-tap": {
+      "title": "הקשת צבע",
+      "description": "תגובה ובחירה"
+    },
+    "symbol-match": {
+      "title": "התאמת סמלים",
+      "description": "קשב חזותי"
+    },
+    "odd-one-out": {
+      "title": "מצא את השונה",
+      "description": "ניתוח חזותי"
+    },
+    "hidden-number": {
+      "title": "מספר נסתר",
+      "description": "חיפוש חזותי"
+    },
+    "memory-flip": {
+      "title": "היפוך זיכרון",
+      "description": "זיכרון לטווח קצר"
+    },
+    "sequence-recall": {
+      "title": "זכירת רצף",
+      "description": "זיכרון חזותי"
+    },
+    "dual-rule-reaction": {
+      "title": "תגובה כפולה",
+      "description": "גמישות קוגניטיבית"
+    },
+    "n-back": {
+      "title": "N-אחורה",
+      "description": "זיכרון עבודה"
+    },
+    "logic-pair-concept": {
+      "title": "זוגות לוגיים",
+      "description": "חשיבה מופשטת"
+    },
+    "phone-recall": {
+      "title": "זכירת מספר",
+      "description": "זיכרון מספרים"
+    },
+    "emoji-hunt": {
+      "title": "ציד אימוג'י",
+      "description": "חיפוש חזותי"
+    }
+  },
+  "common": {
+    "startGame": "התחל משחק",
+    "playAgain": "שחק שוב",
+    "backToMenu": "לתפריט",
+    "nextGame": "משחק הבא",
+    "correct": "נכון!",
+    "incorrect": "לא נכון",
+    "round": "סיבוב",
+    "level": "רמה",
+    "score": "ניקוד",
+    "points": "נקודות",
+    "accuracy": "דיוק",
+    "averageTime": "זמן ממוצע",
+    "gameOver": "המשחק נגמר!",
+    "congratulations": "מזל טוב!",
+    "tryAgain": "נסה שוב לשפר את התוצאה!",
+    "howToPlay": "איך לשחק",
+    "rules": "חוקים",
+    "difficulty": {
+      "easy": "קל",
+      "medium": "בינוני",
+      "hard": "קשה"
+    },
+    "length": "אורך",
+    "entered": "הוזן",
+    "correctAnswers": "תשובות נכונות",
+    "find": "מצא",
+    "sec": "שנ'",
+    "ms": "מ״ש"
+  },
+  "gameCard": {
+    "bestScore": "הטוב ביותר",
+    "play": "שחק"
+  },
+  "results": {
+    "title": "המשחק נגמר!",
+    "maxReached": "הגעת למקסימום!",
+    "perfectScore": "מושלם! אתה מאסטר של ניתוח חזותי!",
+    "excellent": "מעולה! יש לך עין חדה מאוד!",
+    "good": "טוב! המשך להתאמן!",
+    "notBad": "לא רע! היה יותר קשוב!",
+    "keepPracticing": "תאמן את תשומת הלב לפרטים!",
+    "correctSequences": "רצפים נכונים",
+    "maxLength": "אורך מקסימלי",
+    "totalPoints": "סה״כ נקודות",
+    "correctNumbers": "מספרים נכונים",
+    "byDifficulty": "לפי רמת קושי"
+  },
+  "phoneRecall": {
+    "title": "זכירת מספר",
+    "description": "אימון זיכרון מספרים",
+    "instructions": {
+      "memorize": "זכור את המספר המוצג",
+      "enter": "הקלד אותו מהזיכרון",
+      "initialLength": "אורך התחלתי: 4 ספרות",
+      "onSuccess": "בהצלחה: +1 ספרה (מקס' 12)",
+      "onError": "בטעות: המשחק נגמר",
+      "scoring": "נקודות = אורך המספר"
+    },
+    "memorize": "זכור את המספר",
+    "enterNumber": "הקלד את המספר",
+    "correctAnswer": "התשובה הנכונה"
+  },
+  "emojiHunt": {
+    "title": "ציד אימוג'י",
+    "description": "אימון חיפוש חזותי",
+    "instructions": {
+      "find": "מצא את האימוג'י המבוקש ברשת",
+      "tap": "הקש עליו מהר ככל האפשר",
+      "difficulty": "הקושי עולה בכל סיבוב!"
+    },
+    "scoring": "נקודות: גודל הרשת + בונוס מהירות"
+  },
+  "oddOneOut": {
+    "title": "מצא את השונה",
+    "description": "אימון ניתוח חזותי",
+    "instructions": {
+      "look": "הסתכל על רשת הסמלים",
+      "find": "מצא את הסמל השונה",
+      "tap": "הקש עליו",
+      "difficulty": "הקושי עולה בכל סיבוב!"
+    },
+    "findOdd": "מצא את הסמל השונה"
+  },
+  "nBack": {
+    "title": "N-אחורה (2-אחורה)",
+    "description": "אימון זיכרון עבודה",
+    "instructions": {
+      "appear": "אימוג'ים מופיעים אחד אחד כל 2.5 שנ'",
+      "match": "לחץ על \"מתאים\" אם האימוג'י הנוכחי תואם לזה שהיה 2 צעדים אחורה",
+      "noMatch": "אם לא מתאים - אל תלחץ",
+      "blocks": "3 בלוקים של 20 אלמנטים (60 סה״כ)",
+      "hitScore": "לחיצה נכונה: +1 נקודה",
+      "rejectScore": "דילוג נכון: +0.5 נקודה"
+    },
+    "match": "מתאים",
+    "history": "היסטוריה (2 צעדים אחורה)",
+    "memorize": "זכור את הרצף...",
+    "pressIfMatch": "לחץ אם מתאים לאלמנט 2 צעדים אחורה",
+    "block": "בלוק",
+    "position": "מיקום",
+    "hits": "פגיעות",
+    "misses": "החטאות",
+    "falseAlarms": "אזעקות שווא",
+    "correctRejections": "דחיות נכונות",
+    "blockComplete": "הבלוק הושלם!",
+    "prepareForBlock": "התכונן לבלוק"
+  },
+  "logicPair": {
+    "title": "זוגות לוגיים",
+    "description": "אימון חשיבה מופשטת",
+    "instructions": {
+      "shown": "מוצגים 4 פריטים",
+      "select": "בחר 2 פריטים שיוצרים זוג לוגי",
+      "example": "לדוגמה: תפוח + תפוז (שניהם פירות)",
+      "rounds": "10 סיבובים עם קטגוריות שונות",
+      "scoring": "זוג נכון: +2 נקודות"
+    },
+    "selectPair": "בחר 2 פריטים שיוצרים זוג לוגי",
+    "confirmSelection": "אשר בחירה",
+    "selectTwo": "בחר 2 פריטים",
+    "selectOneMore": "בחר עוד פריט אחד",
+    "pressConfirm": "לחץ על \"אשר\"",
+    "yourChoice": "הבחירה שלך",
+    "nextRound": "סיבוב הבא",
+    "results": "תוצאות"
+  },
+  "sequenceRecall": {
+    "title": "זכירת רצף",
+    "description": "אימון זיכרון עבודה חזותי",
+    "instructions": {
+      "memorize": "זכור את רצף האימוג'ים",
+      "reproduce": "שחזר אותו בסדר הנכון",
+      "initialLength": "אורך התחלתי: 3 אלמנטים",
+      "onSuccess": "בהצלחה: +1 אלמנט (מקס' 7)",
+      "onError": "בטעות: המשחק נגמר",
+      "scoring": "נקודות = אורך הרצף"
+    },
+    "memorizeSequence": "זכור את הרצף",
+    "repeatSequence": "חזור על הרצף",
+    "emoji": "אימוג'י",
+    "of": "מתוך"
+  }
+}
+

@@ -1,0 +1,206 @@
+{
+  "app": {
+    "title": "Brain Trainer",
+    "score": "Score",
+    "back": "Back"
+  },
+  "menu": {
+    "title": "Select a Game",
+    "subtitle": "Train your brain with fun mini-games",
+    "footer": "All results are saved automatically"
+  },
+  "games": {
+    "reaction-click": {
+      "title": "Reaction Click",
+      "description": "Reaction speed training"
+    },
+    "color-tap": {
+      "title": "Color Tap",
+      "description": "Reaction and selection"
+    },
+    "symbol-match": {
+      "title": "Symbol Match",
+      "description": "Visual attention"
+    },
+    "odd-one-out": {
+      "title": "Odd One Out",
+      "description": "Visual analysis"
+    },
+    "hidden-number": {
+      "title": "Hidden Number",
+      "description": "Visual search"
+    },
+    "memory-flip": {
+      "title": "Memory Flip",
+      "description": "Short-term memory"
+    },
+    "sequence-recall": {
+      "title": "Sequence Recall",
+      "description": "Visual memory"
+    },
+    "dual-rule-reaction": {
+      "title": "Dual-Rule Reaction",
+      "description": "Cognitive flexibility"
+    },
+    "n-back": {
+      "title": "N-Back",
+      "description": "Working memory"
+    },
+    "logic-pair-concept": {
+      "title": "Logic Pair Concept",
+      "description": "Abstract thinking"
+    },
+    "phone-recall": {
+      "title": "Phone Recall",
+      "description": "Number memory"
+    },
+    "emoji-hunt": {
+      "title": "Emoji Hunt",
+      "description": "Visual search"
+    }
+  },
+  "common": {
+    "startGame": "Start Game",
+    "playAgain": "Play Again",
+    "backToMenu": "Back to Menu",
+    "nextGame": "Next Game",
+    "correct": "Correct!",
+    "incorrect": "Incorrect",
+    "round": "Round",
+    "level": "Level",
+    "score": "Score",
+    "points": "points",
+    "accuracy": "Accuracy",
+    "averageTime": "Average time",
+    "gameOver": "Game Over!",
+    "congratulations": "Congratulations!",
+    "tryAgain": "Try again to improve your result!",
+    "howToPlay": "How to Play",
+    "rules": "Rules",
+    "difficulty": {
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard"
+    },
+    "length": "Length",
+    "entered": "Entered",
+    "correctAnswers": "Correct answers",
+    "find": "Find",
+    "sec": "sec",
+    "ms": "ms"
+  },
+  "gameCard": {
+    "bestScore": "Best",
+    "play": "Play"
+  },
+  "results": {
+    "title": "Game Over!",
+    "maxReached": "Maximum reached!",
+    "perfectScore": "Perfect! You are a master of visual analysis!",
+    "excellent": "Excellent! You have a very sharp eye!",
+    "good": "Good! Keep practicing!",
+    "notBad": "Not bad! Be more careful!",
+    "keepPracticing": "Train your attention to details!",
+    "correctSequences": "Correct sequences",
+    "maxLength": "Max length",
+    "totalPoints": "Total points",
+    "correctNumbers": "Correct numbers",
+    "byDifficulty": "By difficulty level"
+  },
+  "phoneRecall": {
+    "title": "Phone Recall",
+    "description": "Number memory training",
+    "instructions": {
+      "memorize": "Memorize the shown number",
+      "enter": "Enter it from memory",
+      "initialLength": "Initial length: 4 digits",
+      "onSuccess": "On success: +1 digit (max 12)",
+      "onError": "On error: game ends",
+      "scoring": "Points = number length"
+    },
+    "memorize": "Memorize the number",
+    "enterNumber": "Enter the number",
+    "correctAnswer": "Correct answer"
+  },
+  "emojiHunt": {
+    "title": "Emoji Hunt",
+    "description": "Visual search training",
+    "instructions": {
+      "find": "Find the target emoji on the grid",
+      "tap": "Tap on it as fast as possible",
+      "difficulty": "Difficulty increases each round!"
+    },
+    "scoring": "Points: grid size + speed bonus"
+  },
+  "oddOneOut": {
+    "title": "Odd One Out",
+    "description": "Visual analysis training",
+    "instructions": {
+      "look": "Look at the grid of symbols",
+      "find": "Find the odd symbol",
+      "tap": "Tap on it",
+      "difficulty": "Difficulty increases each round!"
+    },
+    "findOdd": "Find the odd symbol"
+  },
+  "nBack": {
+    "title": "N-Back (2-back)",
+    "description": "Working memory training",
+    "instructions": {
+      "appear": "Emojis appear one by one every 2.5 sec",
+      "match": "Press \"Match\" if current emoji matches the one 2 steps back",
+      "noMatch": "If no match - don't press anything",
+      "blocks": "3 blocks of 20 elements (60 total)",
+      "hitScore": "Correct press: +1 point",
+      "rejectScore": "Correct skip: +0.5 point"
+    },
+    "match": "Match",
+    "history": "History (2 steps back)",
+    "memorize": "Memorize the sequence...",
+    "pressIfMatch": "Press if matches element 2 steps back",
+    "block": "Block",
+    "position": "Position",
+    "hits": "Hits",
+    "misses": "Misses",
+    "falseAlarms": "False alarms",
+    "correctRejections": "Correct rejections",
+    "blockComplete": "Block complete!",
+    "prepareForBlock": "Prepare for block"
+  },
+  "logicPair": {
+    "title": "Logic Pair Concept",
+    "description": "Abstract thinking training",
+    "instructions": {
+      "shown": "4 items are shown",
+      "select": "Select 2 items that form a logical pair",
+      "example": "Example: apple + orange (both fruits)",
+      "rounds": "10 rounds with different categories",
+      "scoring": "Correct pair: +2 points"
+    },
+    "selectPair": "Select 2 items that form a logical pair",
+    "confirmSelection": "Confirm selection",
+    "selectTwo": "Select 2 items",
+    "selectOneMore": "Select 1 more item",
+    "pressConfirm": "Press \"Confirm\"",
+    "yourChoice": "Your choice",
+    "nextRound": "Next round",
+    "results": "Results"
+  },
+  "sequenceRecall": {
+    "title": "Sequence Recall",
+    "description": "Visual working memory training",
+    "instructions": {
+      "memorize": "Memorize the emoji sequence",
+      "reproduce": "Reproduce it in the correct order",
+      "initialLength": "Initial length: 3 elements",
+      "onSuccess": "On success: +1 element (max 7)",
+      "onError": "On error: game ends",
+      "scoring": "Points = sequence length"
+    },
+    "memorizeSequence": "Memorize the sequence",
+    "repeatSequence": "Repeat the sequence",
+    "emoji": "Emoji",
+    "of": "of"
+  }
+}
+

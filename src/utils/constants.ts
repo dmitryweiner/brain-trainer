@@ -12,6 +12,8 @@ export const GAME_IDS = {
   DUAL_RULE: 'dual-rule-reaction',
   N_BACK: 'n-back',
   LOGIC_PAIR: 'logic-pair-concept',
+  PHONE_RECALL: 'phone-recall',
+  EMOJI_HUNT: 'emoji-hunt',
 } as const;
 
 // Метаданные игр
@@ -86,6 +88,20 @@ export const GAMES_META: GameMeta[] = [
     icon: '🔗',
     difficulty: 3,
   },
+  {
+    id: GAME_IDS.PHONE_RECALL,
+    title: 'Phone Recall',
+    description: 'Числовая память',
+    icon: '📞',
+    difficulty: 3,
+  },
+  {
+    id: GAME_IDS.EMOJI_HUNT,
+    title: 'Emoji Hunt',
+    description: 'Визуальный поиск',
+    icon: '🔎',
+    difficulty: 2,
+  },
 ];
 
 // Тайминги
@@ -119,6 +135,7 @@ export const ROUNDS = {
   N_BACK_PER_BLOCK: 20,
   N_BACK_BLOCKS: 3,
   LOGIC_PAIR: 10,
+  EMOJI_HUNT: 10,
 } as const;
 
 // LocalStorage ключи

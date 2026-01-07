@@ -86,7 +86,8 @@ describe('OddOneOut', () => {
     await user.click(screen.getByText('Начать игру'));
     
     await waitFor(() => {
-      expect(screen.getByText('Легко')).toBeInTheDocument();
+      // Difficulty badge includes grid size, e.g. "Легко (3×3)"
+      expect(screen.getByText(/Легко/)).toBeInTheDocument();
     });
   });
 
@@ -192,7 +193,8 @@ describe('OddOneOut', () => {
       expect(grid).toBeInTheDocument();
       
       const cells = container.querySelectorAll('.emoji-cell');
-      expect(cells.length).toBe(4);
+      // 3x3 grid for easy difficulty = 9 cells
+      expect(cells.length).toBe(9);
     });
   });
 
@@ -209,7 +211,8 @@ describe('OddOneOut', () => {
     
     await waitFor(() => {
       const cells = container.querySelectorAll('.emoji-cell');
-      expect(cells.length).toBe(4);
+      // 3x3 grid for easy difficulty = 9 cells
+      expect(cells.length).toBe(9);
       cells.forEach(cell => {
         expect(cell.tagName).toBe('BUTTON');
       });

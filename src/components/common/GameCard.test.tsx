@@ -27,7 +27,8 @@ describe('GameCard', () => {
     
     render(<GameCard game={mockGame} onPlay={handlePlay} />);
     
-    await user.click(screen.getByText('Играть'));
+    // Button text uses i18n 'gameCard.play' = 'Играть'
+    await user.click(screen.getByRole('button'));
     expect(handlePlay).toHaveBeenCalledWith('test-game');
   });
 
@@ -42,28 +43,30 @@ describe('GameCard', () => {
   });
 
   it('should not show best score when not provided', () => {
-    render(<GameCard game={mockGame} onPlay={() => {}} />);
+    const { container } = render(<GameCard game={mockGame} onPlay={() => {}} />);
     
-    expect(screen.queryByText('Лучший результат:')).not.toBeInTheDocument();
+    expect(container.querySelector('.best-score')).not.toBeInTheDocument();
   });
 
   it('should show best score when provided and greater than 0', () => {
-    render(<GameCard game={mockGame} bestScore={100} onPlay={() => {}} />);
+    const { container } = render(<GameCard game={mockGame} bestScore={100} onPlay={() => {}} />);
     
-    expect(screen.getByText('Лучший результат:')).toBeInTheDocument();
+    const bestScoreElement = container.querySelector('.best-score');
+    expect(bestScoreElement).toBeInTheDocument();
     expect(screen.getByText('100')).toBeInTheDocument();
   });
 
   it('should not show best score when it is 0', () => {
-    render(<GameCard game={mockGame} bestScore={0} onPlay={() => {}} />);
+    const { container } = render(<GameCard game={mockGame} bestScore={0} onPlay={() => {}} />);
     
-    expect(screen.queryByText('Лучший результат:')).not.toBeInTheDocument();
+    expect(container.querySelector('.best-score')).not.toBeInTheDocument();
   });
 
-  it('should render difficulty label', () => {
-    render(<GameCard game={mockGame} onPlay={() => {}} />);
+  it('should render difficulty stars', () => {
+    const { container } = render(<GameCard game={mockGame} onPlay={() => {}} />);
     
-    expect(screen.getByText('Сложность:')).toBeInTheDocument();
+    const stars = container.querySelector('.difficulty-stars');
+    expect(stars).toBeInTheDocument();
   });
 
   it('should render all difficulty levels correctly', () => {
