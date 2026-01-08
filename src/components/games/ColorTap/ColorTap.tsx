@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { GameLayout, ResultsModal, Button } from '../../common';
 import { useScoreContext } from '../../../context/ScoreContext';
+import { useGameHistoryContext } from '../../../context/GameHistoryContext';
 import { GAME_IDS, ROUNDS } from '../../../utils/constants';
 import useColorTap from './useColorTap';
 import './ColorTap.scss';
@@ -12,6 +13,7 @@ export interface ColorTapProps {
 
 export const ColorTap: React.FC<ColorTapProps> = ({ onBackToMenu, onNextGame }) => {
   const { addScore } = useScoreContext();
+  const { addGameResult } = useGameHistoryContext();
   const scoreAddedRef = useRef(false);
   const {
     status,
@@ -31,15 +33,23 @@ export const ColorTap: React.FC<ColorTapProps> = ({ onBackToMenu, onNextGame }) 
 
   // Auto-add score when game ends (only once)
   useEffect(() => {
-    if (status === 'results' && currentScore > 0 && !scoreAddedRef.current) {
-      addScore(GAME_IDS.COLOR_TAP, currentScore);
+    if (status === 'results' && !scoreAddedRef.current) {
+      if (currentScore > 0) {
+        addScore(GAME_IDS.COLOR_TAP, currentScore);
+      }
+      addGameResult({
+        gameId: GAME_IDS.COLOR_TAP,
+        score: currentScore,
+        accuracy: getAccuracy(),
+        averageTime: getAverageTime() || 0,
+      });
       scoreAddedRef.current = true;
     }
     // Reset flag when starting a new game
     if (status === 'intro' || status === 'playing' || status === 'feedback') {
       scoreAddedRef.current = false;
     }
-  }, [status, currentScore, addScore]);
+  }, [status, currentScore, addScore, addGameResult, getAccuracy, getAverageTime]);
 
   const renderContent = () => {
     if (status === 'intro') {

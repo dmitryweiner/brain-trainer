@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useMemoryFlip } from './useMemoryFlip';
-import { useScore } from '../../../hooks/useScore';
+import { useScoreContext } from '../../../context/ScoreContext';
+import { useGameHistoryContext } from '../../../context/GameHistoryContext';
 import GameLayout from '../../common/GameLayout';
 import Button from '../../common/Button';
 import ResultsModal from '../../common/ResultsModal';
@@ -39,16 +40,26 @@ export default function MemoryFlip({ onBack }: MemoryFlipProps) {
     proceedToNextLevel,
   } = useMemoryFlip();
 
-  const { addScore } = useScore();
+  const { addScore } = useScoreContext();
+  const { addGameResult } = useGameHistoryContext();
   const scoreAddedRef = useRef(false);
 
   // Добавляем очки в контекст при завершении игры
   useEffect(() => {
     if (status === 'results' && !scoreAddedRef.current) {
       addScore('memory-flip', totalScore);
+      // Calculate average time and accuracy from level stats
+      const totalTime = levelStats.reduce((sum, s) => sum + s.time, 0);
+      const avgTime = levelStats.length > 0 ? Math.round((totalTime / levelStats.length) * 1000) : 0;
+      addGameResult({
+        gameId: 'memory-flip',
+        score: totalScore,
+        accuracy: 100, // Completed all levels
+        averageTime: avgTime,
+      });
       scoreAddedRef.current = true;
     }
-  }, [status, totalScore, addScore]);
+  }, [status, totalScore, addScore, addGameResult, levelStats]);
 
   // Форматирование времени
   const formatTime = (seconds: number): string => {

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useNBack } from './useNBack';
-import { useScore } from '../../../hooks/useScore';
+import { useScoreContext } from '../../../context/ScoreContext';
+import { useGameHistoryContext } from '../../../context/GameHistoryContext';
 import GameLayout from '../../common/GameLayout';
 import Button from '../../common/Button';
 import ResultsModal from '../../common/ResultsModal';
@@ -31,16 +32,28 @@ export default function NBack({ onBack }: NBackProps) {
     handleMatch,
   } = useNBack();
 
-  const { addScore } = useScore();
+  const { addScore } = useScoreContext();
+  const { addGameResult } = useGameHistoryContext();
   const scoreAddedRef = useRef(false);
 
   // Добавляем очки в контекст при завершении игры
   useEffect(() => {
     if (status === 'results' && !scoreAddedRef.current) {
       addScore('n-back', Math.round(score));
+      // Calculate accuracy
+      const totalResponses = hits + misses + falseAlarms + correctRejections;
+      const accuracy = totalResponses > 0 
+        ? Math.round(((hits + correctRejections) / totalResponses) * 100)
+        : 0;
+      addGameResult({
+        gameId: 'n-back',
+        score: Math.round(score),
+        accuracy,
+        averageTime: 0, // N-back doesn't track reaction time per item
+      });
       scoreAddedRef.current = true;
     }
-  }, [status, score, addScore]);
+  }, [status, score, addScore, addGameResult, hits, misses, falseAlarms, correctRejections]);
 
   const totalItems = ITEMS_PER_BLOCK * TOTAL_BLOCKS;
   const totalAttempts = currentIndex + 1 + (currentBlock - 1) * ITEMS_PER_BLOCK;

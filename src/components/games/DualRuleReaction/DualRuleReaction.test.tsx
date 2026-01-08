@@ -3,9 +3,14 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DualRuleReaction from './DualRuleReaction';
 import { ScoreProvider } from '../../../context/ScoreContext';
+import { GameHistoryProvider } from '../../../context/GameHistoryContext';
 
 const renderWithProvider = (component: React.ReactElement) => {
-  return render(<ScoreProvider>{component}</ScoreProvider>);
+  return render(
+    <ScoreProvider>
+      <GameHistoryProvider>{component}</GameHistoryProvider>
+    </ScoreProvider>
+  );
 };
 
 describe('DualRuleReaction Component', () => {

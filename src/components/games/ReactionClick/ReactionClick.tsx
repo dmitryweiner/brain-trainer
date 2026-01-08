@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GameLayout, ResultsModal } from '../../common';
 import { useScoreContext } from '../../../context/ScoreContext';
+import { useGameHistoryContext } from '../../../context/GameHistoryContext';
 import { GAME_IDS, ROUNDS } from '../../../utils/constants';
 import useReactionClick from './useReactionClick';
 import './ReactionClick.scss';
@@ -14,6 +15,7 @@ export interface ReactionClickProps {
 export const ReactionClick: React.FC<ReactionClickProps> = ({ onBackToMenu, onNextGame }) => {
   const { t } = useTranslation();
   const { addScore } = useScoreContext();
+  const { addGameResult } = useGameHistoryContext();
   const scoreAddedRef = useRef(false);
   const {
     status,
@@ -31,15 +33,27 @@ export const ReactionClick: React.FC<ReactionClickProps> = ({ onBackToMenu, onNe
 
   // Auto-add score when game ends (only once)
   useEffect(() => {
-    if (status === 'results' && currentScore > 0 && !scoreAddedRef.current) {
-      addScore(GAME_IDS.REACTION_CLICK, currentScore);
+    if (status === 'results' && !scoreAddedRef.current) {
+      if (currentScore > 0) {
+        addScore(GAME_IDS.REACTION_CLICK, currentScore);
+      }
+      // Record game history
+      const successRate = reactionTimes.length > 0 
+        ? (reactionTimes.length / ROUNDS.REACTION_CLICK) * 100 
+        : 0;
+      addGameResult({
+        gameId: GAME_IDS.REACTION_CLICK,
+        score: currentScore,
+        accuracy: Math.round(successRate),
+        averageTime: getAverageTime() || 0,
+      });
       scoreAddedRef.current = true;
     }
     // Reset flag when starting a new game
     if (status === 'intro' || status === 'waiting') {
       scoreAddedRef.current = false;
     }
-  }, [status, currentScore, addScore]);
+  }, [status, currentScore, addScore, addGameResult, reactionTimes, getAverageTime]);
 
   const renderContent = () => {
     if (status === 'intro') {

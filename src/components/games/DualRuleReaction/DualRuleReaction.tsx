@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useDualRuleReaction } from './useDualRuleReaction';
-import { useScore } from '../../../hooks/useScore';
+import { useScoreContext } from '../../../context/ScoreContext';
+import { useGameHistoryContext } from '../../../context/GameHistoryContext';
 import GameLayout from '../../common/GameLayout';
 import Button from '../../common/Button';
 import ResultsModal from '../../common/ResultsModal';
@@ -30,16 +31,28 @@ export default function DualRuleReaction({ onBack }: DualRuleReactionProps) {
     proceedToNextRound,
   } = useDualRuleReaction();
 
-  const { addScore } = useScore();
+  const { addScore } = useScoreContext();
+  const { addGameResult } = useGameHistoryContext();
   const scoreAddedRef = useRef(false);
 
   // Добавляем очки в контекст при завершении игры
   useEffect(() => {
     if (status === 'results' && !scoreAddedRef.current) {
       addScore('dual-rule-reaction', Math.round(score));
+      // Calculate accuracy and average time
+      const accuracy = Math.round(((TOTAL_ROUNDS - errors) / TOTAL_ROUNDS) * 100);
+      const avgTime = reactionTimes.length > 0 
+        ? Math.round(reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length)
+        : 0;
+      addGameResult({
+        gameId: 'dual-rule-reaction',
+        score: Math.round(score),
+        accuracy,
+        averageTime: avgTime,
+      });
       scoreAddedRef.current = true;
     }
-  }, [status, score, addScore]);
+  }, [status, score, addScore, addGameResult, errors, reactionTimes]);
 
   // Автоматический переход после feedback
   useEffect(() => {

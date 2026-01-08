@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { usePhoneRecall } from './usePhoneRecall';
-import { useScore } from '../../../hooks/useScore';
+import { useScoreContext } from '../../../context/ScoreContext';
+import { useGameHistoryContext } from '../../../context/GameHistoryContext';
 import GameLayout from '../../common/GameLayout';
 import Button from '../../common/Button';
 import ResultsModal from '../../common/ResultsModal';
@@ -12,6 +13,7 @@ interface PhoneRecallProps {
 }
 
 const MAX_LENGTH = 12;
+const INITIAL_LENGTH = 4;
 
 export default function PhoneRecall({ onBack }: PhoneRecallProps) {
   const {
@@ -29,16 +31,26 @@ export default function PhoneRecall({ onBack }: PhoneRecallProps) {
     handleSubmit,
   } = usePhoneRecall();
 
-  const { addScore } = useScore();
+  const { addScore } = useScoreContext();
+  const { addGameResult } = useGameHistoryContext();
   const scoreAddedRef = useRef(false);
 
   // Добавляем очки в контекст при завершении игры
   useEffect(() => {
     if (status === 'results' && !scoreAddedRef.current) {
       addScore('phone-recall', totalScore);
+      // Accuracy based on how many numbers correctly recalled
+      const maxPossible = MAX_LENGTH - INITIAL_LENGTH + 1;
+      const accuracy = Math.round((correctNumbers / maxPossible) * 100);
+      addGameResult({
+        gameId: 'phone-recall',
+        score: totalScore,
+        accuracy: Math.min(accuracy, 100),
+        averageTime: 0, // No reaction time tracking
+      });
       scoreAddedRef.current = true;
     }
-  }, [status, totalScore, addScore]);
+  }, [status, totalScore, addScore, addGameResult, correctNumbers]);
 
   // Обработка клавиатуры
   useEffect(() => {

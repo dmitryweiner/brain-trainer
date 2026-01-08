@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useSequenceRecall } from './useSequenceRecall';
-import { useScore } from '../../../hooks/useScore';
+import { useScoreContext } from '../../../context/ScoreContext';
+import { useGameHistoryContext } from '../../../context/GameHistoryContext';
 import GameLayout from '../../common/GameLayout';
 import Button from '../../common/Button';
 import ResultsModal from '../../common/ResultsModal';
@@ -12,6 +13,7 @@ interface SequenceRecallProps {
 }
 
 const MAX_LENGTH = 7;
+const INITIAL_LENGTH = 3;
 
 export default function SequenceRecall({ onBack }: SequenceRecallProps) {
   const {
@@ -28,16 +30,26 @@ export default function SequenceRecall({ onBack }: SequenceRecallProps) {
     handleOptionClick,
   } = useSequenceRecall();
 
-  const { addScore } = useScore();
+  const { addScore } = useScoreContext();
+  const { addGameResult } = useGameHistoryContext();
   const scoreAddedRef = useRef(false);
 
   // Добавляем очки в контекст при завершении игры
   useEffect(() => {
     if (status === 'results' && !scoreAddedRef.current) {
       addScore('sequence-recall', totalScore);
+      // Accuracy based on correct sequences vs possible sequences
+      const maxPossible = MAX_LENGTH - INITIAL_LENGTH + 1;
+      const accuracy = Math.round((correctSequences / maxPossible) * 100);
+      addGameResult({
+        gameId: 'sequence-recall',
+        score: totalScore,
+        accuracy: Math.min(accuracy, 100),
+        averageTime: 0, // No time tracking in this game
+      });
       scoreAddedRef.current = true;
     }
-  }, [status, totalScore, addScore]);
+  }, [status, totalScore, addScore, addGameResult, correctSequences]);
 
   return (
     <GameLayout

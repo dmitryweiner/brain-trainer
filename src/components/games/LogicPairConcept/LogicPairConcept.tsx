@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useLogicPairConcept } from './useLogicPairConcept';
-import { useScore } from '../../../hooks/useScore';
+import { useScoreContext } from '../../../context/ScoreContext';
+import { useGameHistoryContext } from '../../../context/GameHistoryContext';
 import GameLayout from '../../common/GameLayout';
 import Button from '../../common/Button';
 import ResultsModal from '../../common/ResultsModal';
@@ -29,16 +30,24 @@ export default function LogicPairConcept({ onBack }: LogicPairConceptProps) {
     handleContinue,
   } = useLogicPairConcept();
 
-  const { addScore } = useScore();
+  const { addScore } = useScoreContext();
+  const { addGameResult } = useGameHistoryContext();
   const scoreAddedRef = useRef(false);
 
   // Добавляем очки в контекст при завершении игры
   useEffect(() => {
     if (status === 'results' && !scoreAddedRef.current) {
       addScore('logic-pair-concept', score);
+      const accuracy = Math.round((correctAnswers / TOTAL_ROUNDS) * 100);
+      addGameResult({
+        gameId: 'logic-pair-concept',
+        score,
+        accuracy,
+        averageTime: 0, // No time tracking
+      });
       scoreAddedRef.current = true;
     }
-  }, [status, score, addScore]);
+  }, [status, score, addScore, addGameResult, correctAnswers]);
 
   const accuracy = TOTAL_ROUNDS > 0
     ? Math.round((correctAnswers / TOTAL_ROUNDS) * 100)

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { GameLayout, ResultsModal, ProgressBar } from '../../common';
 import { useScoreContext } from '../../../context/ScoreContext';
+import { useGameHistoryContext } from '../../../context/GameHistoryContext';
 import { GAME_IDS, ROUNDS } from '../../../utils/constants';
 import useOddOneOut from './useOddOneOut';
 import './OddOneOut.scss';
@@ -12,6 +13,7 @@ export interface OddOneOutProps {
 
 export const OddOneOut: React.FC<OddOneOutProps> = ({ onBackToMenu, onNextGame }) => {
   const { addScore } = useScoreContext();
+  const { addGameResult } = useGameHistoryContext();
   const scoreAddedRef = useRef(false);
   const {
     status,
@@ -32,15 +34,23 @@ export const OddOneOut: React.FC<OddOneOutProps> = ({ onBackToMenu, onNextGame }
 
   // Auto-add score when game ends (only once)
   useEffect(() => {
-    if (status === 'results' && currentScore > 0 && !scoreAddedRef.current) {
-      addScore(GAME_IDS.ODD_ONE_OUT, currentScore);
+    if (status === 'results' && !scoreAddedRef.current) {
+      if (currentScore > 0) {
+        addScore(GAME_IDS.ODD_ONE_OUT, currentScore);
+      }
+      addGameResult({
+        gameId: GAME_IDS.ODD_ONE_OUT,
+        score: currentScore,
+        accuracy: getAccuracy(),
+        averageTime: getAverageTime() || 0,
+      });
       scoreAddedRef.current = true;
     }
     // Reset flag when starting a new game
     if (status === 'intro' || status === 'playing' || status === 'feedback') {
       scoreAddedRef.current = false;
     }
-  }, [status, currentScore, addScore]);
+  }, [status, currentScore, addScore, addGameResult, getAccuracy, getAverageTime]);
 
   const getDifficultyLabel = (difficulty: string) => {
     switch (difficulty) {

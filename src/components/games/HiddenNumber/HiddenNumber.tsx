@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { GameLayout, ResultsModal, ProgressBar } from '../../common';
 import { useScoreContext } from '../../../context/ScoreContext';
+import { useGameHistoryContext } from '../../../context/GameHistoryContext';
 import { GAME_IDS, ROUNDS } from '../../../utils/constants';
 import useHiddenNumber from './useHiddenNumber';
 import './HiddenNumber.scss';
@@ -12,6 +13,7 @@ export interface HiddenNumberProps {
 
 export const HiddenNumber: React.FC<HiddenNumberProps> = ({ onBackToMenu, onNextGame }) => {
   const { addScore } = useScoreContext();
+  const { addGameResult } = useGameHistoryContext();
   const scoreAddedRef = useRef(false);
   const {
     status,
@@ -35,15 +37,24 @@ export const HiddenNumber: React.FC<HiddenNumberProps> = ({ onBackToMenu, onNext
 
   // Auto-add score when game ends (only once)
   useEffect(() => {
-    if (status === 'results' && currentScore > 0 && !scoreAddedRef.current) {
-      addScore(GAME_IDS.HIDDEN_NUMBER, currentScore);
+    if (status === 'results' && !scoreAddedRef.current) {
+      if (currentScore > 0) {
+        addScore(GAME_IDS.HIDDEN_NUMBER, currentScore);
+      }
+      // For HiddenNumber, accuracy is 100% since we always find the number
+      addGameResult({
+        gameId: GAME_IDS.HIDDEN_NUMBER,
+        score: currentScore,
+        accuracy: 100,
+        averageTime: getAverageTime() || 0,
+      });
       scoreAddedRef.current = true;
     }
     // Reset flag when starting a new game
     if (status === 'intro' || status === 'playing' || status === 'feedback') {
       scoreAddedRef.current = false;
     }
-  }, [status, currentScore, addScore]);
+  }, [status, currentScore, addScore, addGameResult, getAverageTime]);
 
   const renderContent = () => {
     if (status === 'intro') {

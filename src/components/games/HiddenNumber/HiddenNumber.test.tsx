@@ -3,10 +3,13 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { HiddenNumber } from './HiddenNumber';
 import { ScoreProvider } from '../../../context/ScoreContext';
+import { GameHistoryProvider } from '../../../context/GameHistoryContext';
 import React from 'react';
 
 const wrapper = ({ children }: { children: React.ReactNode }) => (
-  <ScoreProvider>{children}</ScoreProvider>
+  <ScoreProvider>
+    <GameHistoryProvider>{children}</GameHistoryProvider>
+  </ScoreProvider>
 );
 
 describe('HiddenNumber', () => {

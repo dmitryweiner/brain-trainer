@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { GameLayout, ResultsModal, ProgressBar } from '../../common';
 import { useScoreContext } from '../../../context/ScoreContext';
+import { useGameHistoryContext } from '../../../context/GameHistoryContext';
 import { GAME_IDS, ROUNDS } from '../../../utils/constants';
 import useEmojiHunt from './useEmojiHunt';
 import './EmojiHunt.scss';
@@ -11,6 +12,7 @@ export interface EmojiHuntProps {
 
 export const EmojiHunt: React.FC<EmojiHuntProps> = ({ onBack }) => {
   const { addScore } = useScoreContext();
+  const { addGameResult } = useGameHistoryContext();
   const scoreAddedRef = useRef(false);
   const {
     status,
@@ -31,14 +33,22 @@ export const EmojiHunt: React.FC<EmojiHuntProps> = ({ onBack }) => {
   } = useEmojiHunt();
 
   useEffect(() => {
-    if (status === 'results' && currentScore > 0 && !scoreAddedRef.current) {
-      addScore(GAME_IDS.EMOJI_HUNT, currentScore);
+    if (status === 'results' && !scoreAddedRef.current) {
+      if (currentScore > 0) {
+        addScore(GAME_IDS.EMOJI_HUNT, currentScore);
+      }
+      addGameResult({
+        gameId: GAME_IDS.EMOJI_HUNT,
+        score: currentScore,
+        accuracy: getAccuracy(),
+        averageTime: getAverageTime() || 0,
+      });
       scoreAddedRef.current = true;
     }
     if (status === 'intro' || status === 'playing' || status === 'feedback') {
       scoreAddedRef.current = false;
     }
-  }, [status, currentScore, addScore]);
+  }, [status, currentScore, addScore, addGameResult, getAccuracy, getAverageTime]);
 
   const getDifficultyLabel = (difficulty: string) => {
     switch (difficulty) {
