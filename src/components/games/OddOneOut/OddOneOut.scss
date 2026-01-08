@@ -157,25 +157,25 @@
     display: grid;
     gap: $spacing-sm;
     width: 100%;
-    max-width: 400px;
+    max-width: min(400px, 90vw);
 
     // Dynamic sizing based on grid
     &.grid-3x3 {
-      max-width: 320px;
+      max-width: min(320px, 85vw);
       .emoji-cell {
         font-size: clamp(36px, 10vw, 56px);
       }
     }
 
     &.grid-4x4 {
-      max-width: 360px;
+      max-width: min(360px, 88vw);
       .emoji-cell {
         font-size: clamp(28px, 8vw, 44px);
       }
     }
 
     &.grid-5x5 {
-      max-width: 400px;
+      max-width: min(400px, 90vw);
       gap: 6px;
       .emoji-cell {
         font-size: clamp(22px, 6vw, 36px);
@@ -357,11 +357,29 @@
 
   .odd-one-out-game {
     .emoji-grid {
-      max-width: 280px;
+      // Use viewport-based sizing to ensure grid fits
+      max-width: min(320px, 85vw);
 
-      .emoji-cell {
-        font-size: 60px;
-        min-height: 110px;
+      &.grid-3x3 {
+        max-width: min(280px, 80vw);
+        .emoji-cell {
+          font-size: clamp(32px, 8vw, 50px);
+        }
+      }
+
+      &.grid-4x4 {
+        max-width: min(300px, 82vw);
+        .emoji-cell {
+          font-size: clamp(26px, 6vw, 40px);
+        }
+      }
+
+      &.grid-5x5 {
+        max-width: min(320px, 85vw);
+        gap: 4px;
+        .emoji-cell {
+          font-size: clamp(20px, 5vw, 32px);
+        }
       }
     }
 
@@ -374,56 +392,59 @@
 @media (max-width: $breakpoint-sm) {
   .odd-one-out-game {
     gap: $spacing-sm;
+    padding: 0 $spacing-xs;
 
     .emoji-grid {
-      gap: 4px;
+      gap: 3px;
 
       &.grid-3x3 {
-        max-width: 260px;
+        max-width: min(240px, 78vw);
         .emoji-cell {
-          font-size: clamp(28px, 8vw, 42px);
+          font-size: clamp(26px, 7vw, 38px);
         }
       }
 
       &.grid-4x4 {
-        max-width: 280px;
+        max-width: min(260px, 80vw);
         .emoji-cell {
-          font-size: clamp(22px, 6vw, 32px);
+          font-size: clamp(20px, 5.5vw, 30px);
         }
       }
 
       &.grid-5x5 {
-        max-width: 300px;
-        gap: 3px;
+        max-width: min(280px, 82vw);
+        gap: 2px;
         .emoji-cell {
-          font-size: clamp(18px, 5vw, 26px);
+          font-size: clamp(16px, 4.5vw, 24px);
         }
       }
 
       .emoji-cell {
-        border-radius: 8px;
-        border-width: 2px;
+        border-radius: 6px;
+        border-width: 1px;
       }
     }
 
     .difficulty-badge .badge {
-      font-size: 16px;
-      padding: $spacing-xs $spacing-md;
+      font-size: 14px;
+      padding: $spacing-xs $spacing-sm;
     }
 
     .instruction-text {
-      font-size: 18px;
+      font-size: 16px;
     }
   }
 
   .odd-one-out-feedback {
+    min-height: 200px;
+    
     .feedback-indicator {
       .feedback-icon {
-        font-size: 100px;
+        font-size: 80px;
       }
 
       .feedback-text {
-        font-size: 28px;
+        font-size: 24px;
       }
     }
   }
@@ -433,7 +454,51 @@
     gap: $spacing-sm;
 
     span {
-      font-size: 18px;
+      font-size: 16px;
+    }
+  }
+}
+
+// Extra small screens (320px and below)
+@media (max-width: $breakpoint-xs) {
+  .odd-one-out-game {
+    .emoji-grid {
+      gap: 2px;
+
+      &.grid-3x3 {
+        max-width: min(200px, 75vw);
+        .emoji-cell {
+          font-size: clamp(22px, 6vw, 32px);
+        }
+      }
+
+      &.grid-4x4 {
+        max-width: min(220px, 76vw);
+        .emoji-cell {
+          font-size: clamp(16px, 4.5vw, 24px);
+        }
+      }
+
+      &.grid-5x5 {
+        max-width: min(240px, 78vw);
+        gap: 1px;
+        .emoji-cell {
+          font-size: clamp(13px, 3.8vw, 19px);
+        }
+      }
+
+      .emoji-cell {
+        border-radius: 4px;
+      }
+    }
+
+    .difficulty-badge .badge {
+      font-size: 12px;
+      padding: 4px $spacing-xs;
+    }
+
+    .instruction-text {
+      font-size: 14px;
     }
   }
 }

@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ScoreProvider, useScoreContext } from './context/ScoreContext';
+import { GameHistoryProvider } from './context/GameHistoryContext';
 import { Header } from './components/common';
 import GameMenu from './components/GameMenu';
 import type { GameId } from './types/game.types';
@@ -16,17 +17,76 @@ import NBack from './components/games/NBack';
 import LogicPairConcept from './components/games/LogicPairConcept';
 import { PhoneRecall } from './components/games/PhoneRecall';
 import { EmojiHunt } from './components/games/EmojiHunt';
+import { Profile } from './components/Profile';
+
+type AppView = 'menu' | 'game' | 'profile';
+
+// Parse hash from URL
+const parseHash = (): { view: AppView; gameId: GameId | null } => {
+  const hash = window.location.hash.replace('#', '');
+  
+  if (hash === 'profile') {
+    return { view: 'profile', gameId: null };
+  }
+  
+  // Check if hash is a valid game ID
+  const gameIds = Object.values(GAME_IDS);
+  if (gameIds.includes(hash as GameId)) {
+    return { view: 'game', gameId: hash as GameId };
+  }
+  
+  return { view: 'menu', gameId: null };
+};
 
 function AppContent() {
-  const [currentGame, setCurrentGame] = useState<GameId | null>(null);
+  // Initialize state from URL
+  const initialState = parseHash();
+  const [currentGame, setCurrentGame] = useState<GameId | null>(initialState.gameId);
+  const [currentView, setCurrentView] = useState<AppView>(initialState.view);
   const { totalScore } = useScoreContext();
+
+  // Update URL when view/game changes
+  const updateUrl = useCallback((view: AppView, gameId: GameId | null) => {
+    let newHash = '';
+    if (view === 'profile') {
+      newHash = 'profile';
+    } else if (view === 'game' && gameId) {
+      newHash = gameId;
+    }
+    
+    // Only update if hash actually changed
+    if (window.location.hash.replace('#', '') !== newHash) {
+      window.location.hash = newHash;
+    }
+  }, []);
+
+  // Listen for browser back/forward
+  useEffect(() => {
+    const handleHashChange = () => {
+      const { view, gameId } = parseHash();
+      setCurrentView(view);
+      setCurrentGame(gameId);
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   const handleGameSelect = (gameId: GameId) => {
     setCurrentGame(gameId);
+    setCurrentView('game');
+    updateUrl('game', gameId);
   };
 
   const handleBackToMenu = () => {
     setCurrentGame(null);
+    setCurrentView('menu');
+    updateUrl('menu', null);
+  };
+
+  const handleProfileClick = () => {
+    setCurrentView('profile');
+    updateUrl('profile', null);
   };
 
   const getCurrentGameTitle = () => {
@@ -39,13 +99,17 @@ function AppContent() {
     <div className="app-container">
       <Header
         totalScore={totalScore}
-        showBackButton={currentGame !== null}
+        showBackButton={currentView !== 'menu'}
         onBack={handleBackToMenu}
-        gameTitle={getCurrentGameTitle()}
+        gameTitle={currentView === 'game' ? getCurrentGameTitle() : undefined}
+        onProfileClick={handleProfileClick}
+        showProfileButton={currentView === 'menu'}
       />
 
       <div className="main-content">
-        {currentGame === null ? (
+        {currentView === 'profile' ? (
+          <Profile onBack={handleBackToMenu} />
+        ) : currentView === 'menu' ? (
           <GameMenu onGameSelect={handleGameSelect} />
         ) : currentGame === GAME_IDS.REACTION_CLICK ? (
           <ReactionClick onBackToMenu={handleBackToMenu} />
@@ -93,7 +157,9 @@ function AppContent() {
 function App() {
   return (
     <ScoreProvider>
-      <AppContent />
+      <GameHistoryProvider>
+        <AppContent />
+      </GameHistoryProvider>
     </ScoreProvider>
   );
 }

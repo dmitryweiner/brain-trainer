@@ -8,6 +8,8 @@ export interface HeaderProps {
   showBackButton?: boolean;
   onBack?: () => void;
   gameTitle?: string;
+  onProfileClick?: () => void;
+  showProfileButton?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -15,6 +17,8 @@ export const Header: React.FC<HeaderProps> = ({
   showBackButton = false,
   onBack,
   gameTitle,
+  onProfileClick,
+  showProfileButton = true,
 }) => {
   const { t, i18n } = useTranslation();
   const [showLangMenu, setShowLangMenu] = useState(false);
@@ -65,12 +69,22 @@ export const Header: React.FC<HeaderProps> = ({
         )}
         
         <div className="header-center">
-          <h1 className="app-title">
+          <h1 className={`app-title ${gameTitle ? 'game-mode' : ''}`}>
             {gameTitle ? gameTitle : `🧠 ${t('app.title')}`}
           </h1>
         </div>
         
         <div className="header-right">
+          {showProfileButton && onProfileClick && (
+            <button 
+              className="profile-button"
+              onClick={onProfileClick}
+              aria-label={t('profile.title')}
+            >
+              👤
+            </button>
+          )}
+          
           <div className="score-display">
             <span className="score-label">{t('app.score')}:</span>
             <span className="score-value">{totalScore}</span>

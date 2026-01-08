@@ -12,15 +12,57 @@
   "games": {
     "reaction-click": {
       "title": "Reaction Click",
-      "description": "Reaction speed training"
+      "description": "Reaction speed training",
+      "instructions": {
+        "lead": "Reaction speed training",
+        "wait": "Wait for the screen to turn green",
+        "clickFast": "Click as fast as possible",
+        "dontClickEarly": "Don't click too early!",
+        "scoring": "Points for speed",
+        "score5": "< 300ms: 5 points",
+        "score3": "300-500ms: 3 points",
+        "score2": "500-800ms: 2 points",
+        "score1": "> 800ms: 1 point",
+        "totalAttempts": "Total attempts"
+      },
+      "waiting": "Wait...",
+      "clickNow": "CLICK!",
+      "tooEarly": "Too early!",
+      "waitForButton": "Wait for the button 🔘",
+      "great": "Great!",
+      "attempt": "Attempt"
     },
     "color-tap": {
       "title": "Color Tap",
-      "description": "Reaction and selection"
+      "description": "Reaction and selection",
+      "instructions": {
+        "lead": "Reaction and attention training",
+        "greenYes": "🟢 Green circle → press YES",
+        "redNo": "🔴 Red circle → press NO",
+        "fastBonus": "⚡ Fast answer (< 1sec) = bonus!",
+        "scoring": "Points",
+        "correct": "Correct answer: +1 point",
+        "fast": "Fast answer: +0.5 bonus"
+      },
+      "round": "Round",
+      "yes": "YES",
+      "no": "NO",
+      "correct": "Correct!",
+      "incorrect": "Incorrect"
     },
     "symbol-match": {
       "title": "Symbol Match",
-      "description": "Visual attention"
+      "description": "Visual attention",
+      "instructions": {
+        "lead": "Visual attention training",
+        "look": "Look at two symbols",
+        "decide": "Decide if they match or not",
+        "press": "Press the corresponding button",
+        "beAttentive": "Be attentive!",
+        "scoring": "Correct answer: +1 point"
+      },
+      "match": "Match",
+      "noMatch": "Don't match"
     },
     "odd-one-out": {
       "title": "Odd One Out",
@@ -28,11 +70,30 @@
     },
     "hidden-number": {
       "title": "Hidden Number",
-      "description": "Visual search"
+      "description": "Visual search",
+      "instructions": {
+        "lead": "Visual search training",
+        "grid": "A grid will appear on screen",
+        "number": "One cell will contain a number",
+        "find": "Find and tap it as fast as possible",
+        "faster": "The faster you find it, the more points!",
+        "scoring": "Scoring system",
+        "fast": "< 3 seconds: 3 points",
+        "medium": "3-5 seconds: 2 points",
+        "slow": "> 5 seconds: 1 point"
+      },
+      "findNumber": "Find number"
     },
     "memory-flip": {
       "title": "Memory Flip",
-      "description": "Short-term memory"
+      "description": "Short-term memory",
+      "instructions": {
+        "lead": "Short-term memory training",
+        "flip": "Cards will be briefly shown",
+        "remember": "Remember their positions",
+        "findPairs": "Find all matching pairs",
+        "scoring": "Points for each pair found"
+      }
     },
     "sequence-recall": {
       "title": "Sequence Recall",
@@ -40,7 +101,19 @@
     },
     "dual-rule-reaction": {
       "title": "Dual-Rule Reaction",
-      "description": "Cognitive flexibility"
+      "description": "Cognitive flexibility",
+      "instructions": {
+        "lead": "Cognitive flexibility training",
+        "twoRules": "Two rules alternate",
+        "rule1": "SHAPE rule: press left for circle, right for square",
+        "rule2": "COLOR rule: press left for green, right for red",
+        "watchIndicator": "Watch the rule indicator!",
+        "scoring": "Correct answer: +1 point"
+      },
+      "shapeRule": "SHAPE",
+      "colorRule": "COLOR",
+      "left": "Left",
+      "right": "Right"
     },
     "n-back": {
       "title": "N-Back",
@@ -201,6 +274,34 @@
     "repeatSequence": "Repeat the sequence",
     "emoji": "Emoji",
     "of": "of"
+  },
+  "profile": {
+    "title": "Profile",
+    "totalGames": "Games Played",
+    "totalScore": "Total Score",
+    "avgAccuracy": "Avg Accuracy",
+    "activeDays": "Active Days",
+    "recentActivity": "Recent Activity",
+    "noData": "No game data yet. Play some games to see your stats!",
+    "games": "games",
+    "score": "Score",
+    "accuracy": "Accuracy",
+    "played": "played",
+    "bestScore": "Best Score",
+    "avgScore": "Avg Score",
+    "trend": "Trend",
+    "trends": {
+      "improving": "Improving",
+      "declining": "Declining",
+      "stable": "Stable"
+    },
+    "notPlayedYet": "You haven't played this game yet",
+    "confirmClear": "Are you sure you want to clear all game history?",
+    "tabs": {
+      "overview": "Overview",
+      "daily": "Daily",
+      "games": "Games"
+    }
   }
 }
 

@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { ROUNDS } from '../../../utils/constants';
-import { getRandomInt, shuffleArray } from '../../../utils/randomUtils';
+import { getRandomInt } from '../../../utils/randomUtils';
 
 export type GameStatus = 'intro' | 'playing' | 'feedback' | 'results';
 export type Difficulty = 'easy' | 'medium' | 'hard';
@@ -108,20 +108,13 @@ function useEmojiHunt(): UseEmojiHuntReturn {
     // Выбираем целевой эмодзи
     const target = targets[getRandomInt(0, targets.length - 1)];
     setTargetEmoji(target);
-
-    // Выбираем один "основной" дистрактор для заполнения большей части сетки
-    const mainDistractor = distractors[getRandomInt(0, distractors.length - 1)];
     
-    // Создаем сетку
+    // Создаем сетку с случайными дистракторами
     const newGrid: string[] = [];
     for (let i = 0; i < totalCells; i++) {
-      // Добавляем вариативность в дистракторы для сложных уровней
-      if (difficulty === 'hard' && Math.random() > 0.7) {
-        const otherDistractor = distractors[getRandomInt(0, distractors.length - 1)];
-        newGrid.push(otherDistractor);
-      } else {
-        newGrid.push(mainDistractor);
-      }
+      // Каждая ячейка получает случайный дистрактор
+      const randomDistractor = distractors[getRandomInt(0, distractors.length - 1)];
+      newGrid.push(randomDistractor);
     }
 
     // Размещаем целевой эмодзи в случайную позицию
@@ -129,12 +122,6 @@ function useEmojiHunt(): UseEmojiHuntReturn {
     newGrid[targetPos] = target;
     setTargetIndex(targetPos);
 
-    setGrid(shuffleArray(newGrid).map((_, i) => {
-      // Находим где теперь находится target после shuffle
-      return newGrid[i];
-    }));
-
-    // На самом деле нам не нужен shuffle, мы уже поместили target в случайную позицию
     setGrid(newGrid);
     setStartTime(Date.now());
   }, [getDifficultyForRound]);

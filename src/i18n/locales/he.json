@@ -12,15 +12,57 @@
   "games": {
     "reaction-click": {
       "title": "לחיצת תגובה",
-      "description": "אימון מהירות תגובה"
+      "description": "אימון מהירות תגובה",
+      "instructions": {
+        "lead": "אימון מהירות תגובה",
+        "wait": "חכה שהמסך יהפוך לירוק",
+        "clickFast": "לחץ כמה שיותר מהר",
+        "dontClickEarly": "אל תלחץ לפני הזמן!",
+        "scoring": "נקודות למהירות",
+        "score5": "< 300ms: 5 נקודות",
+        "score3": "300-500ms: 3 נקודות",
+        "score2": "500-800ms: 2 נקודות",
+        "score1": "> 800ms: נקודה אחת",
+        "totalAttempts": "סה״כ ניסיונות"
+      },
+      "waiting": "חכה...",
+      "clickNow": "לחץ!",
+      "tooEarly": "מוקדם מדי!",
+      "waitForButton": "חכה לכפתור 🔘",
+      "great": "מעולה!",
+      "attempt": "ניסיון"
     },
     "color-tap": {
       "title": "הקשת צבע",
-      "description": "תגובה ובחירה"
+      "description": "תגובה ובחירה",
+      "instructions": {
+        "lead": "אימון תגובה ותשומת לב",
+        "greenYes": "🟢 עיגול ירוק → לחץ כן",
+        "redNo": "🔴 עיגול אדום → לחץ לא",
+        "fastBonus": "⚡ תשובה מהירה (< 1שנ') = בונוס!",
+        "scoring": "נקודות",
+        "correct": "תשובה נכונה: +1 נקודה",
+        "fast": "תשובה מהירה: +0.5 בונוס"
+      },
+      "round": "סיבוב",
+      "yes": "כן",
+      "no": "לא",
+      "correct": "נכון!",
+      "incorrect": "לא נכון"
     },
     "symbol-match": {
       "title": "התאמת סמלים",
-      "description": "קשב חזותי"
+      "description": "קשב חזותי",
+      "instructions": {
+        "lead": "אימון קשב חזותי",
+        "look": "הסתכל על שני הסמלים",
+        "decide": "החלט אם הם תואמים או לא",
+        "press": "לחץ על הכפתור המתאים",
+        "beAttentive": "היה קשוב!",
+        "scoring": "תשובה נכונה: +1 נקודה"
+      },
+      "match": "תואמים",
+      "noMatch": "לא תואמים"
     },
     "odd-one-out": {
       "title": "מצא את השונה",
@@ -28,11 +70,30 @@
     },
     "hidden-number": {
       "title": "מספר נסתר",
-      "description": "חיפוש חזותי"
+      "description": "חיפוש חזותי",
+      "instructions": {
+        "lead": "אימון חיפוש חזותי",
+        "grid": "רשת תופיע על המסך",
+        "number": "באחד התאים יהיה מספר",
+        "find": "מצא ולחץ עליו כמה שיותר מהר",
+        "faster": "ככל שתמצא מהר יותר - יותר נקודות!",
+        "scoring": "מערכת ניקוד",
+        "fast": "< 3 שניות: 3 נקודות",
+        "medium": "3-5 שניות: 2 נקודות",
+        "slow": "> 5 שניות: נקודה אחת"
+      },
+      "findNumber": "מצא מספר"
     },
     "memory-flip": {
       "title": "היפוך זיכרון",
-      "description": "זיכרון לטווח קצר"
+      "description": "זיכרון לטווח קצר",
+      "instructions": {
+        "lead": "אימון זיכרון לטווח קצר",
+        "flip": "הקלפים יוצגו לרגע",
+        "remember": "זכור את מיקומם",
+        "findPairs": "מצא את כל הזוגות התואמים",
+        "scoring": "נקודות לכל זוג שנמצא"
+      }
     },
     "sequence-recall": {
       "title": "זכירת רצף",
@@ -40,7 +101,19 @@
     },
     "dual-rule-reaction": {
       "title": "תגובה כפולה",
-      "description": "גמישות קוגניטיבית"
+      "description": "גמישות קוגניטיבית",
+      "instructions": {
+        "lead": "אימון גמישות קוגניטיבית",
+        "twoRules": "שני חוקים מתחלפים",
+        "rule1": "חוק צורה: שמאל לעיגול, ימין לריבוע",
+        "rule2": "חוק צבע: שמאל לירוק, ימין לאדום",
+        "watchIndicator": "עקוב אחר מחוון החוק!",
+        "scoring": "תשובה נכונה: +1 נקודה"
+      },
+      "shapeRule": "צורה",
+      "colorRule": "צבע",
+      "left": "שמאל",
+      "right": "ימין"
     },
     "n-back": {
       "title": "N-אחורה",
@@ -201,6 +274,34 @@
     "repeatSequence": "חזור על הרצף",
     "emoji": "אימוג'י",
     "of": "מתוך"
+  },
+  "profile": {
+    "title": "פרופיל",
+    "totalGames": "משחקים ששוחקו",
+    "totalScore": "סה״כ ניקוד",
+    "avgAccuracy": "דיוק ממוצע",
+    "activeDays": "ימים פעילים",
+    "recentActivity": "פעילות אחרונה",
+    "noData": "אין נתוני משחקים עדיין. שחק כמה משחקים כדי לראות סטטיסטיקות!",
+    "games": "משחקים",
+    "score": "ניקוד",
+    "accuracy": "דיוק",
+    "played": "שוחקו",
+    "bestScore": "תוצאה הטובה ביותר",
+    "avgScore": "תוצאה ממוצעת",
+    "trend": "מגמה",
+    "trends": {
+      "improving": "משתפר",
+      "declining": "יורד",
+      "stable": "יציב"
+    },
+    "notPlayedYet": "עוד לא שיחקת במשחק הזה",
+    "confirmClear": "האם אתה בטוח שברצונך למחוק את כל היסטוריית המשחקים?",
+    "tabs": {
+      "overview": "סקירה",
+      "daily": "יומי",
+      "games": "משחקים"
+    }
   }
 }
 

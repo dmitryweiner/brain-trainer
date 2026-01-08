@@ -19,7 +19,8 @@
 .game-card-icon {
   font-size: 64px;
   text-align: center;
-  margin-bottom: $spacing-sm;
+  margin-top: $spacing-sm;
+  margin-bottom: $spacing-md;
   line-height: 1;
 }
 
@@ -95,7 +96,8 @@
   
   .game-card-icon {
     font-size: 48px;
-    margin-bottom: $spacing-xs;
+    margin-top: $spacing-xs;
+    margin-bottom: $spacing-sm;
   }
   
   .game-card-title {
@@ -133,6 +135,8 @@
   
   .game-card-icon {
     font-size: 40px;
+    margin-top: 4px;
+    margin-bottom: $spacing-xs;
   }
   
   .game-card-title {

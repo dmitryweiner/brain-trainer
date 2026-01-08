@@ -62,7 +62,8 @@ describe('ReactionClick', () => {
     await user.click(screen.getByText('Начать игру'));
     
     await waitFor(() => {
-      expect(screen.getByText(/Попытка 1 из 5/)).toBeInTheDocument();
+      // New format: "Попытка 1 / 5"
+      expect(screen.getByText(/1 \/ 5/)).toBeInTheDocument();
     });
   });
 
@@ -77,6 +78,19 @@ describe('ReactionClick', () => {
     await waitFor(() => {
       // After starting, should show waiting or ready state
       expect(screen.getByText('Ждите...')).toBeInTheDocument();
+    });
+  });
+
+  it('should show bomb emoji during waiting state', async () => {
+    const user = userEvent.setup();
+    const handleBackToMenu = vi.fn();
+    
+    render(<ReactionClick onBackToMenu={handleBackToMenu} />, { wrapper });
+    
+    await user.click(screen.getByText('Начать игру'));
+    
+    await waitFor(() => {
+      expect(screen.getByText('💣')).toBeInTheDocument();
     });
   });
 

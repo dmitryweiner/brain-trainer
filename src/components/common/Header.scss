@@ -50,12 +50,32 @@
   font-size: 24px;
   margin: 0;
   font-weight: 700;
+
+  &.game-mode {
+    font-size: 18px;
+    font-weight: 600;
+  }
 }
 
 .header-right {
   display: flex;
   align-items: center;
   gap: $spacing-sm;
+}
+
+.profile-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  line-height: 1;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
 }
 
 .score-display {
@@ -158,6 +178,14 @@
     min-height: 42px;
   }
   
+  .app-title {
+    font-size: 18px;
+
+    &.game-mode {
+      font-size: 14px;
+    }
+  }
+  
   .back-button {
     min-width: auto;
     padding: 4px 8px;
@@ -174,6 +202,11 @@
   }
 
   .lang-button {
+    padding: 4px 6px;
+    font-size: 16px;
+  }
+
+  .profile-button {
     padding: 4px 6px;
     font-size: 16px;
   }

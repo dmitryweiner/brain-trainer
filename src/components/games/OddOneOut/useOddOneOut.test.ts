@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import useOddOneOut from './useOddOneOut';
+import { ODD_ONE_OUT_EMOJIS } from '../../../utils/emojiSets';
 
 describe('useOddOneOut', () => {
   it('should initialize with correct default values', () => {
@@ -266,6 +267,54 @@ describe('useOddOneOut', () => {
     // One emoji appears once, rest appear gridSize-1 times (8 for 3x3)
     expect(countsArray[0]).toBe(1); // The odd one
     expect(countsArray[1]).toBe(emojis.length - 1); // The majority
+  });
+
+  it('should have odd emoji different from main emoji at oddOneIndex', () => {
+    const { result } = renderHook(() => useOddOneOut());
+
+    act(() => {
+      result.current.startGame();
+    });
+
+    const emojis = result.current.emojis;
+    const oddIndex = result.current.oddOneIndex;
+    const oddEmoji = emojis[oddIndex];
+    
+    // Count occurrences
+    const counts = new Map<string, number>();
+    emojis.forEach(e => {
+      counts.set(e, (counts.get(e) || 0) + 1);
+    });
+
+    // The emoji at oddIndex should appear only once (it's the odd one)
+    expect(counts.get(oddEmoji)).toBe(1);
+    
+    // And the other emoji should appear multiple times
+    const mainEmoji = emojis.find(e => e !== oddEmoji);
+    expect(counts.get(mainEmoji!)).toBe(emojis.length - 1);
+  });
+
+  it('should verify ODD_ONE_OUT_EMOJIS data has different main and odd emojis', () => {
+    // Verify easy sets
+    ODD_ONE_OUT_EMOJIS.easy.sets.forEach((set, index) => {
+      expect(set.main).not.toBe(set.odd);
+      expect(set.main.length).toBeGreaterThan(0);
+      expect(set.odd.length).toBeGreaterThan(0);
+    });
+
+    // Verify medium sets
+    ODD_ONE_OUT_EMOJIS.medium.sets.forEach((set, index) => {
+      expect(set.main).not.toBe(set.odd);
+      expect(set.main.length).toBeGreaterThan(0);
+      expect(set.odd.length).toBeGreaterThan(0);
+    });
+
+    // Verify hard sets
+    ODD_ONE_OUT_EMOJIS.hard.sets.forEach((set, index) => {
+      expect(set.main).not.toBe(set.odd);
+      expect(set.main.length).toBeGreaterThan(0);
+      expect(set.odd.length).toBeGreaterThan(0);
+    });
   });
 });
 

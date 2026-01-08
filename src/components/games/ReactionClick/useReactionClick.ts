@@ -3,7 +3,7 @@ import { ROUNDS, TIMINGS } from '../../../utils/constants';
 import { getRandomInt } from '../../../utils/randomUtils';
 import { calculateReactionScore } from '../../../utils/gameUtils';
 
-export type GameStatus = 'intro' | 'waiting' | 'ready' | 'tooEarly' | 'results';
+export type GameStatus = 'intro' | 'waiting' | 'ready' | 'tooEarly' | 'clicked' | 'results';
 
 export interface ReactionClickState {
   status: GameStatus;
@@ -105,6 +105,9 @@ function useReactionClick(): UseReactionClickReturn {
       const nextAttempt = currentAttempt + 1;
       setCurrentAttempt(nextAttempt);
 
+      // Show celebration briefly
+      setStatus('clicked');
+
       // Brief pause before next round
       setTimeout(() => {
         if (nextAttempt >= totalRounds) {
@@ -112,7 +115,7 @@ function useReactionClick(): UseReactionClickReturn {
         } else {
           startNextRound();
         }
-      }, 500);
+      }, 800);
     }
 
     if (status === 'tooEarly') {

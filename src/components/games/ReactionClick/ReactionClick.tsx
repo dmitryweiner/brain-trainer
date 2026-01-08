@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { GameLayout, ResultsModal } from '../../common';
 import { useScoreContext } from '../../../context/ScoreContext';
 import { GAME_IDS, ROUNDS } from '../../../utils/constants';
@@ -11,6 +12,7 @@ export interface ReactionClickProps {
 }
 
 export const ReactionClick: React.FC<ReactionClickProps> = ({ onBackToMenu, onNextGame }) => {
+  const { t } = useTranslation();
   const { addScore } = useScoreContext();
   const scoreAddedRef = useRef(false);
   const {
@@ -44,30 +46,30 @@ export const ReactionClick: React.FC<ReactionClickProps> = ({ onBackToMenu, onNe
       return (
         <div className="reaction-intro">
           <div className="intro-card">
-            <h2>⚡ Reaction Click</h2>
+            <h2>⚡ {t('games.reaction-click.title')}</h2>
             <div className="intro-instructions">
-              <p className="lead">Тренировка скорости реакции</p>
+              <p className="lead">{t('games.reaction-click.instructions.lead')}</p>
               <ol className="instructions-list">
-                <li>Дождитесь, когда экран станет <strong className="text-success">зелёным</strong></li>
-                <li>Нажмите как можно быстрее</li>
-                <li>Не нажимайте раньше времени!</li>
+                <li>{t('games.reaction-click.instructions.wait')}</li>
+                <li>{t('games.reaction-click.instructions.clickFast')}</li>
+                <li>{t('games.reaction-click.instructions.dontClickEarly')}</li>
               </ol>
               <div className="scoring-info">
-                <p><strong>Очки за скорость:</strong></p>
+                <p><strong>{t('games.reaction-click.instructions.scoring')}:</strong></p>
                 <ul>
-                  <li>&lt; 300ms: <strong>5 очков</strong></li>
-                  <li>300-500ms: <strong>3 очка</strong></li>
-                  <li>500-800ms: <strong>2 очка</strong></li>
-                  <li>&gt; 800ms: <strong>1 очко</strong></li>
+                  <li><strong>{t('games.reaction-click.instructions.score5')}</strong></li>
+                  <li><strong>{t('games.reaction-click.instructions.score3')}</strong></li>
+                  <li><strong>{t('games.reaction-click.instructions.score2')}</strong></li>
+                  <li><strong>{t('games.reaction-click.instructions.score1')}</strong></li>
                 </ul>
               </div>
-              <p className="text-muted">Всего попыток: {ROUNDS.REACTION_CLICK}</p>
+              <p className="text-muted">{t('games.reaction-click.instructions.totalAttempts')}: {ROUNDS.REACTION_CLICK}</p>
             </div>
             <button
               className="btn btn-primary btn-large"
               onClick={startGame}
             >
-              Начать игру
+              {t('common.startGame')}
             </button>
           </div>
         </div>
@@ -84,8 +86,9 @@ export const ReactionClick: React.FC<ReactionClickProps> = ({ onBackToMenu, onNe
           onKeyDown={(e) => e.key === 'Enter' && handleClick()}
         >
           <div className="reaction-content">
-            <h2>Ждите...</h2>
-            <p className="attempt-counter">Попытка {currentAttempt + 1} из {ROUNDS.REACTION_CLICK}</p>
+            <div className="reaction-emoji">💣</div>
+            <h2>{t('games.reaction-click.waiting')}</h2>
+            <p className="attempt-counter">{t('games.reaction-click.attempt')} {currentAttempt + 1} / {ROUNDS.REACTION_CLICK}</p>
           </div>
         </div>
       );
@@ -101,7 +104,19 @@ export const ReactionClick: React.FC<ReactionClickProps> = ({ onBackToMenu, onNe
           onKeyDown={(e) => e.key === 'Enter' && handleClick()}
         >
           <div className="reaction-content">
-            <h2>НАЖМИТЕ СЕЙЧАС!</h2>
+            <div className="reaction-emoji">🔘</div>
+            <h2>{t('games.reaction-click.clickNow')}</h2>
+          </div>
+        </div>
+      );
+    }
+
+    if (status === 'clicked') {
+      return (
+        <div className="reaction-area reaction-clicked">
+          <div className="reaction-content">
+            <div className="reaction-emoji celebration">🎉</div>
+            <h2>{t('games.reaction-click.great')}</h2>
           </div>
         </div>
       );
@@ -111,8 +126,9 @@ export const ReactionClick: React.FC<ReactionClickProps> = ({ onBackToMenu, onNe
       return (
         <div className="reaction-area reaction-too-early">
           <div className="reaction-content">
-            <h2>Слишком рано!</h2>
-            <p>Дождитесь зелёного экрана</p>
+            <div className="reaction-emoji explosion">💥</div>
+            <h2>{t('games.reaction-click.tooEarly')}</h2>
+            <p>{t('games.reaction-click.waitForButton')}</p>
           </div>
         </div>
       );
