@@ -124,7 +124,7 @@ export const EmojiHunt: React.FC<EmojiHuntProps> = ({ onBack }) => {
           </div>
 
           <div 
-            className="emoji-grid"
+            className={`emoji-grid grid-${gridSize}x${gridSize}`}
             style={{ 
               gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
               gridTemplateRows: `repeat(${gridSize}, 1fr)`,
