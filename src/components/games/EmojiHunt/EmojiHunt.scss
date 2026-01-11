@@ -137,11 +137,11 @@
     width: 100%;
     max-width: 400px;
     
-    // Для 8x8 сетки - делаем шире чтобы кнопки были больше
+    // Для 8x8 сетки - кнопки должны быть достаточно большими для нажатия
     &.grid-8x8 {
-      gap: 4px;
-      max-width: 100%;
-      width: calc(8 * 44px + 7 * 4px); // 8 кнопок по 44px + 7 gaps
+      gap: 3px;
+      max-width: none;
+      width: calc(8 * 42px + 7 * 3px); // 8 кнопок по 42px + 7 gaps = 357px
     }
   }
 
@@ -157,7 +157,7 @@
     cursor: pointer;
     transition: all 0.15s ease;
     padding: 0;
-    min-width: 44px; // Минимум для удобного нажатия
+    min-width: 44px;
     min-height: 44px;
 
     &:hover {
@@ -302,8 +302,8 @@
       max-width: 100%;
       
       &.grid-8x8 {
-        gap: 3px;
-        width: calc(8 * 40px + 7 * 3px); // 8 кнопок по 40px + 7 gaps
+        gap: 2px;
+        width: calc(8 * 42px + 7 * 2px); // 8 кнопок по 42px + 7 gaps = 350px
       }
     }
 
@@ -311,29 +311,29 @@
       font-size: clamp(18px, 5vw, 28px);
       border-radius: 8px;
       border-width: 1px;
-      min-width: 40px;
-      min-height: 40px;
+      min-width: 42px;
+      min-height: 42px;
     }
   }
 }
 
-// Extra small screens - всё равно кнопки должны быть достаточно большими
-@media (max-width: 360px) {
+// Extra small screens (< 375px) - уменьшаем до минимума, но не меньше 38px для тапа
+@media (max-width: 374px) {
   .emoji-hunt-game {
     .emoji-grid {
-      gap: 3px;
+      gap: 2px;
       
       &.grid-8x8 {
         gap: 2px;
-        width: calc(8 * 38px + 7 * 2px); // 8 кнопок по 38px + 7 gaps
+        width: calc(8 * 40px + 7 * 2px); // 8 кнопок по 40px + 7 gaps = 334px
       }
     }
 
     .emoji-cell {
       font-size: clamp(16px, 4.5vw, 24px);
       border-radius: 6px;
-      min-width: 38px;
-      min-height: 38px;
+      min-width: 40px;
+      min-height: 40px;
     }
   }
 }
