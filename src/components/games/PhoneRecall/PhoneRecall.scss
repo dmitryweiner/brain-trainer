@@ -129,14 +129,14 @@
   }
 
   .digit-slot {
-    width: 36px;
-    height: 48px;
+    width: 48px;
+    height: 64px;
     border: 2px solid #ddd;
-    border-radius: 8px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
+    font-size: 32px;
     font-weight: bold;
     font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
     background: white;
@@ -157,21 +157,22 @@
   .numpad {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    max-width: 280px;
+    gap: 12px;
+    max-width: 320px;
     margin: 0 auto;
   }
 
   .numpad-button {
     width: 100%;
-    height: 56px;
-    font-size: 24px;
+    height: 72px;
+    font-size: 28px;
     font-weight: bold;
     border: none;
-    border-radius: 12px;
+    border-radius: 16px;
     background: #f0f0f0;
     cursor: pointer;
     transition: all 0.15s ease;
+    min-width: 80px;
 
     &:hover {
       background: #e0e0e0;
@@ -323,18 +324,42 @@
 
   .phone-recall-input {
     .digit-slot {
-      width: 28px;
-      height: 40px;
-      font-size: 18px;
+      width: 42px;
+      height: 56px;
+      font-size: 28px;
     }
 
     .numpad {
-      max-width: 240px;
+      max-width: 300px;
+      gap: 10px;
     }
 
     .numpad-button {
+      height: 64px;
+      font-size: 26px;
+      min-width: 70px;
+    }
+  }
+}
+
+// Extra small screens
+@media (max-width: 374px) {
+  .phone-recall-input {
+    .digit-slot {
+      width: 36px;
       height: 48px;
-      font-size: 20px;
+      font-size: 24px;
+    }
+
+    .numpad {
+      max-width: 280px;
+      gap: 8px;
+    }
+
+    .numpad-button {
+      height: 58px;
+      font-size: 24px;
+      min-width: 60px;
     }
   }
 }

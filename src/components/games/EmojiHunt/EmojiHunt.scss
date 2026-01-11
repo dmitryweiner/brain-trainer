@@ -133,9 +133,15 @@
 
   .emoji-grid {
     display: grid;
-    gap: 6px;
+    gap: 8px;
     width: 100%;
-    max-width: 400px;
+    max-width: 420px;
+    
+    // Для 6x6 сетки
+    &.grid-6x6 {
+      gap: 6px;
+      max-width: 400px;
+    }
     
     // Для 8x8 сетки - кнопки должны быть достаточно большими для нажатия
     &.grid-8x8 {
@@ -150,10 +156,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: clamp(22px, 5vw, 36px);
+    font-size: 42px; // Крупные эмодзи для 5x5
     background: #f5f5f5;
     border: 2px solid #e0e0e0;
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
     transition: all 0.15s ease;
     padding: 0;
@@ -169,6 +175,15 @@
     &:active {
       transform: scale(0.95);
     }
+  }
+  
+  // Размеры эмодзи для разных сеток
+  .grid-6x6 .emoji-cell {
+    font-size: 36px;
+  }
+  
+  .grid-8x8 .emoji-cell {
+    font-size: 28px;
   }
 }
 
@@ -298,8 +313,12 @@
     }
 
     .emoji-grid {
-      gap: 4px;
+      gap: 6px;
       max-width: 100%;
+      
+      &.grid-6x6 {
+        gap: 4px;
+      }
       
       &.grid-8x8 {
         gap: 2px;
@@ -308,11 +327,19 @@
     }
 
     .emoji-cell {
-      font-size: clamp(18px, 5vw, 28px);
+      font-size: 36px; // Для 5x5
       border-radius: 8px;
       border-width: 1px;
       min-width: 42px;
       min-height: 42px;
+    }
+    
+    .grid-6x6 .emoji-cell {
+      font-size: 30px;
+    }
+    
+    .grid-8x8 .emoji-cell {
+      font-size: 24px;
     }
   }
 }
