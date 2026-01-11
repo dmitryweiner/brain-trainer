@@ -110,11 +110,25 @@
         "watchIndicator": "עקוב אחר מחוון החוק!",
         "scoring": "תשובה נכונה: +1 נקודה"
       },
-      "shapeRule": "צורה",
-      "colorRule": "צבע",
-      "left": "שמאל",
-      "right": "ימין"
-    },
+    "shapeRule": "צורה",
+    "colorRule": "צבע",
+    "left": "שמאל",
+    "right": "ימין",
+    "errors": "שגיאות",
+    "excellentFlexibility": "גמישות קוגניטיבית מעולה!",
+    "goodResultKeepPracticing": "תוצאה טובה, המשך להתאמן!",
+    "tryAgainBeAttentive": "נסה שוב, היה יותר קשוב!",
+    "totalErrors": "סה״כ שגיאות",
+    "circleA": "עיגול → A",
+    "squareB": "ריבוע → B",
+    "figureShown": "מוצגת צורה עם צבע",
+    "pressAorB": "לחץ על כפתור A או B לפי החוק",
+    "rounds1to15": "סיבובים 1-15: לפי צורה",
+    "rounds16to30": "סיבובים 16-30: החוק משתנה!",
+    "guessNewRule": "נחש בעצמך מה החוק החדש",
+    "correctAnswer1point": "תשובה נכונה: +1 נקודה",
+    "errorMinus05": "שגיאה: -0.5 נקודה"
+  },
     "n-back": {
       "title": "N-אחורה",
       "description": "זיכרון עבודה"
@@ -145,6 +159,7 @@
     "points": "נקודות",
     "accuracy": "דיוק",
     "averageTime": "זמן ממוצע",
+    "averageReactionTime": "זמן תגובה ממוצע",
     "gameOver": "המשחק נגמר!",
     "congratulations": "מזל טוב!",
     "tryAgain": "נסה שוב לשפר את התוצאה!",
@@ -187,8 +202,8 @@
       "memorize": "זכור את המספר המוצג",
       "enter": "הקלד אותו מהזיכרון",
       "initialLength": "אורך התחלתי: 4 ספרות",
-      "onSuccess": "בהצלחה: +1 ספרה (מקס' 12)",
-      "onError": "בטעות: המשחק נגמר",
+      "onSuccess": "בהצלחה: +1 ספרה (מקס' 6)",
+      "onError": "בטעות: ממשיכים באותו אורך",
       "scoring": "נקודות = אורך המספר"
     },
     "memorize": "זכור את המספר",
@@ -203,7 +218,15 @@
       "tap": "הקש עליו מהר ככל האפשר",
       "difficulty": "הקושי עולה בכל סיבוב!"
     },
-    "scoring": "נקודות: גודל הרשת + בונוס מהירות"
+    "scoring": "נקודות: גודל הרשת + בונוס מהירות",
+    "rounds": {
+      "easy": "סיבובים 1-3",
+      "medium": "סיבובים 4-6",
+      "hard": "סיבובים 7-10"
+    },
+    "differentEmojis": "אימוג'ים שונים",
+    "similarSmileys": "סמיילים דומים",
+    "verySimilar": "דומים מאוד"
   },
   "oddOneOut": {
     "title": "מצא את השונה",
@@ -238,7 +261,9 @@
     "falseAlarms": "אזעקות שווא",
     "correctRejections": "דחיות נכונות",
     "blockComplete": "הבלוק הושלם!",
-    "prepareForBlock": "התכונן לבלוק"
+    "prepareForBlock": "התכונן לבלוק",
+    "excellentMemory": "זיכרון עבודה מעולה!",
+    "missedMatches": "התאמות שהוחטאו"
   },
   "logicPair": {
     "title": "זוגות לוגיים",
@@ -257,7 +282,11 @@
     "pressConfirm": "לחץ על \"אשר\"",
     "yourChoice": "הבחירה שלך",
     "nextRound": "סיבוב הבא",
-    "results": "תוצאות"
+    "results": "תוצאות",
+    "excellentLogic": "חשיבה לוגית מעולה!",
+    "goodResult": "תוצאה טובה!",
+    "incorrectAnswers": "תשובות שגויות",
+    "outOf": "מתוך"
   },
   "sequenceRecall": {
     "title": "זכירת רצף",
@@ -266,8 +295,8 @@
       "memorize": "זכור את רצף האימוג'ים",
       "reproduce": "שחזר אותו בסדר הנכון",
       "initialLength": "אורך התחלתי: 3 אלמנטים",
-      "onSuccess": "בהצלחה: +1 אלמנט (מקס' 7)",
-      "onError": "בטעות: המשחק נגמר",
+      "onSuccess": "בהצלחה: +1 אלמנט (מקס' 6)",
+      "onError": "בטעות: ממשיכים באותו אורך",
       "scoring": "נקודות = אורך הרצף"
     },
     "memorizeSequence": "זכור את הרצף",
@@ -297,6 +326,7 @@
     },
     "notPlayedYet": "עוד לא שיחקת במשחק הזה",
     "confirmClear": "האם אתה בטוח שברצונך למחוק את כל היסטוריית המשחקים?",
+    "resetAll": "אפס את כל התוצאות",
     "tabs": {
       "overview": "סקירה",
       "daily": "יומי",

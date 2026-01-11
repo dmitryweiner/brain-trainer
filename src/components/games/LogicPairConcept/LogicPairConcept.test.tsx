@@ -18,24 +18,25 @@ describe('LogicPairConcept Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<LogicPairConcept onBack={onBack} />);
 
-    const titles = screen.getAllByText('💡 Logic Pair Concept');
+    const titles = screen.getAllByText(/Logic Pair|Логічні пари|Логические пары/i);
     expect(titles.length).toBeGreaterThan(0);
-    expect(screen.getByText(/Тренировка абстрактного мышления/i)).toBeInTheDocument();
-    expect(screen.getByText(/Показываются 4 предмета/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Начать игру/i })).toBeInTheDocument();
+    expect(screen.getByText(/Тренировка абстрактного|Abstract thinking/i)).toBeInTheDocument();
+    expect(screen.getByText(/Показываються 4 предмети|Показываются 4 предмета|4 items are shown/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Начать игру|Start/i })).toBeInTheDocument();
   });
 
   it('should start game and show playing screen', async () => {
     const user = userEvent.setup();
     const onBack = vi.fn();
-    renderWithProvider(<LogicPairConcept onBack={onBack} />);
+    const { container } = renderWithProvider(<LogicPairConcept onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
-    // Должна появиться инструкция
+    // Должна появиться инструкция или сетка элементов
     await waitFor(() => {
-      expect(screen.getByText(/Выберите 2 предмета, образующие смысловую пару/i)).toBeInTheDocument();
+      const items = container.querySelectorAll('.item-button');
+      expect(items.length).toBe(4);
     });
   });
 
@@ -44,7 +45,7 @@ describe('LogicPairConcept Component', () => {
     const onBack = vi.fn();
     const { container } = renderWithProvider(<LogicPairConcept onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {
@@ -58,7 +59,7 @@ describe('LogicPairConcept Component', () => {
     const onBack = vi.fn();
     const { container } = renderWithProvider(<LogicPairConcept onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {
@@ -79,7 +80,7 @@ describe('LogicPairConcept Component', () => {
     const onBack = vi.fn();
     const { container } = renderWithProvider(<LogicPairConcept onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {
@@ -87,7 +88,7 @@ describe('LogicPairConcept Component', () => {
       expect(items.length).toBe(4);
     });
 
-    const submitButton = screen.getByRole('button', { name: /Подтвердить выбор/i });
+    const submitButton = screen.getByRole('button', { name: /Подтвердити вибір|Подтвердить выбор|Confirm/i });
     expect(submitButton).toBeDisabled();
 
     const items = container.querySelectorAll('.item-button');
@@ -106,7 +107,7 @@ describe('LogicPairConcept Component', () => {
     const onBack = vi.fn();
     const { container } = renderWithProvider(<LogicPairConcept onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {
@@ -120,7 +121,7 @@ describe('LogicPairConcept Component', () => {
     await user.click(items[0] as Element);
     await user.click(items[1] as Element);
 
-    const submitButton = screen.getByRole('button', { name: /Подтвердить выбор/i });
+    const submitButton = screen.getByRole('button', { name: /Подтвердити вибір|Подтвердить выбор|Confirm/i });
     await user.click(submitButton);
 
     // Должна появиться обратная связь
@@ -135,15 +136,15 @@ describe('LogicPairConcept Component', () => {
     const onBack = vi.fn();
     const { container } = renderWithProvider(<LogicPairConcept onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {
       const stats = container.querySelector('.logic-pair-stats');
       expect(stats).toBeInTheDocument();
-      expect(stats?.textContent).toContain('Раунд:');
-      expect(stats?.textContent).toContain('Правильных:');
-      expect(stats?.textContent).toContain('Очки:');
+      expect(stats?.textContent).toMatch(/Раунд|Round/);
+      expect(stats?.textContent).toMatch(/Правильных|Correct/);
+      expect(stats?.textContent).toMatch(/Очки|Score/);
     });
   });
 
@@ -152,11 +153,11 @@ describe('LogicPairConcept Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<LogicPairConcept onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {
-      expect(screen.getByText(/Раунд 1 \/ 10/i)).toBeInTheDocument();
+      expect(screen.getByText(/Раунд 1 \/ 10|Round 1 \/ 10/i)).toBeInTheDocument();
     });
   });
 
@@ -165,7 +166,7 @@ describe('LogicPairConcept Component', () => {
     const onBack = vi.fn();
     const { container } = renderWithProvider(<LogicPairConcept onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {

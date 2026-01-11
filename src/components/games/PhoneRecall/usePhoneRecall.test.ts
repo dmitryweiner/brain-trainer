@@ -139,7 +139,7 @@ describe('usePhoneRecall', () => {
     vi.useFakeTimers();
   });
 
-  it('should not allow more digits than currentLength', async () => {
+  it('should not allow more digits than currentLength (auto-check triggers at 4)', async () => {
     vi.useRealTimers();
     const { result } = renderHook(() => usePhoneRecall());
 
@@ -155,19 +155,21 @@ describe('usePhoneRecall', () => {
       { timeout: 6000 }
     );
 
-    // Try to enter more than 4 digits
-    for (let i = 0; i < 6; i++) {
+    // Enter exactly 3 digits (less than currentLength)
+    for (let i = 0; i < 3; i++) {
       act(() => {
         result.current.handleDigitClick('1');
       });
     }
 
-    expect(result.current.userInput).toHaveLength(4);
+    // Should still be input with 3 digits
+    expect(result.current.userInput).toHaveLength(3);
+    expect(result.current.status).toBe('input');
 
     vi.useFakeTimers();
   });
 
-  it('should handle correct answer', async () => {
+  it('should handle correct answer with auto-check', async () => {
     vi.useRealTimers();
     const { result } = renderHook(() => usePhoneRecall());
 
@@ -185,24 +187,23 @@ describe('usePhoneRecall', () => {
 
     const correctNumber = result.current.number;
 
-    // Enter correct number
+    // Enter correct number (auto-check triggers when all digits entered)
     for (const digit of correctNumber) {
       act(() => {
         result.current.handleDigitClick(digit);
       });
     }
 
-    act(() => {
-      result.current.handleSubmit();
+    // Auto-check triggers, should go to feedback
+    await waitFor(() => {
+      expect(result.current.status).toBe('feedback');
     });
-
-    expect(result.current.status).toBe('feedback');
     expect(result.current.lastAnswerCorrect).toBe(true);
 
     vi.useFakeTimers();
   });
 
-  it('should handle incorrect answer', async () => {
+  it('should continue game with same length on incorrect answer', async () => {
     vi.useRealTimers();
     const { result } = renderHook(() => usePhoneRecall());
 
@@ -218,27 +219,33 @@ describe('usePhoneRecall', () => {
       { timeout: 8000 }
     );
 
+    const initialLength = result.current.currentLength;
+
     // Enter wrong number - use digits that are definitely different from the generated number
     // The number doesn't start with 0, so entering all 0s is guaranteed wrong
+    // Auto-check triggers when 4 digits are entered
     for (let i = 0; i < 4; i++) {
       act(() => {
         result.current.handleDigitClick('0');
       });
     }
 
-    act(() => {
-      result.current.handleSubmit();
+    await waitFor(() => {
+      expect(result.current.status).toBe('feedback');
     });
-
+    
     expect(result.current.lastAnswerCorrect).toBe(false);
 
-    // Wait for results (feedback: 1500ms)
+    // Wait for memorize phase (game continues with same length)
     await waitFor(
       () => {
-        expect(result.current.status).toBe('results');
+        expect(result.current.status).toBe('memorize');
       },
       { timeout: 4000 }
     );
+    
+    // Length should remain the same
+    expect(result.current.currentLength).toBe(initialLength);
 
     vi.useFakeTimers();
   }, 15000);
@@ -267,11 +274,10 @@ describe('usePhoneRecall', () => {
       });
     }
 
-    act(() => {
-      result.current.handleSubmit();
+    // Auto-check triggers when input length matches
+    await waitFor(() => {
+      expect(result.current.totalScore).toBe(4); // Score = currentLength
     });
-
-    expect(result.current.totalScore).toBe(4); // Score = currentLength
 
     vi.useFakeTimers();
   });
@@ -300,12 +306,7 @@ describe('usePhoneRecall', () => {
       });
     }
 
-    act(() => {
-      result.current.handleSubmit();
-    });
-
-    // Wait for feedback then next level memorize phase
-    // feedback: 1500ms, then memorize starts with increased length
+    // Auto-check triggers when input length matches, then feedback, then next level
     await waitFor(
       () => {
         expect(result.current.currentLength).toBe(5);
@@ -342,11 +343,10 @@ describe('usePhoneRecall', () => {
       });
     }
 
-    act(() => {
-      result.current.handleSubmit();
+    // Auto-check triggers
+    await waitFor(() => {
+      expect(result.current.correctNumbers).toBe(1);
     });
-
-    expect(result.current.correctNumbers).toBe(1);
 
     vi.useFakeTimers();
   });
@@ -375,11 +375,7 @@ describe('usePhoneRecall', () => {
       });
     }
 
-    act(() => {
-      result.current.handleSubmit();
-    });
-
-    // Wait for feedback
+    // Auto-check triggers, wait for feedback
     await waitFor(
       () => {
         expect(result.current.status).toBe('feedback');

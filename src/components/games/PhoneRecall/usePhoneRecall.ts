@@ -24,7 +24,7 @@ interface UsePhoneRecallReturn {
 }
 
 const INITIAL_LENGTH = 4;
-const MAX_LENGTH = 12;
+const MAX_LENGTH = 6;
 const MEMORIZE_TIME_BASE = 2000; // базовое время
 const MEMORIZE_TIME_PER_DIGIT = 500; // доп. время за каждую цифру
 
@@ -43,6 +43,7 @@ export function usePhoneRecall(): UsePhoneRecallReturn {
   const memorizeTimerRef = useRef<number | null>(null);
   const countdownRef = useRef<number | null>(null);
   const feedbackTimeoutRef = useRef<number | null>(null);
+  const autoCheckRef = useRef<boolean>(false);
 
   // Генерация случайного числа заданной длины
   const generateNumber = useCallback((length: number): string => {
@@ -75,6 +76,7 @@ export function usePhoneRecall(): UsePhoneRecallReturn {
     setCorrectNumbers(0);
     setLastAnswerCorrect(true);
     setMemorizeTimeLeft(Math.ceil(memorizeTime / 1000));
+    autoCheckRef.current = false;
 
     // Обратный отсчёт
     countdownRef.current = window.setInterval(() => {
@@ -94,49 +96,54 @@ export function usePhoneRecall(): UsePhoneRecallReturn {
     }, memorizeTime);
   }, [generateNumber, getMemorizeTime]);
 
-  // Ввод цифры
-  const handleDigitClick = useCallback((digit: string) => {
-    if (status !== 'input') return;
-    
-    setState((prev) => {
-      if (prev.userInput.length >= prev.currentLength) return prev;
-      return {
-        ...prev,
-        userInput: prev.userInput + digit,
-      };
-    });
-  }, [status]);
-
-  // Удаление последней цифры
-  const handleBackspace = useCallback(() => {
-    if (status !== 'input') return;
-    
-    setState((prev) => ({
-      ...prev,
-      userInput: prev.userInput.slice(0, -1),
-    }));
-  }, [status]);
-
-  // Отправка ответа
-  const handleSubmit = useCallback(() => {
-    if (status !== 'input') return;
-    if (state.userInput.length !== state.currentLength) return;
-
-    const isCorrect = state.userInput === state.number;
+  // Логика проверки ответа (вынесена для использования в handleDigitClick и handleSubmit)
+  const checkAnswer = useCallback((userInput: string, number: string, currentLength: number) => {
+    const isCorrect = userInput === number;
 
     if (!isCorrect) {
-      // Ошибка - игра окончена
+      // Ошибка - продолжаем с той же длиной
       setLastAnswerCorrect(false);
       setStatus('feedback');
 
       feedbackTimeoutRef.current = window.setTimeout(() => {
-        setStatus('results');
+        // Проверяем, достигнут ли максимум
+        if (currentLength >= MAX_LENGTH) {
+          setStatus('results');
+        } else {
+          // Продолжаем с той же длиной
+          const nextNumber = generateNumber(currentLength);
+          const memorizeTime = getMemorizeTime(currentLength);
+
+          setState({
+            number: nextNumber,
+            userInput: '',
+            currentLength: currentLength,
+          });
+          setStatus('memorize');
+          setMemorizeTimeLeft(Math.ceil(memorizeTime / 1000));
+
+          // Обратный отсчёт
+          countdownRef.current = window.setInterval(() => {
+            setMemorizeTimeLeft((prev) => {
+              if (prev <= 1) {
+                if (countdownRef.current) clearInterval(countdownRef.current);
+                return 0;
+              }
+              return prev - 1;
+            });
+          }, 1000);
+
+          memorizeTimerRef.current = window.setTimeout(() => {
+            if (countdownRef.current) clearInterval(countdownRef.current);
+            setStatus('input');
+          }, memorizeTime);
+        }
       }, 1500);
       return;
     }
 
     // Правильный ответ
-    const scoreForNumber = state.currentLength;
+    const scoreForNumber = currentLength;
     setTotalScore((prev) => prev + scoreForNumber);
     setCorrectNumbers((prev) => prev + 1);
     setLastAnswerCorrect(true);
@@ -144,11 +151,11 @@ export function usePhoneRecall(): UsePhoneRecallReturn {
 
     feedbackTimeoutRef.current = window.setTimeout(() => {
       // Проверяем, достигнут ли максимум
-      if (state.currentLength >= MAX_LENGTH) {
+      if (currentLength >= MAX_LENGTH) {
         setStatus('results');
       } else {
         // Переходим к следующему числу
-        const nextLength = state.currentLength + 1;
+        const nextLength = currentLength + 1;
         const nextNumber = generateNumber(nextLength);
         const memorizeTime = getMemorizeTime(nextLength);
 
@@ -177,7 +184,49 @@ export function usePhoneRecall(): UsePhoneRecallReturn {
         }, memorizeTime);
       }
     }, 1500);
-  }, [status, state, generateNumber, getMemorizeTime]);
+  }, [generateNumber, getMemorizeTime]);
+
+  // Ввод цифры с автопроверкой
+  const handleDigitClick = useCallback((digit: string) => {
+    if (status !== 'input') return;
+    
+    setState((prev) => {
+      if (prev.userInput.length >= prev.currentLength) return prev;
+      
+      const newInput = prev.userInput + digit;
+      
+      // Если ввели все цифры, автоматически проверяем
+      if (newInput.length === prev.currentLength) {
+        // Используем setTimeout чтобы состояние успело обновиться
+        setTimeout(() => {
+          checkAnswer(newInput, prev.number, prev.currentLength);
+        }, 0);
+      }
+      
+      return {
+        ...prev,
+        userInput: newInput,
+      };
+    });
+  }, [status, checkAnswer]);
+
+  // Удаление последней цифры
+  const handleBackspace = useCallback(() => {
+    if (status !== 'input') return;
+    
+    setState((prev) => ({
+      ...prev,
+      userInput: prev.userInput.slice(0, -1),
+    }));
+  }, [status]);
+
+  // Отправка ответа (оставлена для совместимости, но автопроверка происходит в handleDigitClick)
+  const handleSubmit = useCallback(() => {
+    if (status !== 'input') return;
+    if (state.userInput.length !== state.currentLength) return;
+
+    checkAnswer(state.userInput, state.number, state.currentLength);
+  }, [status, state, checkAnswer]);
 
   // Очистка таймеров при размонтировании
   useEffect(() => {
@@ -203,4 +252,3 @@ export function usePhoneRecall(): UsePhoneRecallReturn {
     handleSubmit,
   };
 }
-

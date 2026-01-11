@@ -18,11 +18,11 @@ describe('NBack Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<NBack onBack={onBack} />);
 
-    const titles = screen.getAllByText('🔄 N-Back');
+    const titles = screen.getAllByText(/N-Back|N-назад/i);
     expect(titles.length).toBeGreaterThan(0);
-    expect(screen.getByText(/Тренировка рабочей памяти/i)).toBeInTheDocument();
-    expect(screen.getByText(/Эмодзи появляются по одному/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Начать игру/i })).toBeInTheDocument();
+    expect(screen.getByText(/Тренировка рабочей памяти|Working memory training/i)).toBeInTheDocument();
+    expect(screen.getByText(/Эмодзи появляются|Emojis appear/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Начать игру|Start/i })).toBeInTheDocument();
   });
 
   it('should start game and show playing screen', async () => {
@@ -30,12 +30,12 @@ describe('NBack Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<NBack onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     // Должна появиться кнопка "Совпадает"
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /Совпадает/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Совпадает|Match/i })).toBeInTheDocument();
     });
   });
 
@@ -44,11 +44,11 @@ describe('NBack Component', () => {
     const onBack = vi.fn();
     const { container } = renderWithProvider(<NBack onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {
-      expect(screen.getByText(/История \(2 шага назад\):/i)).toBeInTheDocument();
+      expect(screen.getByText(/История|History/i)).toBeInTheDocument();
     });
   });
 
@@ -57,7 +57,7 @@ describe('NBack Component', () => {
     const onBack = vi.fn();
     const { container } = renderWithProvider(<NBack onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     // Ждем появления эмодзи
@@ -75,16 +75,16 @@ describe('NBack Component', () => {
     const onBack = vi.fn();
     const { container } = renderWithProvider(<NBack onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {
       const stats = container.querySelector('.n-back-stats');
       expect(stats).toBeInTheDocument();
-      expect(stats?.textContent).toContain('Блок:');
-      expect(stats?.textContent).toContain('Позиция:');
-      expect(stats?.textContent).toContain('Попадания:');
-      expect(stats?.textContent).toContain('Пропуски:');
+      expect(stats?.textContent).toMatch(/Блок|Block/);
+      expect(stats?.textContent).toMatch(/Позиция|Position/);
+      expect(stats?.textContent).toMatch(/Попадания|Hits/);
+      expect(stats?.textContent).toMatch(/Пропуски|Misses/);
     });
   });
 
@@ -93,11 +93,11 @@ describe('NBack Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<NBack onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {
-      expect(screen.getByText(/Блок 1 \/ 3/i)).toBeInTheDocument();
+      expect(screen.getByText(/Блок 1 \/ 3|Block 1 \/ 3/i)).toBeInTheDocument();
     });
   });
 
@@ -106,10 +106,10 @@ describe('NBack Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<NBack onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
-    const matchButton = await screen.findByRole('button', { name: /Совпадает/i });
+    const matchButton = await screen.findByRole('button', { name: /Совпадает|Match/i });
 
     // Кнопка должна стать активной после показа N (2) эмодзи
     // 500ms initial + 2*2500ms = 5500ms
@@ -126,12 +126,12 @@ describe('NBack Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<NBack onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {
-      const hint = screen.queryByText(/Запоминайте последовательность/i) ||
-                   screen.queryByText(/Нажмите, если совпадает/i);
+      const hint = screen.queryByText(/Запоминайте|Memorize/i) ||
+                   screen.queryByText(/Нажмите|Press/i);
       expect(hint).toBeInTheDocument();
     });
   });

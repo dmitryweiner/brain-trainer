@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDualRuleReaction } from './useDualRuleReaction';
 import { useScoreContext } from '../../../context/ScoreContext';
 import { useGameHistoryContext } from '../../../context/GameHistoryContext';
@@ -15,6 +16,7 @@ interface DualRuleReactionProps {
 const TOTAL_ROUNDS = 30;
 
 export default function DualRuleReaction({ onBack }: DualRuleReactionProps) {
+  const { t } = useTranslation();
   const {
     status,
     currentRound,
@@ -81,21 +83,21 @@ export default function DualRuleReaction({ onBack }: DualRuleReactionProps) {
 
   return (
     <GameLayout
-      title="↔️ Dual-Rule Reaction"
+      title={`↔️ ${t('games.dual-rule-reaction.title')}`}
       onBack={onBack}
       footer={
         status === 'playing' || status === 'feedback' ? (
           <div className="dual-rule-stats">
             <div className="stat-item">
-              <span className="stat-label">Раунд:</span>
+              <span className="stat-label">{t('common.round')}:</span>
               <span className="stat-value">{currentRound} / {TOTAL_ROUNDS}</span>
             </div>
             <div className="stat-item">
-              <span className="stat-label">Ошибки:</span>
+              <span className="stat-label">{t('games.dual-rule-reaction.errors')}:</span>
               <span className="stat-value">{errors}</span>
             </div>
             <div className="stat-item">
-              <span className="stat-label">Очки:</span>
+              <span className="stat-label">{t('common.score')}:</span>
               <span className="stat-value">{score.toFixed(1)}</span>
             </div>
           </div>
@@ -107,22 +109,22 @@ export default function DualRuleReaction({ onBack }: DualRuleReactionProps) {
         {status === 'intro' && (
           <div className="dual-rule-intro">
             <div className="game-icon">↔️</div>
-            <h2>Dual-Rule Reaction</h2>
-            <p className="game-description">Тренировка когнитивной гибкости</p>
+            <h2>{t('games.dual-rule-reaction.title')}</h2>
+            <p className="game-description">{t('games.dual-rule-reaction.description')}</p>
             <div className="game-rules">
-              <h3>Как играть:</h3>
+              <h3>{t('common.howToPlay')}:</h3>
               <ul>
-                <li>Показывается фигура с цветом</li>
-                <li>Нажимайте кнопку A или B по правилу</li>
-                <li>Раунды 1-15: по форме (🔵 → A, 🟥 → B)</li>
-                <li>Раунды 16-30: правило меняется!</li>
-                <li>Догадайтесь сами, какое новое правило</li>
-                <li>Правильный ответ: +1 очко</li>
-                <li>Ошибка: -0.5 очка</li>
+                <li>{t('games.dual-rule-reaction.figureShown')}</li>
+                <li>{t('games.dual-rule-reaction.pressAorB')}</li>
+                <li>{t('games.dual-rule-reaction.rounds1to15')} (🔵 → A, 🟥 → B)</li>
+                <li>{t('games.dual-rule-reaction.rounds16to30')}</li>
+                <li>{t('games.dual-rule-reaction.guessNewRule')}</li>
+                <li>{t('games.dual-rule-reaction.correctAnswer1point')}</li>
+                <li>{t('games.dual-rule-reaction.errorMinus05')}</li>
               </ul>
             </div>
             <Button variant="primary" size="lg" onClick={startGame}>
-              Начать игру
+              {t('common.startGame')}
             </Button>
           </div>
         )}
@@ -134,13 +136,13 @@ export default function DualRuleReaction({ onBack }: DualRuleReactionProps) {
               <ProgressBar
                 current={currentRound}
                 total={TOTAL_ROUNDS}
-                label={`Раунд ${currentRound} / ${TOTAL_ROUNDS}`}
+                label={`${t('common.round')} ${currentRound} / ${TOTAL_ROUNDS}`}
               />
             </div>
 
             {showRuleHint && (
               <div className="rule-hint">
-                <p>🔵 Круг → A, 🟥 Квадрат → B</p>
+                <p>🔵 {t('games.dual-rule-reaction.circleA')}, 🟥 {t('games.dual-rule-reaction.squareB')}</p>
               </div>
             )}
 
@@ -152,7 +154,7 @@ export default function DualRuleReaction({ onBack }: DualRuleReactionProps) {
 
             {status === 'feedback' && (
               <div className={`feedback-indicator ${lastAnswerCorrect ? 'correct' : 'incorrect'}`}>
-                {lastAnswerCorrect ? '✓ Правильно' : '✗ Неправильно'}
+                {lastAnswerCorrect ? `✓ ${t('common.correct')}` : `✗ ${t('common.incorrect')}`}
               </div>
             )}
 
@@ -183,36 +185,36 @@ export default function DualRuleReaction({ onBack }: DualRuleReactionProps) {
         {status === 'results' && (
           <ResultsModal
             show={true}
-            title="Игра завершена!"
+            title={t('common.gameOver')}
             score={Math.round(score)}
             message={
               accuracy >= 80
-                ? 'Отличная когнитивная гибкость!'
+                ? t('games.dual-rule-reaction.excellentFlexibility')
                 : accuracy >= 60
-                ? 'Хороший результат, продолжайте тренироваться!'
-                : 'Попробуйте ещё раз, будьте внимательнее!'
+                ? t('games.dual-rule-reaction.goodResultKeepPracticing')
+                : t('games.dual-rule-reaction.tryAgainBeAttentive')
             }
             onPlayAgain={startGame}
             onBackToMenu={onBack}
             details={
               <div className="dual-rule-results-details">
                 <div className="results-section">
-                  <h4>Точность</h4>
+                  <h4>{t('common.accuracy')}</h4>
                   <p className="big-number">{accuracy}%</p>
                   <p className="stat-detail">
-                    {TOTAL_ROUNDS - errors} из {TOTAL_ROUNDS} правильных
+                    {TOTAL_ROUNDS - errors} {t('logicPair.outOf')} {TOTAL_ROUNDS} {t('common.correct')}
                   </p>
                 </div>
                 <div className="results-section">
-                  <h4>Среднее время реакции</h4>
-                  <p className="big-number">{calculateAverageReactionTime()} мс</p>
+                  <h4>{t('common.averageReactionTime')}</h4>
+                  <p className="big-number">{calculateAverageReactionTime()} {t('common.ms')}</p>
                 </div>
                 <div className="results-section">
-                  <h4>Всего ошибок</h4>
+                  <h4>{t('games.dual-rule-reaction.totalErrors')}</h4>
                   <p className="big-number">{errors}</p>
                 </div>
                 <div className="results-section">
-                  <h4>Всего очков</h4>
+                  <h4>{t('results.totalPoints')}</h4>
                   <p className="big-number">🏆 {Math.round(score)}</p>
                 </div>
               </div>
@@ -223,4 +225,3 @@ export default function DualRuleReaction({ onBack }: DualRuleReactionProps) {
     </GameLayout>
   );
 }
-

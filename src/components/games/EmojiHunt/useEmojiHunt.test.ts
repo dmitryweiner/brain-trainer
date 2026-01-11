@@ -43,15 +43,15 @@ describe('useEmojiHunt', () => {
     expect(result.current.status).toBe('playing');
   });
 
-  it('should generate 3x3 grid for easy rounds', () => {
+  it('should generate 5x5 grid for easy rounds', () => {
     const { result } = renderHook(() => useEmojiHunt());
 
     act(() => {
       result.current.startGame();
     });
 
-    expect(result.current.gridSize).toBe(3);
-    expect(result.current.grid).toHaveLength(9); // 3x3 = 9
+    expect(result.current.gridSize).toBe(5);
+    expect(result.current.grid).toHaveLength(25); // 5x5 = 25
   });
 
   it('should set difficulty to easy for first rounds', () => {
@@ -157,7 +157,7 @@ describe('useEmojiHunt', () => {
     expect(result.current.results[0]).toHaveProperty('difficulty');
     expect(result.current.results[0]).toHaveProperty('gridSize');
     expect(result.current.results[0].difficulty).toBe('easy');
-    expect(result.current.results[0].gridSize).toBe(3);
+    expect(result.current.results[0].gridSize).toBe(5);
   });
 
   it('should return 0 for accuracy with no results', () => {
@@ -294,11 +294,11 @@ describe('useEmojiHunt', () => {
       });
     }
 
-    // Wait for round 4 (index 3) which is medium difficulty with 4x4 grid
+    // Wait for round 4 (index 3) which is medium difficulty with 6x6 grid
     await waitFor(
       () => {
-        expect(result.current.gridSize).toBe(4);
-        expect(result.current.grid).toHaveLength(16); // 4x4
+        expect(result.current.gridSize).toBe(6);
+        expect(result.current.grid).toHaveLength(36); // 6x6
       },
       { timeout: 3000 }
     );
@@ -321,8 +321,8 @@ describe('useEmojiHunt', () => {
       result.current.handleCellClick(targetIndex);
     });
 
-    // Base points = gridSize (3) + possible time bonus
-    expect(result.current.currentScore).toBeGreaterThanOrEqual(3);
+    // Base points = gridSize (5) + possible time bonus
+    expect(result.current.currentScore).toBeGreaterThanOrEqual(5);
   });
 
   it('should initialize results as empty array', () => {

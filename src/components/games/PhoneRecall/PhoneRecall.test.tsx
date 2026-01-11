@@ -18,19 +18,21 @@ describe('PhoneRecall Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<PhoneRecall onBack={onBack} />);
 
-    expect(screen.getByText('Phone Recall')).toBeInTheDocument();
-    expect(screen.getByText(/Тренировка числовой памяти/i)).toBeInTheDocument();
-    expect(screen.getByText(/Запомните показанный номер/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Начать игру/i })).toBeInTheDocument();
+    // Check for translated title (Russian or English)
+    const titles = screen.getAllByText(/Запоминание номера|Phone Recall/i);
+    expect(titles.length).toBeGreaterThan(0);
+    expect(screen.getByText(/Тренировка числовой|Number memory/i)).toBeInTheDocument();
+    expect(screen.getByText(/Запомните показанный|Memorize the shown/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Начать игру|Start/i })).toBeInTheDocument();
   });
 
   it('should display game rules', () => {
     const onBack = vi.fn();
     renderWithProvider(<PhoneRecall onBack={onBack} />);
 
-    expect(screen.getByText(/Начальная длина: 4 цифры/i)).toBeInTheDocument();
-    expect(screen.getByText(/При успехе: \+1 цифра/i)).toBeInTheDocument();
-    expect(screen.getByText(/При ошибке: игра завершается/i)).toBeInTheDocument();
+    expect(screen.getByText(/Начальная длина: 4 цифры|Initial length: 4 digits/i)).toBeInTheDocument();
+    expect(screen.getByText(/При успехе: \+1 цифра|On success: \+1 digit/i)).toBeInTheDocument();
+    expect(screen.getByText(/При ошибке: продолжаем|On error: continue/i)).toBeInTheDocument();
   });
 
   it('should start game and show number', async () => {
@@ -38,11 +40,11 @@ describe('PhoneRecall Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<PhoneRecall onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {
-      expect(screen.getByText(/Запомните номер/i)).toBeInTheDocument();
+      expect(screen.getByText(/Запомните номер|Memorize/i)).toBeInTheDocument();
     });
   });
 
@@ -51,7 +53,7 @@ describe('PhoneRecall Component', () => {
     const onBack = vi.fn();
     const { container } = renderWithProvider(<PhoneRecall onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {
@@ -65,13 +67,13 @@ describe('PhoneRecall Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<PhoneRecall onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     // Memorize time for 4 digits = 2000 + 4*500 = 4000ms
     await waitFor(
       () => {
-        expect(screen.getByText(/Введите номер/i)).toBeInTheDocument();
+        expect(screen.getByText(/Введите номер|Enter/i)).toBeInTheDocument();
       },
       { timeout: 8000 }
     );
@@ -82,13 +84,13 @@ describe('PhoneRecall Component', () => {
     const onBack = vi.fn();
     const { container } = renderWithProvider(<PhoneRecall onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     // Memorize time for 4 digits = 2000 + 4*500 = 4000ms
     await waitFor(
       () => {
-        expect(screen.getByText(/Введите номер/i)).toBeInTheDocument();
+        expect(screen.getByText(/Введите номер|Enter/i)).toBeInTheDocument();
       },
       { timeout: 8000 }
     );
@@ -107,13 +109,13 @@ describe('PhoneRecall Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<PhoneRecall onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     // Memorize time for 4 digits = 2000 + 4*500 = 4000ms
     await waitFor(
       () => {
-        expect(screen.getByText(/Введите номер/i)).toBeInTheDocument();
+        expect(screen.getByText(/Введите номер|Enter/i)).toBeInTheDocument();
       },
       { timeout: 8000 }
     );
@@ -126,13 +128,13 @@ describe('PhoneRecall Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<PhoneRecall onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     // Memorize time for 4 digits = 2000 + 4*500 = 4000ms
     await waitFor(
       () => {
-        expect(screen.getByText(/Введите номер/i)).toBeInTheDocument();
+        expect(screen.getByText(/Введите номер|Enter/i)).toBeInTheDocument();
       },
       { timeout: 8000 }
     );
@@ -145,13 +147,13 @@ describe('PhoneRecall Component', () => {
     const onBack = vi.fn();
     const { container } = renderWithProvider(<PhoneRecall onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     // Memorize time for 4 digits = 2000 + 4*500 = 4000ms
     await waitFor(
       () => {
-        expect(screen.getByText(/Введите номер/i)).toBeInTheDocument();
+        expect(screen.getByText(/Введите номер|Enter/i)).toBeInTheDocument();
       },
       { timeout: 8000 }
     );
@@ -172,11 +174,11 @@ describe('PhoneRecall Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<PhoneRecall onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {
-      expect(screen.getByText(/Уровень 1/i)).toBeInTheDocument();
+        expect(screen.getByText(/Уровень 1|Level 1/i)).toBeInTheDocument();
     });
   });
 
@@ -185,21 +187,21 @@ describe('PhoneRecall Component', () => {
     const onBack = vi.fn();
     const { container } = renderWithProvider(<PhoneRecall onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     // Memorize time for 4 digits = 2000 + 4*500 = 4000ms
     await waitFor(
       () => {
-        expect(screen.getByText(/Введите номер/i)).toBeInTheDocument();
+        expect(screen.getByText(/Введите номер|Enter/i)).toBeInTheDocument();
       },
       { timeout: 8000 }
     );
 
     const stats = container.querySelector('.phone-recall-stats');
     expect(stats).toBeInTheDocument();
-    expect(stats?.textContent).toContain('Длина:');
-    expect(stats?.textContent).toContain('Очки:');
+    expect(stats?.textContent).toMatch(/Длина|Length/);
+    expect(stats?.textContent).toMatch(/Очки|Score/);
   });
 });
 

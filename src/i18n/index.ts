@@ -5,11 +5,13 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import en from './locales/en.json';
 import ru from './locales/ru.json';
 import he from './locales/he.json';
+import uk from './locales/uk.json';
 
 export const SUPPORTED_LANGUAGES = {
   en: { name: 'English', flag: '🇬🇧' },
   ru: { name: 'Русский', flag: '🇷🇺' },
   he: { name: 'עברית', flag: '🇮🇱', dir: 'rtl' },
+  uk: { name: 'Українська', flag: '🇺🇦' },
 } as const;
 
 export type SupportedLanguage = keyof typeof SUPPORTED_LANGUAGES;
@@ -22,9 +24,10 @@ i18n
       en: { translation: en },
       ru: { translation: ru },
       he: { translation: he },
+      uk: { translation: uk },
     },
     fallbackLng: 'en',
-    supportedLngs: ['en', 'ru', 'he'],
+    supportedLngs: ['en', 'ru', 'he', 'uk'],
     
     detection: {
       order: ['localStorage', 'navigator', 'htmlTag'],

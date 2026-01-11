@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLogicPairConcept } from './useLogicPairConcept';
 import { useScoreContext } from '../../../context/ScoreContext';
 import { useGameHistoryContext } from '../../../context/GameHistoryContext';
@@ -15,6 +16,7 @@ interface LogicPairConceptProps {
 const TOTAL_ROUNDS = 10;
 
 export default function LogicPairConcept({ onBack }: LogicPairConceptProps) {
+  const { t } = useTranslation();
   const {
     status,
     currentRound,
@@ -55,21 +57,21 @@ export default function LogicPairConcept({ onBack }: LogicPairConceptProps) {
 
   return (
     <GameLayout
-      title="💡 Logic Pair Concept"
+      title={`💡 ${t('logicPair.title')}`}
       onBack={onBack}
       footer={
         status === 'playing' ? (
           <div className="logic-pair-stats">
             <div className="stat-item">
-              <span className="stat-label">Раунд:</span>
+              <span className="stat-label">{t('common.round')}:</span>
               <span className="stat-value">{currentRound} / {TOTAL_ROUNDS}</span>
             </div>
             <div className="stat-item">
-              <span className="stat-label">Правильных:</span>
+              <span className="stat-label">{t('common.correctAnswers')}:</span>
               <span className="stat-value">{correctAnswers}</span>
             </div>
             <div className="stat-item">
-              <span className="stat-label">Очки:</span>
+              <span className="stat-label">{t('common.score')}:</span>
               <span className="stat-value">{score}</span>
             </div>
           </div>
@@ -81,20 +83,20 @@ export default function LogicPairConcept({ onBack }: LogicPairConceptProps) {
         {status === 'intro' && (
           <div className="logic-pair-intro">
             <div className="game-icon">💡</div>
-            <h2>Logic Pair Concept</h2>
-            <p className="game-description">Тренировка абстрактного мышления</p>
+            <h2>{t('logicPair.title')}</h2>
+            <p className="game-description">{t('logicPair.description')}</p>
             <div className="game-rules">
-              <h3>Как играть:</h3>
+              <h3>{t('common.howToPlay')}:</h3>
               <ul>
-                <li>Показываются 4 предмета</li>
-                <li>Выберите 2 предмета, образующие смысловую пару</li>
-                <li>Например: яблоко + апельсин (оба фрукты)</li>
-                <li>10 раундов с разными категориями</li>
-                <li>Правильная пара: +2 очка</li>
+                <li>{t('logicPair.instructions.shown')}</li>
+                <li>{t('logicPair.instructions.select')}</li>
+                <li>{t('logicPair.instructions.example')}</li>
+                <li>{t('logicPair.instructions.rounds')}</li>
+                <li>{t('logicPair.instructions.scoring')}</li>
               </ul>
             </div>
             <Button variant="primary" size="lg" onClick={startGame}>
-              Начать игру
+              {t('common.startGame')}
             </Button>
           </div>
         )}
@@ -106,12 +108,12 @@ export default function LogicPairConcept({ onBack }: LogicPairConceptProps) {
               <ProgressBar
                 current={currentRound}
                 total={TOTAL_ROUNDS}
-                label={`Раунд ${currentRound} / ${TOTAL_ROUNDS}`}
+                label={`${t('common.round')} ${currentRound} / ${TOTAL_ROUNDS}`}
               />
             </div>
 
             <div className="instruction">
-              <p>Выберите 2 предмета, образующие смысловую пару</p>
+              <p>{t('logicPair.selectPair')}</p>
             </div>
 
             <div className="items-grid">
@@ -134,12 +136,12 @@ export default function LogicPairConcept({ onBack }: LogicPairConceptProps) {
                 disabled={!canSubmit}
                 className="submit-button"
               >
-                Подтвердить выбор
+                {t('logicPair.confirmSelection')}
               </Button>
               <p className="submit-hint">
-                {selectedItems.length === 0 && 'Выберите 2 предмета'}
-                {selectedItems.length === 1 && 'Выберите ещё 1 предмет'}
-                {selectedItems.length === 2 && 'Нажмите "Подтвердить"'}
+                {selectedItems.length === 0 && t('logicPair.selectTwo')}
+                {selectedItems.length === 1 && t('logicPair.selectOneMore')}
+                {selectedItems.length === 2 && t('logicPair.pressConfirm')}
               </p>
             </div>
           </div>
@@ -153,12 +155,12 @@ export default function LogicPairConcept({ onBack }: LogicPairConceptProps) {
                 {lastAnswerCorrect ? '✓' : '✗'}
               </div>
               <div className="feedback-text">
-                {lastAnswerCorrect ? 'Правильно! +2 очка' : 'Неправильно'}
+                {lastAnswerCorrect ? `${t('common.correct')} +2 ${t('common.points')}` : t('common.incorrect')}
               </div>
             </div>
 
             <div className="selected-items-display">
-              <p className="selected-label">Ваш выбор:</p>
+              <p className="selected-label">{t('logicPair.yourChoice')}:</p>
               <div className="selected-items">
                 {selectedItems.map((index) => (
                   <div key={index} className="selected-item">
@@ -174,7 +176,7 @@ export default function LogicPairConcept({ onBack }: LogicPairConceptProps) {
               onClick={handleContinue}
               className="continue-button"
             >
-              {currentRound < TOTAL_ROUNDS ? 'Следующий раунд' : 'Результаты'}
+              {currentRound < TOTAL_ROUNDS ? t('logicPair.nextRound') : t('logicPair.results')}
             </Button>
           </div>
         )}
@@ -183,36 +185,36 @@ export default function LogicPairConcept({ onBack }: LogicPairConceptProps) {
         {status === 'results' && (
           <ResultsModal
             show={true}
-            title="Игра завершена!"
+            title={t('common.gameOver')}
             score={score}
             message={
               accuracy >= 80
-                ? 'Отличное логическое мышление!'
+                ? t('logicPair.excellentLogic')
                 : accuracy >= 60
-                ? 'Хороший результат!'
-                : 'Продолжайте тренироваться!'
+                ? t('logicPair.goodResult')
+                : t('common.tryAgain')
             }
             onPlayAgain={startGame}
             onBackToMenu={onBack}
             details={
               <div className="logic-pair-results-details">
                 <div className="results-section">
-                  <h4>Точность</h4>
+                  <h4>{t('common.accuracy')}</h4>
                   <p className="big-number">{accuracy}%</p>
                   <p className="stat-detail">
-                    {correctAnswers} из {TOTAL_ROUNDS} правильных
+                    {correctAnswers} {t('logicPair.outOf')} {TOTAL_ROUNDS} {t('common.correct')}
                   </p>
                 </div>
                 <div className="results-section">
-                  <h4>Правильных ответов</h4>
+                  <h4>{t('common.correctAnswers')}</h4>
                   <p className="big-number">{correctAnswers}</p>
                 </div>
                 <div className="results-section">
-                  <h4>Неправильных ответов</h4>
+                  <h4>{t('logicPair.incorrectAnswers')}</h4>
                   <p className="big-number">{TOTAL_ROUNDS - correctAnswers}</p>
                 </div>
                 <div className="results-section results-total">
-                  <h4>Всего очков</h4>
+                  <h4>{t('results.totalPoints')}</h4>
                   <p className="big-number">🏆 {score}</p>
                 </div>
               </div>
@@ -223,4 +225,3 @@ export default function LogicPairConcept({ onBack }: LogicPairConceptProps) {
     </GameLayout>
   );
 }
-

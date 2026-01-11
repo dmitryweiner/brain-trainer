@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { GameLayout, ResultsModal, ProgressBar } from '../../common';
 import { useScoreContext } from '../../../context/ScoreContext';
 import { useGameHistoryContext } from '../../../context/GameHistoryContext';
@@ -11,6 +12,7 @@ export interface EmojiHuntProps {
 }
 
 export const EmojiHunt: React.FC<EmojiHuntProps> = ({ onBack }) => {
+  const { t } = useTranslation();
   const { addScore } = useScoreContext();
   const { addGameResult } = useGameHistoryContext();
   const scoreAddedRef = useRef(false);
@@ -52,9 +54,9 @@ export const EmojiHunt: React.FC<EmojiHuntProps> = ({ onBack }) => {
 
   const getDifficultyLabel = (difficulty: string) => {
     switch (difficulty) {
-      case 'easy': return 'Легко';
-      case 'medium': return 'Средне';
-      case 'hard': return 'Сложно';
+      case 'easy': return t('common.difficulty.easy');
+      case 'medium': return t('common.difficulty.medium');
+      case 'hard': return t('common.difficulty.hard');
       default: return '';
     }
   };
@@ -64,35 +66,35 @@ export const EmojiHunt: React.FC<EmojiHuntProps> = ({ onBack }) => {
       return (
         <div className="emoji-hunt-intro">
           <div className="intro-card">
-            <h2>🔎 Emoji Hunt</h2>
+            <h2>🔎 {t('emojiHunt.title')}</h2>
             <div className="intro-instructions">
-              <p className="lead">Тренировка визуального поиска</p>
+              <p className="lead">{t('emojiHunt.description')}</p>
               <div className="rules">
-                <h3>Правила:</h3>
+                <h3>{t('common.rules')}:</h3>
                 <ul>
-                  <li>Найдите целевой эмодзи на сетке</li>
-                  <li>Нажмите на него как можно быстрее</li>
-                  <li>С каждым раундом сложность растёт!</li>
+                  <li>{t('emojiHunt.instructions.find')}</li>
+                  <li>{t('emojiHunt.instructions.tap')}</li>
+                  <li>{t('emojiHunt.instructions.difficulty')}</li>
                 </ul>
               </div>
               <div className="difficulty-info">
-                <h4>Уровни сложности:</h4>
+                <h4>{t('results.byDifficulty')}:</h4>
                 <ul>
-                  <li>🟢 Раунды 1-3: <strong>3×3</strong>, разные эмодзи</li>
-                  <li>🟡 Раунды 4-6: <strong>4×4</strong>, похожие смайлики</li>
-                  <li>🔴 Раунды 7-10: <strong>5×5</strong>, очень похожие</li>
+                  <li>🟢 {t('emojiHunt.rounds.easy')}: <strong>5×5</strong>, {t('emojiHunt.differentEmojis')}</li>
+                  <li>🟡 {t('emojiHunt.rounds.medium')}: <strong>6×6</strong>, {t('emojiHunt.similarSmileys')}</li>
+                  <li>🔴 {t('emojiHunt.rounds.hard')}: <strong>8×8</strong>, {t('emojiHunt.verySimilar')}</li>
                 </ul>
               </div>
               <div className="scoring-info">
-                <p><strong>Очки:</strong> размер сетки + бонус за скорость</p>
+                <p><strong>{t('emojiHunt.scoring')}</strong></p>
               </div>
-              <p className="text-muted">Всего раундов: {ROUNDS.EMOJI_HUNT}</p>
+              <p className="text-muted">{t('common.round')}: {ROUNDS.EMOJI_HUNT}</p>
             </div>
             <button
               className="btn btn-primary btn-large"
               onClick={startGame}
             >
-              Начать игру
+              {t('common.startGame')}
             </button>
           </div>
         </div>
@@ -106,7 +108,7 @@ export const EmojiHunt: React.FC<EmojiHuntProps> = ({ onBack }) => {
             <ProgressBar 
               current={currentRound} 
               total={ROUNDS.EMOJI_HUNT}
-              label={`Раунд ${currentRound + 1} / ${ROUNDS.EMOJI_HUNT}`}
+              label={`${t('common.round')} ${currentRound + 1} / ${ROUNDS.EMOJI_HUNT}`}
             />
           </div>
 
@@ -117,7 +119,7 @@ export const EmojiHunt: React.FC<EmojiHuntProps> = ({ onBack }) => {
           </div>
 
           <div className="target-section">
-            <span className="target-label">Найдите:</span>
+            <span className="target-label">{t('common.find')}:</span>
             <span className="target-emoji">{targetEmoji}</span>
           </div>
 
@@ -133,7 +135,7 @@ export const EmojiHunt: React.FC<EmojiHuntProps> = ({ onBack }) => {
                 key={index}
                 className="emoji-cell"
                 onClick={() => handleCellClick(index)}
-                aria-label={`Ячейка ${index + 1}`}
+                aria-label={`Cell ${index + 1}`}
               >
                 {emoji}
               </button>
@@ -150,12 +152,12 @@ export const EmojiHunt: React.FC<EmojiHuntProps> = ({ onBack }) => {
             {lastAnswerCorrect ? (
               <>
                 <div className="feedback-icon">✓</div>
-                <div className="feedback-text">Правильно!</div>
+                <div className="feedback-text">{t('common.correct')}</div>
               </>
             ) : (
               <>
                 <div className="feedback-icon">✗</div>
-                <div className="feedback-text">Неправильно</div>
+                <div className="feedback-text">{t('common.incorrect')}</div>
               </>
             )}
           </div>
@@ -175,32 +177,32 @@ export const EmojiHunt: React.FC<EmojiHuntProps> = ({ onBack }) => {
       <div className="results-details">
         <div className="results-summary">
           <p className="summary-text">
-            Правильных ответов: {correctAnswers} из {ROUNDS.EMOJI_HUNT}
+            {t('common.correctAnswers')}: {correctAnswers} / {ROUNDS.EMOJI_HUNT}
           </p>
         </div>
 
         <div className="stat-item highlight">
-          <span className="stat-label">🎯 Точность:</span>
+          <span className="stat-label">🎯 {t('common.accuracy')}:</span>
           <span className="stat-value stat-best">{getAccuracy()}%</span>
         </div>
         
         <div className="stat-item">
-          <span className="stat-label">⏱️ Среднее время:</span>
-          <span className="stat-value">{getAverageTime()}ms</span>
+          <span className="stat-label">⏱️ {t('common.averageTime')}:</span>
+          <span className="stat-value">{getAverageTime()}{t('common.ms')}</span>
         </div>
 
         <div className="difficulty-breakdown">
-          <h4>По уровням сложности:</h4>
+          <h4>{t('results.byDifficulty')}:</h4>
           <div className="breakdown-item">
-            <span>🟢 3×3 (1-3):</span>
+            <span>🟢 5×5 (1-3):</span>
             <span>{easyCorrect} / {results.filter(r => r.difficulty === 'easy').length}</span>
           </div>
           <div className="breakdown-item">
-            <span>🟡 4×4 (4-6):</span>
+            <span>🟡 6×6 (4-6):</span>
             <span>{mediumCorrect} / {results.filter(r => r.difficulty === 'medium').length}</span>
           </div>
           <div className="breakdown-item">
-            <span>🔴 5×5 (7-10):</span>
+            <span>🔴 8×8 (7-10):</span>
             <span>{hardCorrect} / {results.filter(r => r.difficulty === 'hard').length}</span>
           </div>
         </div>
@@ -212,28 +214,28 @@ export const EmojiHunt: React.FC<EmojiHuntProps> = ({ onBack }) => {
     const accuracy = getAccuracy();
     
     if (accuracy === 100) {
-      return '🏆 Безупречно! Вы мастер визуального поиска!';
+      return `🏆 ${t('results.perfectScore')}`;
     }
     if (accuracy >= 90) {
-      return '⭐ Отлично! У вас очень зоркий глаз!';
+      return `⭐ ${t('results.excellent')}`;
     }
     if (accuracy >= 70) {
-      return '👍 Хорошо! Продолжайте тренироваться!';
+      return `👍 ${t('results.good')}`;
     }
     if (accuracy >= 50) {
-      return '💪 Неплохо! Будьте внимательнее!';
+      return `💪 ${t('results.notBad')}`;
     }
-    return '🎯 Тренируйте внимание к деталям!';
+    return `🎯 ${t('results.keepPracticing')}`;
   };
 
   return (
     <GameLayout
-      title="🔎 Emoji Hunt"
+      title={`🔎 ${t('emojiHunt.title')}`}
       footer={
         (status === 'playing' || status === 'feedback') && (
           <div className="game-stats">
-            <span>Правильно: {correctAnswers}/{currentRound}</span>
-            <span>Очки: {currentScore}</span>
+            <span>{t('common.correct')}: {correctAnswers}/{currentRound}</span>
+            <span>{t('common.score')}: {currentScore}</span>
           </div>
         )
       }
@@ -242,7 +244,7 @@ export const EmojiHunt: React.FC<EmojiHuntProps> = ({ onBack }) => {
 
       <ResultsModal
         show={status === 'results'}
-        title="🎮 Игра завершена!"
+        title={`🎮 ${t('common.gameOver')}`}
         score={currentScore}
         message={getMessage()}
         details={renderDetails()}
@@ -254,4 +256,3 @@ export const EmojiHunt: React.FC<EmojiHuntProps> = ({ onBack }) => {
 };
 
 export default EmojiHunt;
-

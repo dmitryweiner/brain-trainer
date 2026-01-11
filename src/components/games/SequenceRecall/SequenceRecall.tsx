@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSequenceRecall } from './useSequenceRecall';
 import { useScoreContext } from '../../../context/ScoreContext';
 import { useGameHistoryContext } from '../../../context/GameHistoryContext';
@@ -12,10 +13,11 @@ interface SequenceRecallProps {
   onBack: () => void;
 }
 
-const MAX_LENGTH = 7;
+const MAX_LENGTH = 6;
 const INITIAL_LENGTH = 3;
 
 export default function SequenceRecall({ onBack }: SequenceRecallProps) {
+  const { t } = useTranslation();
   const {
     status,
     sequence,
@@ -53,21 +55,21 @@ export default function SequenceRecall({ onBack }: SequenceRecallProps) {
 
   return (
     <GameLayout
-      title="🧠 Sequence Recall"
+      title={`🧠 ${t('sequenceRecall.title')}`}
       onBack={onBack}
       footer={
         status === 'input' ? (
           <div className="sequence-recall-stats">
             <div className="stat-item">
-              <span className="stat-label">Длина:</span>
+              <span className="stat-label">{t('common.length')}:</span>
               <span className="stat-value">{currentLength}</span>
             </div>
             <div className="stat-item">
-              <span className="stat-label">Введено:</span>
+              <span className="stat-label">{t('common.entered')}:</span>
               <span className="stat-value">{userSequence.length} / {sequence.length}</span>
             </div>
             <div className="stat-item">
-              <span className="stat-label">Очки:</span>
+              <span className="stat-label">{t('common.score')}:</span>
               <span className="stat-value">{totalScore}</span>
             </div>
           </div>
@@ -79,21 +81,21 @@ export default function SequenceRecall({ onBack }: SequenceRecallProps) {
         {status === 'intro' && (
           <div className="sequence-recall-intro">
             <div className="game-icon">🧠</div>
-            <h2>Sequence Recall</h2>
-            <p className="game-description">Тренировка визуальной рабочей памяти</p>
+            <h2>{t('sequenceRecall.title')}</h2>
+            <p className="game-description">{t('sequenceRecall.description')}</p>
             <div className="game-rules">
-              <h3>Как играть:</h3>
+              <h3>{t('common.howToPlay')}:</h3>
               <ul>
-                <li>Запомните последовательность эмодзи</li>
-                <li>Воспроизведите её в правильном порядке</li>
-                <li>Начальная длина: 3 элемента</li>
-                <li>При успехе: +1 элемент (макс. 7)</li>
-                <li>При ошибке: игра завершается</li>
-                <li>Очки = длина последовательности</li>
+                <li>{t('sequenceRecall.instructions.memorize')}</li>
+                <li>{t('sequenceRecall.instructions.reproduce')}</li>
+                <li>{t('sequenceRecall.instructions.initialLength')}</li>
+                <li>{t('sequenceRecall.instructions.onSuccess')}</li>
+                <li>{t('sequenceRecall.instructions.onError')}</li>
+                <li>{t('sequenceRecall.instructions.scoring')}</li>
               </ul>
             </div>
             <Button variant="primary" size="lg" onClick={startGame}>
-              Начать игру
+              {t('common.startGame')}
             </Button>
           </div>
         )}
@@ -102,11 +104,11 @@ export default function SequenceRecall({ onBack }: SequenceRecallProps) {
         {status === 'showing' && (
           <div className="sequence-recall-showing">
             <div className="sequence-info">
-              <h3>Запомните последовательность</h3>
+              <h3>{t('sequenceRecall.memorizeSequence')}</h3>
               <ProgressBar
                 current={userSequence.length + 1}
                 total={MAX_LENGTH}
-                label={`Уровень ${currentLength}`}
+                label={`${t('common.level')} ${currentLength}`}
               />
             </div>
 
@@ -119,7 +121,7 @@ export default function SequenceRecall({ onBack }: SequenceRecallProps) {
             </div>
 
             <div className="showing-hint">
-              Эмодзи {userSequence.length + 1} из {sequence.length}
+              {t('sequenceRecall.emoji')} {userSequence.length + 1} {t('sequenceRecall.of')} {sequence.length}
             </div>
           </div>
         )}
@@ -128,11 +130,11 @@ export default function SequenceRecall({ onBack }: SequenceRecallProps) {
         {status === 'input' && (
           <div className="sequence-recall-input">
             <div className="sequence-info">
-              <h3>Повторите последовательность</h3>
+              <h3>{t('sequenceRecall.repeatSequence')}</h3>
               <ProgressBar
                 current={currentLength}
                 total={MAX_LENGTH}
-                label={`Уровень ${currentLength}`}
+                label={`${t('common.level')} ${currentLength}`}
               />
             </div>
 
@@ -170,8 +172,8 @@ export default function SequenceRecall({ onBack }: SequenceRecallProps) {
               </div>
               <div className="feedback-text">
                 {lastAnswerCorrect
-                  ? `Отлично! +${currentLength} очков`
-                  : 'Ошибка!'}
+                  ? `${t('common.correct')} +${currentLength} ${t('common.points')}`
+                  : t('common.incorrect')}
               </div>
             </div>
           </div>
@@ -181,27 +183,27 @@ export default function SequenceRecall({ onBack }: SequenceRecallProps) {
         {status === 'results' && (
           <ResultsModal
             show={true}
-            title={lastAnswerCorrect ? 'Максимум достигнут!' : 'Игра завершена!'}
+            title={lastAnswerCorrect ? t('results.maxReached') : t('common.gameOver')}
             score={totalScore}
             message={
               lastAnswerCorrect
-                ? `Поздравляем! Вы достигли максимальной длины ${MAX_LENGTH}!`
-                : 'Попробуйте ещё раз улучшить результат!'
+                ? `${t('common.congratulations')} ${MAX_LENGTH}!`
+                : t('common.tryAgain')
             }
             onPlayAgain={startGame}
             onBackToMenu={onBack}
             details={
               <div className="sequence-recall-results-details">
                 <div className="results-section">
-                  <h4>Правильных последовательностей</h4>
+                  <h4>{t('results.correctSequences')}</h4>
                   <p className="big-number">{correctSequences}</p>
                 </div>
                 <div className="results-section">
-                  <h4>Максимальная длина</h4>
+                  <h4>{t('results.maxLength')}</h4>
                   <p className="big-number">{lastAnswerCorrect ? MAX_LENGTH : currentLength - 1}</p>
                 </div>
                 <div className="results-section">
-                  <h4>Всего очков</h4>
+                  <h4>{t('results.totalPoints')}</h4>
                   <p className="big-number">🏆 {totalScore}</p>
                 </div>
               </div>
@@ -212,4 +214,3 @@ export default function SequenceRecall({ onBack }: SequenceRecallProps) {
     </GameLayout>
   );
 }
-

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { usePhoneRecall } from './usePhoneRecall';
 import { useScoreContext } from '../../../context/ScoreContext';
 import { useGameHistoryContext } from '../../../context/GameHistoryContext';
@@ -12,10 +13,11 @@ interface PhoneRecallProps {
   onBack: () => void;
 }
 
-const MAX_LENGTH = 12;
+const MAX_LENGTH = 6;
 const INITIAL_LENGTH = 4;
 
 export default function PhoneRecall({ onBack }: PhoneRecallProps) {
+  const { t } = useTranslation();
   const {
     status,
     number,
@@ -74,17 +76,17 @@ export default function PhoneRecall({ onBack }: PhoneRecallProps) {
 
   return (
     <GameLayout
-      title="📞 Phone Recall"
+      title={`📞 ${t('phoneRecall.title')}`}
       onBack={onBack}
       footer={
         status === 'input' ? (
           <div className="phone-recall-stats">
             <div className="stat-item">
-              <span className="stat-label">Длина:</span>
+              <span className="stat-label">{t('common.length')}:</span>
               <span className="stat-value">{currentLength}</span>
             </div>
             <div className="stat-item">
-              <span className="stat-label">Очки:</span>
+              <span className="stat-label">{t('common.score')}:</span>
               <span className="stat-value">{totalScore}</span>
             </div>
           </div>
@@ -96,21 +98,21 @@ export default function PhoneRecall({ onBack }: PhoneRecallProps) {
         {status === 'intro' && (
           <div className="phone-recall-intro">
             <div className="game-icon">📞</div>
-            <h2>Phone Recall</h2>
-            <p className="game-description">Тренировка числовой памяти</p>
+            <h2>{t('phoneRecall.title')}</h2>
+            <p className="game-description">{t('phoneRecall.description')}</p>
             <div className="game-rules">
-              <h3>Как играть:</h3>
+              <h3>{t('common.howToPlay')}:</h3>
               <ul>
-                <li>Запомните показанный номер</li>
-                <li>Введите его по памяти</li>
-                <li>Начальная длина: 4 цифры</li>
-                <li>При успехе: +1 цифра (макс. 12)</li>
-                <li>При ошибке: игра завершается</li>
-                <li>Очки = длина числа</li>
+                <li>{t('phoneRecall.instructions.memorize')}</li>
+                <li>{t('phoneRecall.instructions.enter')}</li>
+                <li>{t('phoneRecall.instructions.initialLength')}</li>
+                <li>{t('phoneRecall.instructions.onSuccess')}</li>
+                <li>{t('phoneRecall.instructions.onError')}</li>
+                <li>{t('phoneRecall.instructions.scoring')}</li>
               </ul>
             </div>
             <Button variant="primary" size="lg" onClick={startGame}>
-              Начать игру
+              {t('common.startGame')}
             </Button>
           </div>
         )}
@@ -119,11 +121,11 @@ export default function PhoneRecall({ onBack }: PhoneRecallProps) {
         {status === 'memorize' && (
           <div className="phone-recall-memorize">
             <div className="memorize-info">
-              <h3>Запомните номер</h3>
+              <h3>{t('phoneRecall.memorize')}</h3>
               <ProgressBar
                 current={currentLength - 3}
                 total={MAX_LENGTH - 3}
-                label={`Уровень ${currentLength - 3}`}
+                label={`${t('common.level')} ${currentLength - 3}`}
               />
             </div>
 
@@ -133,7 +135,7 @@ export default function PhoneRecall({ onBack }: PhoneRecallProps) {
 
             <div className="timer-display">
               <span className="timer-value">{memorizeTimeLeft}</span>
-              <span className="timer-label">сек</span>
+              <span className="timer-label">{t('common.sec')}</span>
             </div>
           </div>
         )}
@@ -142,11 +144,11 @@ export default function PhoneRecall({ onBack }: PhoneRecallProps) {
         {status === 'input' && (
           <div className="phone-recall-input">
             <div className="input-info">
-              <h3>Введите номер</h3>
+              <h3>{t('phoneRecall.enterNumber')}</h3>
               <ProgressBar
                 current={currentLength - 3}
                 total={MAX_LENGTH - 3}
-                label={`Уровень ${currentLength - 3}`}
+                label={`${t('common.level')} ${currentLength - 3}`}
               />
             </div>
 
@@ -207,12 +209,12 @@ export default function PhoneRecall({ onBack }: PhoneRecallProps) {
               </div>
               <div className="feedback-text">
                 {lastAnswerCorrect
-                  ? `Отлично! +${currentLength} очков`
-                  : 'Ошибка!'}
+                  ? `${t('common.correct')} +${currentLength} ${t('common.points')}`
+                  : t('common.incorrect')}
               </div>
               {!lastAnswerCorrect && (
                 <div className="correct-answer">
-                  Правильный ответ: {number}
+                  {t('phoneRecall.correctAnswer')}: {number}
                 </div>
               )}
             </div>
@@ -223,27 +225,27 @@ export default function PhoneRecall({ onBack }: PhoneRecallProps) {
         {status === 'results' && (
           <ResultsModal
             show={true}
-            title={lastAnswerCorrect ? 'Максимум достигнут!' : 'Игра завершена!'}
+            title={lastAnswerCorrect ? t('results.maxReached') : t('common.gameOver')}
             score={totalScore}
             message={
               lastAnswerCorrect
-                ? `Поздравляем! Вы достигли максимальной длины ${MAX_LENGTH}!`
-                : 'Попробуйте ещё раз улучшить результат!'
+                ? `${t('common.congratulations')} ${MAX_LENGTH}!`
+                : t('common.tryAgain')
             }
             onPlayAgain={startGame}
             onBackToMenu={onBack}
             details={
               <div className="phone-recall-results-details">
                 <div className="results-section">
-                  <h4>Правильных номеров</h4>
+                  <h4>{t('results.correctNumbers')}</h4>
                   <p className="big-number">{correctNumbers}</p>
                 </div>
                 <div className="results-section">
-                  <h4>Максимальная длина</h4>
+                  <h4>{t('results.maxLength')}</h4>
                   <p className="big-number">{lastAnswerCorrect ? MAX_LENGTH : currentLength - 1}</p>
                 </div>
                 <div className="results-section">
-                  <h4>Всего очков</h4>
+                  <h4>{t('results.totalPoints')}</h4>
                   <p className="big-number">🏆 {totalScore}</p>
                 </div>
               </div>
@@ -254,4 +256,3 @@ export default function PhoneRecall({ onBack }: PhoneRecallProps) {
     </GameLayout>
   );
 }
-

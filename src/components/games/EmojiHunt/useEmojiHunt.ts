@@ -71,12 +71,12 @@ function useEmojiHunt(): UseEmojiHuntReturn {
   const totalRounds = ROUNDS.EMOJI_HUNT;
 
   const getDifficultyForRound = useCallback((round: number): { difficulty: Difficulty; size: number } => {
-    // Раунды 0-2 (1-3): easy, 3x3
-    // Раунды 3-5 (4-6): medium, 4x4
-    // Раунды 6-9 (7-10): hard, 5x5
-    if (round < 3) return { difficulty: 'easy', size: 3 };
-    if (round < 6) return { difficulty: 'medium', size: 4 };
-    return { difficulty: 'hard', size: 5 };
+    // Раунды 0-2 (1-3): easy, 5x5
+    // Раунды 3-5 (4-6): medium, 6x6
+    // Раунды 6-9 (7-10): hard, 8x8
+    if (round < 3) return { difficulty: 'easy', size: 5 };
+    if (round < 6) return { difficulty: 'medium', size: 6 };
+    return { difficulty: 'hard', size: 8 };
   }, []);
 
   const generateRound = useCallback((round: number) => {

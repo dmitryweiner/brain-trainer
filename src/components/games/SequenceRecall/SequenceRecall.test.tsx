@@ -18,11 +18,12 @@ describe('SequenceRecall Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<SequenceRecall onBack={onBack} />);
 
-    const titles = screen.getAllByText('🧠 Sequence Recall');
+    // Check for translated title (Russian or English) - use getAllByText since title appears in header and intro
+    const titles = screen.getAllByText(/Запоминание последовательности|Sequence Recall/i);
     expect(titles.length).toBeGreaterThan(0);
-    expect(screen.getByText(/Тренировка визуальной рабочей памяти/i)).toBeInTheDocument();
-    expect(screen.getByText(/Запомните последовательность эмодзи/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Начать игру/i })).toBeInTheDocument();
+    expect(screen.getByText(/Тренировка визуальной|Visual working memory/i)).toBeInTheDocument();
+    expect(screen.getByText(/Запомните последовательность|Memorize the emoji/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Начать игру|Start/i })).toBeInTheDocument();
   });
 
   it('should start game and show sequence', async () => {
@@ -30,12 +31,12 @@ describe('SequenceRecall Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<SequenceRecall onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     // Должно появиться "Запомните последовательность"
     await waitFor(() => {
-      expect(screen.getByText(/Запомните последовательность/i)).toBeInTheDocument();
+        expect(screen.getByText(/Запомните последовательность|Memorize the sequence/i)).toBeInTheDocument();
     });
   });
 
@@ -44,13 +45,13 @@ describe('SequenceRecall Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<SequenceRecall onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     // Ждем окончания показа последовательности
     await waitFor(
       () => {
-        expect(screen.getByText(/Повторите последовательность/i)).toBeInTheDocument();
+        expect(screen.getByText(/Повторите последовательность|Repeat the sequence/i)).toBeInTheDocument();
       },
       { timeout: 5000 }
     );
@@ -67,13 +68,13 @@ describe('SequenceRecall Component', () => {
     const onBack = vi.fn();
     const { container } = renderWithProvider(<SequenceRecall onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     // Ждем фазы ввода
     await waitFor(
       () => {
-        expect(screen.getByText(/Повторите последовательность/i)).toBeInTheDocument();
+        expect(screen.getByText(/Повторите последовательность|Repeat the sequence/i)).toBeInTheDocument();
       },
       { timeout: 5000 }
     );
@@ -100,13 +101,13 @@ describe('SequenceRecall Component', () => {
     const onBack = vi.fn();
     const { container } = renderWithProvider(<SequenceRecall onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     // Ждем фазы ввода
     await waitFor(
       () => {
-        expect(screen.getByText(/Повторите последовательность/i)).toBeInTheDocument();
+        expect(screen.getByText(/Повторите последовательность|Repeat the sequence/i)).toBeInTheDocument();
       },
       { timeout: 5000 }
     );
@@ -114,9 +115,10 @@ describe('SequenceRecall Component', () => {
     // Проверяем наличие статистики
     const stats = container.querySelector('.sequence-recall-stats');
     expect(stats).toBeInTheDocument();
-    expect(stats?.textContent).toContain('Длина:');
-    expect(stats?.textContent).toContain('Введено:');
-    expect(stats?.textContent).toContain('Очки:');
+    // Check for stats content (supports both Russian and English)
+    expect(stats?.textContent).toMatch(/Длина|Length/);
+    expect(stats?.textContent).toMatch(/Введено|Entered/);
+    expect(stats?.textContent).toMatch(/Очки|Score/);
   });
 
   it('should show progress bar', async () => {
@@ -124,13 +126,13 @@ describe('SequenceRecall Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<SequenceRecall onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     // Ждем появления прогресс-бара
     await waitFor(
       () => {
-        const progressBar = screen.getByText(/Уровень 3/i);
+        const progressBar = screen.getByText(/Уровень 3|Level 3/i);
         expect(progressBar).toBeInTheDocument();
       },
       { timeout: 1000 }

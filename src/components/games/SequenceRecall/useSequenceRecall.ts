@@ -22,7 +22,7 @@ interface UseSequenceRecallReturn {
 }
 
 const INITIAL_LENGTH = 3;
-const MAX_LENGTH = 7;
+const MAX_LENGTH = 6;
 
 export function useSequenceRecall(): UseSequenceRecallReturn {
   const [status, setStatus] = useState<GameStatus>('intro');
@@ -138,12 +138,30 @@ export function useSequenceRecall(): UseSequenceRecallReturn {
       const isCorrect = emoji === state.sequence[currentIndex];
 
       if (!isCorrect) {
-        // Ошибка - игра окончена
+        // Ошибка - продолжаем с той же длиной
         setLastAnswerCorrect(false);
         setStatus('feedback');
 
         feedbackTimeoutRef.current = window.setTimeout(() => {
-          setStatus('results');
+          // Проверяем, достигнут ли максимум
+          if (state.currentLength >= MAX_LENGTH) {
+            setStatus('results');
+          } else {
+            // Продолжаем с той же длиной
+            const nextSequence = generateSequence(state.currentLength);
+            const nextOptions = generateOptions(nextSequence);
+
+            setState({
+              sequence: nextSequence,
+              userSequence: [],
+              currentLength: state.currentLength,
+              phase: 'showing',
+              showingIndex: 0,
+            });
+            setOptions(nextOptions);
+            setStatus('showing');
+            setCurrentEmoji(null);
+          }
         }, 1500);
 
         return;

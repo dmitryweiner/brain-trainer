@@ -110,11 +110,25 @@
         "watchIndicator": "Watch the rule indicator!",
         "scoring": "Correct answer: +1 point"
       },
-      "shapeRule": "SHAPE",
-      "colorRule": "COLOR",
-      "left": "Left",
-      "right": "Right"
-    },
+    "shapeRule": "SHAPE",
+    "colorRule": "COLOR",
+    "left": "Left",
+    "right": "Right",
+    "errors": "Errors",
+    "excellentFlexibility": "Excellent cognitive flexibility!",
+    "goodResultKeepPracticing": "Good result, keep practicing!",
+    "tryAgainBeAttentive": "Try again, be more attentive!",
+    "totalErrors": "Total errors",
+    "circleA": "Circle → A",
+    "squareB": "Square → B",
+    "figureShown": "A figure with color is shown",
+    "pressAorB": "Press button A or B by the rule",
+    "rounds1to15": "Rounds 1-15: by shape",
+    "rounds16to30": "Rounds 16-30: rule changes!",
+    "guessNewRule": "Guess the new rule yourself",
+    "correctAnswer1point": "Correct answer: +1 point",
+    "errorMinus05": "Error: -0.5 point"
+  },
     "n-back": {
       "title": "N-Back",
       "description": "Working memory"
@@ -145,6 +159,7 @@
     "points": "points",
     "accuracy": "Accuracy",
     "averageTime": "Average time",
+    "averageReactionTime": "Average reaction time",
     "gameOver": "Game Over!",
     "congratulations": "Congratulations!",
     "tryAgain": "Try again to improve your result!",
@@ -187,8 +202,8 @@
       "memorize": "Memorize the shown number",
       "enter": "Enter it from memory",
       "initialLength": "Initial length: 4 digits",
-      "onSuccess": "On success: +1 digit (max 12)",
-      "onError": "On error: game ends",
+      "onSuccess": "On success: +1 digit (max 6)",
+      "onError": "On error: continue with same length",
       "scoring": "Points = number length"
     },
     "memorize": "Memorize the number",
@@ -203,7 +218,15 @@
       "tap": "Tap on it as fast as possible",
       "difficulty": "Difficulty increases each round!"
     },
-    "scoring": "Points: grid size + speed bonus"
+    "scoring": "Points: grid size + speed bonus",
+    "rounds": {
+      "easy": "Rounds 1-3",
+      "medium": "Rounds 4-6",
+      "hard": "Rounds 7-10"
+    },
+    "differentEmojis": "different emojis",
+    "similarSmileys": "similar smileys",
+    "verySimilar": "very similar"
   },
   "oddOneOut": {
     "title": "Odd One Out",
@@ -238,7 +261,9 @@
     "falseAlarms": "False alarms",
     "correctRejections": "Correct rejections",
     "blockComplete": "Block complete!",
-    "prepareForBlock": "Prepare for block"
+    "prepareForBlock": "Prepare for block",
+    "excellentMemory": "Excellent working memory!",
+    "missedMatches": "Missed matches"
   },
   "logicPair": {
     "title": "Logic Pair Concept",
@@ -257,7 +282,11 @@
     "pressConfirm": "Press \"Confirm\"",
     "yourChoice": "Your choice",
     "nextRound": "Next round",
-    "results": "Results"
+    "results": "Results",
+    "excellentLogic": "Excellent logical thinking!",
+    "goodResult": "Good result!",
+    "incorrectAnswers": "Incorrect answers",
+    "outOf": "out of"
   },
   "sequenceRecall": {
     "title": "Sequence Recall",
@@ -266,8 +295,8 @@
       "memorize": "Memorize the emoji sequence",
       "reproduce": "Reproduce it in the correct order",
       "initialLength": "Initial length: 3 elements",
-      "onSuccess": "On success: +1 element (max 7)",
-      "onError": "On error: game ends",
+      "onSuccess": "On success: +1 element (max 6)",
+      "onError": "On error: continue with same length",
       "scoring": "Points = sequence length"
     },
     "memorizeSequence": "Memorize the sequence",
@@ -297,6 +326,7 @@
     },
     "notPlayedYet": "You haven't played this game yet",
     "confirmClear": "Are you sure you want to clear all game history?",
+    "resetAll": "Reset all results",
     "tabs": {
       "overview": "Overview",
       "daily": "Daily",

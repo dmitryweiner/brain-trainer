@@ -18,11 +18,11 @@ describe('DualRuleReaction Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<DualRuleReaction onBack={onBack} />);
 
-    const titles = screen.getAllByText('↔️ Dual-Rule Reaction');
+    const titles = screen.getAllByText(/Dual-Rule Reaction|Зміна правил|Смена правил/i);
     expect(titles.length).toBeGreaterThan(0);
-    expect(screen.getByText(/Тренировка когнитивной гибкости/i)).toBeInTheDocument();
-    expect(screen.getByText(/Показывается фигура с цветом/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Начать игру/i })).toBeInTheDocument();
+    expect(screen.getByText(/Когнітивна гнучкість|Когнитивная гибкость|Cognitive flexibility/i)).toBeInTheDocument();
+    expect(screen.getByText(/фігура|фигура|figure/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Начать игру|Start/i })).toBeInTheDocument();
   });
 
   it('should start game and show playing screen', async () => {
@@ -30,7 +30,7 @@ describe('DualRuleReaction Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<DualRuleReaction onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     // Должны появиться кнопки A и B
@@ -45,14 +45,14 @@ describe('DualRuleReaction Component', () => {
     const onBack = vi.fn();
     const { container } = renderWithProvider(<DualRuleReaction onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {
       const ruleHint = container.querySelector('.rule-hint');
       expect(ruleHint).toBeInTheDocument();
-      expect(ruleHint?.textContent).toContain('Круг');
-      expect(ruleHint?.textContent).toContain('Квадрат');
+      expect(ruleHint?.textContent).toMatch(/Круг|Коло|Circle/);
+      expect(ruleHint?.textContent).toMatch(/Квадрат|Square/);
     });
   });
 
@@ -61,7 +61,7 @@ describe('DualRuleReaction Component', () => {
     const onBack = vi.fn();
     const { container } = renderWithProvider(<DualRuleReaction onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {
@@ -77,7 +77,7 @@ describe('DualRuleReaction Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<DualRuleReaction onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {
@@ -99,15 +99,15 @@ describe('DualRuleReaction Component', () => {
     const onBack = vi.fn();
     const { container } = renderWithProvider(<DualRuleReaction onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {
       const stats = container.querySelector('.dual-rule-stats');
       expect(stats).toBeInTheDocument();
-      expect(stats?.textContent).toContain('Раунд:');
-      expect(stats?.textContent).toContain('Ошибки:');
-      expect(stats?.textContent).toContain('Очки:');
+      expect(stats?.textContent).toMatch(/Раунд|Round/);
+      expect(stats?.textContent).toMatch(/Ошибки|Errors/);
+      expect(stats?.textContent).toMatch(/Очки|Score/);
     });
   });
 
@@ -116,7 +116,7 @@ describe('DualRuleReaction Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<DualRuleReaction onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {
@@ -147,11 +147,11 @@ describe('DualRuleReaction Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<DualRuleReaction onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {
-      expect(screen.getByText(/Раунд 1 \/ 30/i)).toBeInTheDocument();
+      expect(screen.getByText(/Раунд 1 \/ 30|Round 1 \/ 30/i)).toBeInTheDocument();
     });
   });
 

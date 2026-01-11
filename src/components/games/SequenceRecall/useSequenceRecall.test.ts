@@ -172,7 +172,7 @@ describe('useSequenceRecall', () => {
     vi.useFakeTimers();
   });
 
-  it('should end game on incorrect answer', async () => {
+  it('should continue game with same length on incorrect answer', async () => {
     vi.useRealTimers();
     const { result } = renderHook(() => useSequenceRecall());
 
@@ -189,6 +189,7 @@ describe('useSequenceRecall', () => {
     );
 
     const sequence = result.current.sequence;
+    const initialLength = result.current.currentLength;
     // Находим эмодзи, которого НЕТ в последовательности на первой позиции
     const wrongEmoji = result.current.options.find((opt) => opt !== sequence[0]);
 
@@ -202,13 +203,16 @@ describe('useSequenceRecall', () => {
     
     expect(result.current.lastAnswerCorrect).toBe(false);
 
-    // Ждем перехода к results
+    // Ждем перехода к showing (новая последовательность с той же длиной)
     await waitFor(
       () => {
-        expect(result.current.status).toBe('results');
+        expect(result.current.status).toBe('showing');
       },
       { timeout: 2000 }
     );
+    
+    // Проверяем, что длина осталась той же
+    expect(result.current.currentLength).toBe(initialLength);
     
     vi.useFakeTimers();
   });

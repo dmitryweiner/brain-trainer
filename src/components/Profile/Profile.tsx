@@ -89,6 +89,14 @@ export const Profile: React.FC<ProfileProps> = ({ onBack }) => {
           <p>{t('profile.noData')}</p>
         </div>
       )}
+
+      {totalGames > 0 && (
+        <div className="reset-section">
+          <button className="reset-all-btn" onClick={handleClearHistory}>
+            🗑️ {t('profile.resetAll')}
+          </button>
+        </div>
+      )}
     </div>
   );
 

@@ -18,10 +18,10 @@ describe('EmojiHunt Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<EmojiHunt onBack={onBack} />);
 
-    // Multiple elements have "Emoji Hunt" text (header and intro)
-    const titles = screen.getAllByText(/Emoji Hunt/);
+    // Multiple elements have "Emoji Hunt" / "Поиск эмодзи" text (header and intro)
+    const titles = screen.getAllByText(/Emoji Hunt|Поиск эмодзи|Полювання на емодзі/i);
     expect(titles.length).toBeGreaterThan(0);
-    expect(screen.getByText(/Тренировка визуального поиска/i)).toBeInTheDocument();
+    expect(screen.getByText(/Тренировка визуального|Visual search/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Начать игру/i })).toBeInTheDocument();
   });
 
@@ -37,9 +37,9 @@ describe('EmojiHunt Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<EmojiHunt onBack={onBack} />);
 
-    expect(screen.getByText(/3×3/)).toBeInTheDocument();
-    expect(screen.getByText(/4×4/)).toBeInTheDocument();
     expect(screen.getByText(/5×5/)).toBeInTheDocument();
+    expect(screen.getByText(/6×6/)).toBeInTheDocument();
+    expect(screen.getByText(/8×8/)).toBeInTheDocument();
   });
 
   it('should start game and show grid', async () => {
@@ -47,7 +47,7 @@ describe('EmojiHunt Component', () => {
     const onBack = vi.fn();
     const { container } = renderWithProvider(<EmojiHunt onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {
@@ -61,7 +61,7 @@ describe('EmojiHunt Component', () => {
     const onBack = vi.fn();
     const { container } = renderWithProvider(<EmojiHunt onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {
@@ -77,7 +77,7 @@ describe('EmojiHunt Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<EmojiHunt onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {
@@ -90,7 +90,7 @@ describe('EmojiHunt Component', () => {
     const onBack = vi.fn();
     const { container } = renderWithProvider(<EmojiHunt onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {
@@ -104,12 +104,12 @@ describe('EmojiHunt Component', () => {
     const onBack = vi.fn();
     const { container } = renderWithProvider(<EmojiHunt onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {
       const cells = container.querySelectorAll('.emoji-cell');
-      expect(cells).toHaveLength(9);
+      expect(cells).toHaveLength(25); // 5x5 grid
     });
   });
 
@@ -118,7 +118,7 @@ describe('EmojiHunt Component', () => {
     const onBack = vi.fn();
     const { container } = renderWithProvider(<EmojiHunt onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {
@@ -140,7 +140,7 @@ describe('EmojiHunt Component', () => {
     const onBack = vi.fn();
     const { container } = renderWithProvider(<EmojiHunt onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {
@@ -167,7 +167,7 @@ describe('EmojiHunt Component', () => {
     const onBack = vi.fn();
     const { container } = renderWithProvider(<EmojiHunt onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     // Wait for the game to start and the grid to appear
@@ -196,14 +196,14 @@ describe('EmojiHunt Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<EmojiHunt onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);
 
     await waitFor(() => {
       const cellButtons = screen.getAllByRole('button').filter(
         btn => btn.classList.contains('emoji-cell')
       );
-      expect(cellButtons.length).toBe(9);
+      expect(cellButtons.length).toBe(25); // 5x5 grid
     });
   });
 });
