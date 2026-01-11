@@ -1,4 +1,4 @@
-[# Brain Trainer - Тренажёр мозга](https://dmitryweiner.github.io/brain-trainer)
+# [Brain Trainer - Тренажёр мозга](https://dmitryweiner.github.io/brain-trainer)
 
 ## 📋 Описание проекта
 
