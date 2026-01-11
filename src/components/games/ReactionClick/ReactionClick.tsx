@@ -155,7 +155,7 @@ export const ReactionClick: React.FC<ReactionClickProps> = ({ onBackToMenu, onNe
     if (reactionTimes.length === 0) {
       return (
         <div className="results-details">
-          <p className="text-muted">Нет успешных попыток</p>
+          <p className="text-muted">{t('games.reaction-click.noSuccessfulAttempts')}</p>
         </div>
       );
     }
@@ -164,38 +164,38 @@ export const ReactionClick: React.FC<ReactionClickProps> = ({ onBackToMenu, onNe
       <div className="results-details">
         <div className="results-summary">
           <p className="summary-text">
-            Вы завершили {reactionTimes.length} из {ROUNDS.REACTION_CLICK} попыток
-            {tooEarlyCount > 0 && ` (${tooEarlyCount} слишком рано)`}
+            {t('games.reaction-click.completedAttempts', { completed: reactionTimes.length, total: ROUNDS.REACTION_CLICK })}
+            {tooEarlyCount > 0 && ` (${t('games.reaction-click.tooEarlyCount', { count: tooEarlyCount })})`}
           </p>
         </div>
 
         <div className="stat-item highlight">
-          <span className="stat-label">⚡ Лучшая реакция:</span>
-          <span className="stat-value stat-best">{getBestTime()}ms</span>
+          <span className="stat-label">⚡ {t('games.reaction-click.bestReaction')}:</span>
+          <span className="stat-value stat-best">{getBestTime()}{t('common.ms')}</span>
         </div>
         
         <div className="stat-item">
-          <span className="stat-label">📊 Средняя реакция:</span>
-          <span className="stat-value">{getAverageTime()}ms</span>
+          <span className="stat-label">📊 {t('games.reaction-click.averageReaction')}:</span>
+          <span className="stat-value">{getAverageTime()}{t('common.ms')}</span>
         </div>
 
         {reactionTimes.length > 1 && (
           <div className="stat-item">
-            <span className="stat-label">🐌 Худшая реакция:</span>
-            <span className="stat-value stat-worst">{getWorstTime()}ms</span>
+            <span className="stat-label">🐌 {t('games.reaction-click.worstReaction')}:</span>
+            <span className="stat-value stat-worst">{getWorstTime()}{t('common.ms')}</span>
           </div>
         )}
 
         {reactionTimes.length > 0 && (
           <div className="all-times">
-            <div className="stat-label">Все результаты:</div>
+            <div className="stat-label">{t('games.reaction-click.allResults')}:</div>
             <div className="times-list">
               {reactionTimes.map((time, index) => (
                 <span 
                   key={index} 
                   className={`time-chip ${time === getBestTime() ? 'best' : time === getWorstTime() && reactionTimes.length > 1 ? 'worst' : ''}`}
                 >
-                  {index + 1}. {time}ms
+                  {index + 1}. {time}{t('common.ms')}
                 </span>
               ))}
             </div>
@@ -207,27 +207,27 @@ export const ReactionClick: React.FC<ReactionClickProps> = ({ onBackToMenu, onNe
 
   const getMessage = () => {
     if (reactionTimes.length === 0) {
-      return '😅 Попробуйте ещё раз!';
+      return t('games.reaction-click.results.tryAgain');
     }
     
     const avgTime = getAverageTime();
     const bestTime = getBestTime();
     
-    if (bestTime < 250) return '⚡ Невероятная реакция! Вы молниеносны!';
-    if (avgTime < 300) return '🔥 Отличная скорость! Превосходный результат!';
-    if (avgTime < 500) return '👍 Хорошая работа! Продолжайте в том же духе!';
-    if (avgTime < 700) return '💪 Неплохо! Есть куда расти!';
-    return '🎯 Продолжайте тренироваться, скорость придёт!';
+    if (bestTime < 250) return t('games.reaction-click.results.incredible');
+    if (avgTime < 300) return t('games.reaction-click.results.excellent');
+    if (avgTime < 500) return t('games.reaction-click.results.good');
+    if (avgTime < 700) return t('games.reaction-click.results.notBad');
+    return t('games.reaction-click.results.keepPracticing');
   };
 
   return (
     <GameLayout
-      title="⚡ Reaction Click"
+      title={`⚡ ${t('games.reaction-click.title')}`}
       footerContent={
         status !== 'intro' && status !== 'results' && (
           <div className="game-stats">
-            <span>Попытка: {currentAttempt + 1}/{ROUNDS.REACTION_CLICK}</span>
-            <span>Очки: {currentScore}</span>
+            <span>{t('games.reaction-click.attempt')}: {currentAttempt + 1}/{ROUNDS.REACTION_CLICK}</span>
+            <span>{t('common.score')}: {currentScore}</span>
           </div>
         )
       }
@@ -236,7 +236,7 @@ export const ReactionClick: React.FC<ReactionClickProps> = ({ onBackToMenu, onNe
 
       <ResultsModal
         show={status === 'results'}
-        title="🎮 Игра завершена!"
+        title={`🎮 ${t('common.gameOver')}`}
         score={currentScore}
         message={getMessage()}
         details={renderDetails()}

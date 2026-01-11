@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { GameLayout, ResultsModal, ProgressBar } from '../../common';
 import { useScoreContext } from '../../../context/ScoreContext';
 import { useGameHistoryContext } from '../../../context/GameHistoryContext';
@@ -12,6 +13,7 @@ export interface SymbolMatchProps {
 }
 
 export const SymbolMatch: React.FC<SymbolMatchProps> = ({ onBackToMenu, onNextGame }) => {
+  const { t } = useTranslation();
   const { addScore } = useScoreContext();
   const { addGameResult } = useGameHistoryContext();
   const scoreAddedRef = useRef(false);
@@ -56,29 +58,28 @@ export const SymbolMatch: React.FC<SymbolMatchProps> = ({ onBackToMenu, onNextGa
       return (
         <div className="symbol-match-intro">
           <div className="intro-card">
-            <h2>🔄 Symbol Match</h2>
+            <h2>🔄 {t('games.symbol-match.title')}</h2>
             <div className="intro-instructions">
-              <p className="lead">Тренировка зрительного внимания</p>
+              <p className="lead">{t('games.symbol-match.instructions.lead')}</p>
               <div className="rules">
-                <h3>Правила:</h3>
+                <h3>{t('common.rules')}:</h3>
                 <ul>
-                  <li>Смотрите на два символа</li>
-                  <li>Определите, <strong>совпадают</strong> они или нет</li>
-                  <li>Нажмите соответствующую кнопку</li>
-                  <li>Будьте внимательны!</li>
+                  <li>{t('games.symbol-match.instructions.look')}</li>
+                  <li>{t('games.symbol-match.instructions.decide')}</li>
+                  <li>{t('games.symbol-match.instructions.press')}</li>
+                  <li>{t('games.symbol-match.instructions.beAttentive')}</li>
                 </ul>
               </div>
               <div className="scoring-info">
-                <p><strong>Очки:</strong></p>
-                <p>Правильный ответ: <strong>+1 очко</strong></p>
+                <p><strong>{t('games.symbol-match.instructions.scoring')}</strong></p>
               </div>
-              <p className="text-muted">Всего раундов: {ROUNDS.SYMBOL_MATCH}</p>
+              <p className="text-muted">{t('common.totalRounds')}: {ROUNDS.SYMBOL_MATCH}</p>
             </div>
             <button
               className="btn btn-primary btn-large"
               onClick={startGame}
             >
-              Начать игру
+              {t('common.startGame')}
             </button>
           </div>
         </div>
@@ -92,7 +93,7 @@ export const SymbolMatch: React.FC<SymbolMatchProps> = ({ onBackToMenu, onNextGa
             <ProgressBar 
               current={currentRound} 
               total={ROUNDS.SYMBOL_MATCH}
-              label={`Раунд ${currentRound + 1} / ${ROUNDS.SYMBOL_MATCH}`}
+              label={`${t('common.round')} ${currentRound + 1} / ${ROUNDS.SYMBOL_MATCH}`}
             />
           </div>
 
@@ -107,13 +108,13 @@ export const SymbolMatch: React.FC<SymbolMatchProps> = ({ onBackToMenu, onNextGa
               className="btn btn-success btn-large answer-btn match-btn"
               onClick={() => handleAnswer(true)}
             >
-              ✓ Совпадают
+              ✓ {t('games.symbol-match.match')}
             </button>
             <button
               className="btn btn-danger btn-large answer-btn no-match-btn"
               onClick={() => handleAnswer(false)}
             >
-              ✗ Не совпадают
+              ✗ {t('games.symbol-match.noMatch')}
             </button>
           </div>
         </div>
@@ -127,12 +128,12 @@ export const SymbolMatch: React.FC<SymbolMatchProps> = ({ onBackToMenu, onNextGa
             {lastAnswerCorrect ? (
               <>
                 <div className="feedback-icon">✓</div>
-                <div className="feedback-text">Правильно!</div>
+                <div className="feedback-text">{t('common.correct')}</div>
               </>
             ) : (
               <>
                 <div className="feedback-icon">✗</div>
-                <div className="feedback-text">Неправильно</div>
+                <div className="feedback-text">{t('common.incorrect')}</div>
               </>
             )}
           </div>
@@ -148,18 +149,18 @@ export const SymbolMatch: React.FC<SymbolMatchProps> = ({ onBackToMenu, onNextGa
       <div className="results-details">
         <div className="results-summary">
           <p className="summary-text">
-            Правильных ответов: {correctAnswers} из {ROUNDS.SYMBOL_MATCH}
+            {t('games.symbol-match.correctAnswers')}: {correctAnswers} {t('common.of')} {ROUNDS.SYMBOL_MATCH}
           </p>
         </div>
 
         <div className="stat-item highlight">
-          <span className="stat-label">🎯 Точность:</span>
+          <span className="stat-label">🎯 {t('common.accuracy')}:</span>
           <span className="stat-value stat-best">{getAccuracy()}%</span>
         </div>
         
         <div className="stat-item">
-          <span className="stat-label">⏱️ Среднее время:</span>
-          <span className="stat-value">{getAverageTime()}ms</span>
+          <span className="stat-label">⏱️ {t('common.averageTime')}:</span>
+          <span className="stat-value">{getAverageTime()}{t('common.ms')}</span>
         </div>
       </div>
     );
@@ -169,28 +170,28 @@ export const SymbolMatch: React.FC<SymbolMatchProps> = ({ onBackToMenu, onNextGa
     const accuracy = getAccuracy();
     
     if (accuracy === 100) {
-      return '🏆 Идеально! У вас отличное внимание!';
+      return t('games.symbol-match.results.perfect');
     }
     if (accuracy >= 90) {
-      return '⭐ Отлично! Очень внимательны!';
+      return t('games.symbol-match.results.excellent');
     }
     if (accuracy >= 75) {
-      return '👍 Хорошо! Продолжайте тренироваться!';
+      return t('games.symbol-match.results.good');
     }
     if (accuracy >= 60) {
-      return '💪 Неплохо! Будьте внимательнее!';
+      return t('games.symbol-match.results.notBad');
     }
-    return '🎯 Тренируйте внимание!';
+    return t('games.symbol-match.results.keepPracticing');
   };
 
   return (
     <GameLayout
-      title="🔄 Symbol Match"
+      title={`🔄 ${t('games.symbol-match.title')}`}
       footerContent={
         (status === 'playing' || status === 'feedback') && (
           <div className="game-stats">
-            <span>Правильно: {correctAnswers}/{currentRound}</span>
-            <span>Очки: {currentScore}</span>
+            <span>{t('common.correct')}: {correctAnswers}/{currentRound}</span>
+            <span>{t('common.score')}: {currentScore}</span>
           </div>
         )
       }
@@ -199,7 +200,7 @@ export const SymbolMatch: React.FC<SymbolMatchProps> = ({ onBackToMenu, onNextGa
 
       <ResultsModal
         show={status === 'results'}
-        title="🎮 Игра завершена!"
+        title={`🎮 ${t('common.gameOver')}`}
         score={currentScore}
         message={getMessage()}
         details={renderDetails()}

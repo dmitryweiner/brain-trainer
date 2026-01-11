@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { GameLayout, ResultsModal, ProgressBar } from '../../common';
 import { useScoreContext } from '../../../context/ScoreContext';
 import { useGameHistoryContext } from '../../../context/GameHistoryContext';
@@ -12,6 +13,7 @@ export interface HiddenNumberProps {
 }
 
 export const HiddenNumber: React.FC<HiddenNumberProps> = ({ onBackToMenu, onNextGame }) => {
+  const { t } = useTranslation();
   const { addScore } = useScoreContext();
   const { addGameResult } = useGameHistoryContext();
   const scoreAddedRef = useRef(false);
@@ -61,33 +63,33 @@ export const HiddenNumber: React.FC<HiddenNumberProps> = ({ onBackToMenu, onNext
       return (
         <div className="hidden-number-intro">
           <div className="intro-card">
-            <h2>🔢 Hidden Number</h2>
+            <h2>🔢 {t('games.hidden-number.title')}</h2>
             <div className="intro-instructions">
-              <p className="lead">Тренировка визуального поиска</p>
+              <p className="lead">{t('games.hidden-number.instructions.lead')}</p>
               <div className="rules">
-                <h3>Правила:</h3>
+                <h3>{t('common.rules')}:</h3>
                 <ul>
-                  <li>На экране появится сетка {gridSize.rows}×{gridSize.cols}</li>
-                  <li>В одной из клеток будет <strong>число</strong></li>
-                  <li><strong>Найдите</strong> и нажмите на него как можно быстрее</li>
-                  <li>Чем быстрее найдёте — тем больше очков!</li>
+                  <li>{t('games.hidden-number.instructions.grid')} {gridSize.rows}×{gridSize.cols}</li>
+                  <li>{t('games.hidden-number.instructions.number')}</li>
+                  <li>{t('games.hidden-number.instructions.find')}</li>
+                  <li>{t('games.hidden-number.instructions.faster')}</li>
                 </ul>
               </div>
               <div className="scoring-info">
-                <h4>Система очков:</h4>
+                <h4>{t('games.hidden-number.instructions.scoring')}:</h4>
                 <ul>
-                  <li>&lt; 3 секунд: <strong>3 очка</strong></li>
-                  <li>3-5 секунд: <strong>2 очка</strong></li>
-                  <li>&gt; 5 секунд: <strong>1 очко</strong></li>
+                  <li>{t('games.hidden-number.instructions.fast')}</li>
+                  <li>{t('games.hidden-number.instructions.medium')}</li>
+                  <li>{t('games.hidden-number.instructions.slow')}</li>
                 </ul>
               </div>
-              <p className="text-muted">Всего раундов: {ROUNDS.HIDDEN_NUMBER}</p>
+              <p className="text-muted">{t('common.totalRounds')}: {ROUNDS.HIDDEN_NUMBER}</p>
             </div>
             <button
               className="btn btn-primary btn-large"
               onClick={startGame}
             >
-              Начать игру
+              {t('common.startGame')}
             </button>
           </div>
         </div>
@@ -101,12 +103,12 @@ export const HiddenNumber: React.FC<HiddenNumberProps> = ({ onBackToMenu, onNext
             <ProgressBar 
               current={currentRound} 
               total={ROUNDS.HIDDEN_NUMBER}
-              label={`Раунд ${currentRound + 1} / ${ROUNDS.HIDDEN_NUMBER}`}
+              label={`${t('common.round')} ${currentRound + 1} / ${ROUNDS.HIDDEN_NUMBER}`}
             />
           </div>
 
           <div className="instruction-text">
-            Найдите число <span className="target-number">{targetNumber}</span>
+            {t('games.hidden-number.findNumber')} <span className="target-number">{targetNumber}</span>
           </div>
 
           <div 
@@ -121,7 +123,7 @@ export const HiddenNumber: React.FC<HiddenNumberProps> = ({ onBackToMenu, onNext
                 key={index}
                 className={`grid-cell ${index === targetPosition ? 'has-target' : ''}`}
                 onClick={() => handleCellClick(index)}
-                aria-label={`Клетка с числом ${number}`}
+                aria-label={t('games.hidden-number.cellWithNumber', { number })}
               >
                 {number}
               </button>
@@ -137,10 +139,10 @@ export const HiddenNumber: React.FC<HiddenNumberProps> = ({ onBackToMenu, onNext
           <div className="feedback-content">
             <div className="feedback-icon">✓</div>
             <div className="feedback-time">
-              {lastRoundTime ? `${(lastRoundTime / 1000).toFixed(2)}с` : ''}
+              {lastRoundTime ? `${(lastRoundTime / 1000).toFixed(2)}${t('common.sec')}` : ''}
             </div>
             <div className="feedback-points">
-              +{lastRoundPoints} {lastRoundPoints === 1 ? 'очко' : lastRoundPoints! < 5 ? 'очка' : 'очков'}
+              +{lastRoundPoints} {t('common.points')}
             </div>
           </div>
         </div>
@@ -159,40 +161,40 @@ export const HiddenNumber: React.FC<HiddenNumberProps> = ({ onBackToMenu, onNext
       <div className="results-details">
         <div className="results-summary">
           <p className="summary-text">
-            Завершено раундов: {times.length} из {ROUNDS.HIDDEN_NUMBER}
+            {t('games.hidden-number.completedRounds')}: {times.length} {t('common.of')} {ROUNDS.HIDDEN_NUMBER}
           </p>
         </div>
 
         <div className="stat-item highlight">
-          <span className="stat-label">⚡ Лучшее время:</span>
-          <span className="stat-value stat-best">{(getBestTime() / 1000).toFixed(2)}с</span>
+          <span className="stat-label">⚡ {t('games.hidden-number.bestTime')}:</span>
+          <span className="stat-value stat-best">{(getBestTime() / 1000).toFixed(2)}{t('common.sec')}</span>
         </div>
         
         <div className="stat-item">
-          <span className="stat-label">📊 Среднее время:</span>
-          <span className="stat-value">{(getAverageTime() / 1000).toFixed(2)}с</span>
+          <span className="stat-label">📊 {t('common.averageTime')}:</span>
+          <span className="stat-value">{(getAverageTime() / 1000).toFixed(2)}{t('common.sec')}</span>
         </div>
 
         {times.length > 1 && (
           <div className="stat-item">
-            <span className="stat-label">🐌 Худшее время:</span>
-            <span className="stat-value stat-worst">{(getWorstTime() / 1000).toFixed(2)}с</span>
+            <span className="stat-label">🐌 {t('games.hidden-number.worstTime')}:</span>
+            <span className="stat-value stat-worst">{(getWorstTime() / 1000).toFixed(2)}{t('common.sec')}</span>
           </div>
         )}
 
         <div className="speed-breakdown">
-          <h4>Распределение по скорости:</h4>
+          <h4>{t('games.hidden-number.speedDistribution')}:</h4>
           <div className="breakdown-item">
-            <span>⚡ Быстро (&lt; 3с):</span>
-            <span>{fastRounds} раундов</span>
+            <span>⚡ {t('games.hidden-number.fast')} (&lt; 3{t('common.sec')}):</span>
+            <span>{fastRounds} {t('games.hidden-number.rounds')}</span>
           </div>
           <div className="breakdown-item">
-            <span>🏃 Средне (3-5с):</span>
-            <span>{mediumRounds} раундов</span>
+            <span>🏃 {t('games.hidden-number.medium')} (3-5{t('common.sec')}):</span>
+            <span>{mediumRounds} {t('games.hidden-number.rounds')}</span>
           </div>
           <div className="breakdown-item">
-            <span>🐌 Медленно (&gt; 5с):</span>
-            <span>{slowRounds} раундов</span>
+            <span>🐌 {t('games.hidden-number.slow')} (&gt; 5{t('common.sec')}):</span>
+            <span>{slowRounds} {t('games.hidden-number.rounds')}</span>
           </div>
         </div>
       </div>
@@ -204,28 +206,28 @@ export const HiddenNumber: React.FC<HiddenNumberProps> = ({ onBackToMenu, onNext
     const bestTime = getBestTime();
     
     if (bestTime < 2000) {
-      return '⚡ Невероятная скорость! Отличное внимание!';
+      return t('games.hidden-number.results.incredible');
     }
     if (avgTime < 3000) {
-      return '🔥 Превосходно! Очень быстрая реакция!';
+      return t('games.hidden-number.results.excellent');
     }
     if (avgTime < 4000) {
-      return '👍 Хорошая работа! Продолжайте тренироваться!';
+      return t('games.hidden-number.results.good');
     }
     if (avgTime < 5000) {
-      return '💪 Неплохо! Есть куда расти!';
+      return t('games.hidden-number.results.notBad');
     }
-    return '🎯 Тренируйте визуальный поиск!';
+    return t('games.hidden-number.results.keepPracticing');
   };
 
   return (
     <GameLayout
-      title="🔢 Hidden Number"
+      title={`🔢 ${t('games.hidden-number.title')}`}
       footerContent={
         (status === 'playing' || status === 'feedback') && (
           <div className="game-stats">
-            <span>Раунд: {currentRound}/{ROUNDS.HIDDEN_NUMBER}</span>
-            <span>Очки: {currentScore}</span>
+            <span>{t('common.round')}: {currentRound}/{ROUNDS.HIDDEN_NUMBER}</span>
+            <span>{t('common.score')}: {currentScore}</span>
           </div>
         )
       }
@@ -234,7 +236,7 @@ export const HiddenNumber: React.FC<HiddenNumberProps> = ({ onBackToMenu, onNext
 
       <ResultsModal
         show={status === 'results'}
-        title="🎮 Игра завершена!"
+        title={`🎮 ${t('common.gameOver')}`}
         score={currentScore}
         message={getMessage()}
         details={renderDetails()}

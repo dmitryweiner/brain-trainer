@@ -30,7 +30,22 @@
       "tooEarly": "Too early!",
       "waitForButton": "Wait for the button 🔘",
       "great": "Great!",
-      "attempt": "Attempt"
+      "attempt": "Attempt",
+      "results": {
+        "tryAgain": "😅 Try again!",
+        "incredible": "⚡ Incredible reaction! Lightning fast!",
+        "excellent": "🔥 Excellent speed! Outstanding result!",
+        "good": "👍 Good job! Keep it up!",
+        "notBad": "💪 Not bad! Room for improvement!",
+        "keepPracticing": "🎯 Keep practicing, speed will come!"
+      },
+      "noSuccessfulAttempts": "No successful attempts",
+      "completedAttempts": "You completed {{completed}} out of {{total}} attempts",
+      "tooEarlyCount": "{{count}} too early",
+      "bestReaction": "Best reaction",
+      "averageReaction": "Average reaction",
+      "worstReaction": "Worst reaction",
+      "allResults": "All results"
     },
     "color-tap": {
       "title": "Color Tap",
@@ -48,7 +63,16 @@
       "yes": "YES",
       "no": "NO",
       "correct": "Correct!",
-      "incorrect": "Incorrect"
+      "incorrect": "Incorrect",
+      "results": {
+        "perfect": "🏆 Flawless! You're a reaction master!",
+        "excellent": "⚡ Excellent! Very accurate work!",
+        "good": "👍 Good! Keep practicing!",
+        "notBad": "💪 Not bad! Room for improvement!",
+        "keepPracticing": "🎯 Keep practicing!"
+      },
+      "correctAnswers": "Correct answers",
+      "fastAnswers": "Fast answers"
     },
     "symbol-match": {
       "title": "Symbol Match",
@@ -62,7 +86,15 @@
         "scoring": "Correct answer: +1 point"
       },
       "match": "Match",
-      "noMatch": "Don't match"
+      "noMatch": "Don't match",
+      "results": {
+        "perfect": "🏆 Perfect! You have excellent attention!",
+        "excellent": "⚡ Excellent! Very sharp eye!",
+        "good": "👍 Good! Keep practicing!",
+        "notBad": "💪 Not bad! Be more attentive!",
+        "keepPracticing": "🎯 Train your attention!"
+      },
+      "correctAnswers": "Correct answers"
     },
     "odd-one-out": {
       "title": "Odd One Out",
@@ -82,7 +114,26 @@
         "medium": "3-5 seconds: 2 points",
         "slow": "> 5 seconds: 1 point"
       },
-      "findNumber": "Find number"
+      "findNumber": "Find number",
+      "point": "point",
+      "points234": "points",
+      "points": "points",
+      "results": {
+        "incredible": "⚡ Incredible speed! Excellent attention!",
+        "excellent": "🔥 Outstanding! Very fast reaction!",
+        "good": "👍 Good job! Keep practicing!",
+        "notBad": "💪 Not bad! Room for improvement!",
+        "keepPracticing": "🎯 Train your visual search!"
+      },
+      "cellWithNumber": "Cell with number {{number}}",
+      "completedRounds": "Completed rounds",
+      "bestTime": "Best time",
+      "worstTime": "Worst time",
+      "speedDistribution": "Speed distribution",
+      "fast": "Fast",
+      "medium": "Medium",
+      "slow": "Slow",
+      "rounds": "rounds"
     },
     "memory-flip": {
       "title": "Memory Flip",
@@ -92,8 +143,23 @@
         "flip": "Cards will be briefly shown",
         "remember": "Remember their positions",
         "findPairs": "Find all matching pairs",
-        "scoring": "Points for each pair found"
-      }
+        "scoring": "Points for each pair found",
+        "findPairsRule": "Find all pairs of identical emojis",
+        "openTwoCards": "Open 2 cards at a time",
+        "rememberPositions": "Remember card positions",
+        "fourLevels": "4 levels of increasing difficulty",
+        "from6to20": "From 6 to 20 cards"
+      },
+      "moves": "Moves",
+      "time": "Time",
+      "levelComplete": "Level Complete!",
+      "goToLevel": "Go to Level {{level}}",
+      "finishGame": "Finish Game",
+      "gameComplete": "Game Complete!",
+      "completedAllLevels": "Great! You completed all {{count}} levels!",
+      "totalTime": "Total time",
+      "totalPoints": "Total points",
+      "card": "Card {{number}}"
     },
     "sequence-recall": {
       "title": "Sequence Recall",
@@ -175,7 +241,9 @@
     "correctAnswers": "Correct answers",
     "find": "Find",
     "sec": "sec",
-    "ms": "ms"
+    "ms": "ms",
+    "totalRounds": "Total rounds",
+    "of": "of"
   },
   "gameCard": {
     "bestScore": "Best",
@@ -237,7 +305,21 @@
       "tap": "Tap on it",
       "difficulty": "Difficulty increases each round!"
     },
-    "findOdd": "Find the odd symbol"
+    "findOdd": "Find the odd symbol",
+    "results": {
+      "perfect": "🏆 Flawless! You're a visual analysis master!",
+      "excellent": "⚡ Excellent! Very sharp eye!",
+      "good": "👍 Good! Keep practicing!",
+      "notBad": "💪 Not bad! Be more attentive!",
+      "keepPracticing": "🎯 Train your attention to details!"
+    },
+    "difficultyLevels": "Difficulty levels",
+    "rounds1to3": "Rounds 1-3",
+    "rounds4to7": "Rounds 4-7",
+    "rounds8to10": "Rounds 8-10",
+    "selectSymbol": "Select symbol {{number}}",
+    "pointsPerCorrect": "+1 for correct answer",
+    "byDifficulty": "By difficulty"
   },
   "nBack": {
     "title": "N-Back (2-back)",

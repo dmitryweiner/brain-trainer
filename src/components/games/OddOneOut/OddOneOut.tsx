@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { GameLayout, ResultsModal, ProgressBar } from '../../common';
 import { useScoreContext } from '../../../context/ScoreContext';
 import { useGameHistoryContext } from '../../../context/GameHistoryContext';
@@ -12,6 +13,7 @@ export interface OddOneOutProps {
 }
 
 export const OddOneOut: React.FC<OddOneOutProps> = ({ onBackToMenu, onNextGame }) => {
+  const { t } = useTranslation();
   const { addScore } = useScoreContext();
   const { addGameResult } = useGameHistoryContext();
   const scoreAddedRef = useRef(false);
@@ -54,9 +56,9 @@ export const OddOneOut: React.FC<OddOneOutProps> = ({ onBackToMenu, onNextGame }
 
   const getDifficultyLabel = (difficulty: string) => {
     switch (difficulty) {
-      case 'easy': return 'Легко';
-      case 'medium': return 'Средне';
-      case 'hard': return 'Сложно';
+      case 'easy': return t('common.difficulty.easy');
+      case 'medium': return t('common.difficulty.medium');
+      case 'hard': return t('common.difficulty.hard');
       default: return '';
     }
   };
@@ -66,36 +68,36 @@ export const OddOneOut: React.FC<OddOneOutProps> = ({ onBackToMenu, onNextGame }
       return (
         <div className="odd-one-out-intro">
           <div className="intro-card">
-            <h2>🔍 Odd One Out</h2>
+            <h2>🔍 {t('oddOneOut.title')}</h2>
             <div className="intro-instructions">
-              <p className="lead">Тренировка визуального анализа</p>
+              <p className="lead">{t('oddOneOut.description')}</p>
               <div className="rules">
-                <h3>Правила:</h3>
+                <h3>{t('common.rules')}:</h3>
                 <ul>
-                  <li>Смотрите на сетку символов</li>
-                  <li>Найдите <strong>лишний</strong> символ</li>
-                  <li>Нажмите на него</li>
-                  <li>С каждым раундом сложность растёт!</li>
+                  <li>{t('oddOneOut.instructions.look')}</li>
+                  <li>{t('oddOneOut.instructions.find')}</li>
+                  <li>{t('oddOneOut.instructions.tap')}</li>
+                  <li>{t('oddOneOut.instructions.difficulty')}</li>
                 </ul>
               </div>
               <div className="difficulty-info">
-                <h4>Уровни сложности:</h4>
+                <h4>{t('oddOneOut.difficultyLevels')}:</h4>
                 <ul>
-                  <li>🟢 Раунды 1-3: <strong>3×3</strong> (легко)</li>
-                  <li>🟡 Раунды 4-7: <strong>4×4</strong> (средне)</li>
-                  <li>🔴 Раунды 8-10: <strong>5×5</strong> (сложно)</li>
+                  <li>🟢 {t('oddOneOut.rounds1to3')}: <strong>3×3</strong> ({t('common.difficulty.easy')})</li>
+                  <li>🟡 {t('oddOneOut.rounds4to7')}: <strong>4×4</strong> ({t('common.difficulty.medium')})</li>
+                  <li>🔴 {t('oddOneOut.rounds8to10')}: <strong>5×5</strong> ({t('common.difficulty.hard')})</li>
                 </ul>
               </div>
               <div className="scoring-info">
-                <p><strong>Очки:</strong> +1 за правильный ответ</p>
+                <p><strong>{t('common.score')}:</strong> {t('oddOneOut.pointsPerCorrect')}</p>
               </div>
-              <p className="text-muted">Всего раундов: {ROUNDS.ODD_ONE_OUT}</p>
+              <p className="text-muted">{t('common.totalRounds')}: {ROUNDS.ODD_ONE_OUT}</p>
             </div>
             <button
               className="btn btn-primary btn-large"
               onClick={startGame}
             >
-              Начать игру
+              {t('common.startGame')}
             </button>
           </div>
         </div>
@@ -109,7 +111,7 @@ export const OddOneOut: React.FC<OddOneOutProps> = ({ onBackToMenu, onNextGame }
             <ProgressBar 
               current={currentRound} 
               total={ROUNDS.ODD_ONE_OUT}
-              label={`Раунд ${currentRound + 1} / ${ROUNDS.ODD_ONE_OUT}`}
+              label={`${t('common.round')} ${currentRound + 1} / ${ROUNDS.ODD_ONE_OUT}`}
             />
           </div>
 
@@ -120,7 +122,7 @@ export const OddOneOut: React.FC<OddOneOutProps> = ({ onBackToMenu, onNextGame }
           </div>
 
           <div className="instruction-text">
-            Найдите лишний символ
+            {t('oddOneOut.findOdd')}
           </div>
 
           <div 
@@ -135,7 +137,7 @@ export const OddOneOut: React.FC<OddOneOutProps> = ({ onBackToMenu, onNextGame }
                 key={index}
                 className="emoji-cell"
                 onClick={() => handleEmojiClick(index)}
-                aria-label={`Выбрать символ ${index + 1}`}
+                aria-label={t('oddOneOut.selectSymbol', { number: index + 1 })}
               >
                 {emoji}
               </button>
@@ -152,12 +154,12 @@ export const OddOneOut: React.FC<OddOneOutProps> = ({ onBackToMenu, onNextGame }
             {lastAnswerCorrect ? (
               <>
                 <div className="feedback-icon">✓</div>
-                <div className="feedback-text">Правильно!</div>
+                <div className="feedback-text">{t('common.correct')}</div>
               </>
             ) : (
               <>
                 <div className="feedback-icon">✗</div>
-                <div className="feedback-text">Неправильно</div>
+                <div className="feedback-text">{t('common.incorrect')}</div>
               </>
             )}
           </div>
@@ -177,22 +179,22 @@ export const OddOneOut: React.FC<OddOneOutProps> = ({ onBackToMenu, onNextGame }
       <div className="results-details">
         <div className="results-summary">
           <p className="summary-text">
-            Правильных ответов: {correctAnswers} из {ROUNDS.ODD_ONE_OUT}
+            {t('common.correctAnswers')}: {correctAnswers} {t('common.of')} {ROUNDS.ODD_ONE_OUT}
           </p>
         </div>
 
         <div className="stat-item highlight">
-          <span className="stat-label">🎯 Точность:</span>
+          <span className="stat-label">🎯 {t('common.accuracy')}:</span>
           <span className="stat-value stat-best">{getAccuracy()}%</span>
         </div>
         
         <div className="stat-item">
-          <span className="stat-label">⏱️ Среднее время:</span>
-          <span className="stat-value">{getAverageTime()}ms</span>
+          <span className="stat-label">⏱️ {t('common.averageTime')}:</span>
+          <span className="stat-value">{getAverageTime()}{t('common.ms')}</span>
         </div>
 
         <div className="difficulty-breakdown">
-          <h4>По уровням сложности:</h4>
+          <h4>{t('oddOneOut.byDifficulty')}:</h4>
           <div className="breakdown-item">
             <span>🟢 3×3 (1-3):</span>
             <span>{easyCorrect} / {results.filter(r => r.difficulty === 'easy').length}</span>
@@ -214,28 +216,28 @@ export const OddOneOut: React.FC<OddOneOutProps> = ({ onBackToMenu, onNextGame }
     const accuracy = getAccuracy();
     
     if (accuracy === 100) {
-      return '🏆 Безупречно! Вы мастер визуального анализа!';
+      return t('oddOneOut.results.perfect');
     }
     if (accuracy >= 90) {
-      return '⭐ Отлично! У вас очень зоркий глаз!';
+      return t('oddOneOut.results.excellent');
     }
     if (accuracy >= 70) {
-      return '👍 Хорошо! Продолжайте тренироваться!';
+      return t('oddOneOut.results.good');
     }
     if (accuracy >= 50) {
-      return '💪 Неплохо! Будьте внимательнее!';
+      return t('oddOneOut.results.notBad');
     }
-    return '🎯 Тренируйте внимание к деталям!';
+    return t('oddOneOut.results.keepPracticing');
   };
 
   return (
     <GameLayout
-      title="🔍 Odd One Out"
+      title={`🔍 ${t('oddOneOut.title')}`}
       footerContent={
         (status === 'playing' || status === 'feedback') && (
           <div className="game-stats">
-            <span>Правильно: {correctAnswers}/{currentRound}</span>
-            <span>Очки: {currentScore}</span>
+            <span>{t('common.correct')}: {correctAnswers}/{currentRound}</span>
+            <span>{t('common.score')}: {currentScore}</span>
           </div>
         )
       }
@@ -244,7 +246,7 @@ export const OddOneOut: React.FC<OddOneOutProps> = ({ onBackToMenu, onNextGame }
 
       <ResultsModal
         show={status === 'results'}
-        title="🎮 Игра завершена!"
+        title={`🎮 ${t('common.gameOver')}`}
         score={currentScore}
         message={getMessage()}
         details={renderDetails()}

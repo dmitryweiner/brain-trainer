@@ -30,7 +30,22 @@
       "tooEarly": "מוקדם מדי!",
       "waitForButton": "חכה לכפתור 🔘",
       "great": "מעולה!",
-      "attempt": "ניסיון"
+      "attempt": "ניסיון",
+      "results": {
+        "tryAgain": "😅 נסה שוב!",
+        "incredible": "⚡ תגובה מדהימה! אתה מהיר כברק!",
+        "excellent": "🔥 מהירות מעולה! תוצאה מצוינת!",
+        "good": "👍 עבודה טובה! המשך ככה!",
+        "notBad": "💪 לא רע! יש מקום לשיפור!",
+        "keepPracticing": "🎯 המשך להתאמן, המהירות תגיע!"
+      },
+      "noSuccessfulAttempts": "אין ניסיונות מוצלחים",
+      "completedAttempts": "השלמת {{completed}} מתוך {{total}} ניסיונות",
+      "tooEarlyCount": "{{count}} מוקדם מדי",
+      "bestReaction": "תגובה הטובה ביותר",
+      "averageReaction": "תגובה ממוצעת",
+      "worstReaction": "תגובה הגרועה ביותר",
+      "allResults": "כל התוצאות"
     },
     "color-tap": {
       "title": "הקשת צבע",
@@ -48,7 +63,16 @@
       "yes": "כן",
       "no": "לא",
       "correct": "נכון!",
-      "incorrect": "לא נכון"
+      "results": {
+        "perfect": "🏆 מושלם! אתה אלוף התגובה!",
+        "excellent": "⚡ מצוין! עבודה מדויקת מאוד!",
+        "good": "👍 טוב! המשך להתאמן!",
+        "notBad": "💪 לא רע! יש מקום לשיפור!",
+        "keepPracticing": "🎯 המשך להתאמן!"
+      },
+      "incorrect": "לא נכון",
+      "correctAnswers": "תשובות נכונות",
+      "fastAnswers": "תשובות מהירות"
     },
     "symbol-match": {
       "title": "התאמת סמלים",
@@ -62,7 +86,15 @@
         "scoring": "תשובה נכונה: +1 נקודה"
       },
       "match": "תואמים",
-      "noMatch": "לא תואמים"
+      "noMatch": "לא תואמים",
+      "results": {
+        "perfect": "🏆 מושלם! יש לך קשב מצוין!",
+        "excellent": "⚡ מעולה! מאוד קשוב!",
+        "good": "👍 טוב! המשך להתאמן!",
+        "notBad": "💪 לא רע! היה קשוב יותר!",
+        "keepPracticing": "🎯 אמן את הקשב שלך!"
+      },
+      "correctAnswers": "תשובות נכונות"
     },
     "odd-one-out": {
       "title": "מצא את השונה",
@@ -82,17 +114,51 @@
         "medium": "3-5 שניות: 2 נקודות",
         "slow": "> 5 שניות: נקודה אחת"
       },
-      "findNumber": "מצא מספר"
+      "findNumber": "מצא מספר",
+      "results": {
+        "incredible": "⚡ מהירות מדהימה! קשב מצוין!",
+        "excellent": "🔥 מעולה! תגובה מהירה מאוד!",
+        "good": "👍 עבודה טובה! המשך להתאמן!",
+        "notBad": "💪 לא רע! יש מקום לשיפור!",
+        "keepPracticing": "🎯 אמן את החיפוש החזותי!"
+      },
+      "cellWithNumber": "תא עם מספר {{number}}",
+      "completedRounds": "סיבובים שהושלמו",
+      "bestTime": "הזמן הטוב ביותר",
+      "worstTime": "הזמן הגרוע ביותר",
+      "speedDistribution": "התפלגות מהירות",
+      "fast": "מהיר",
+      "medium": "בינוני",
+      "slow": "איטי",
+      "rounds": "סיבובים",
+      "point": "נקודה",
+      "points234": "נקודות",
+      "points": "נקודות"
     },
     "memory-flip": {
       "title": "היפוך זיכרון",
       "description": "זיכרון לטווח קצר",
+      "moves": "מהלכים",
+      "time": "זמן",
+      "levelComplete": "השלב הושלם!",
+      "goToLevel": "עבור לשלב {{level}}",
+      "finishGame": "סיים משחק",
+      "gameComplete": "המשחק הושלם!",
+      "completedAllLevels": "מעולה! השלמת את כל {{count}} השלבים!",
+      "totalTime": "זמן כולל",
+      "totalPoints": "סה״כ נקודות",
+      "card": "קלף {{number}}",
       "instructions": {
         "lead": "אימון זיכרון לטווח קצר",
         "flip": "הקלפים יוצגו לרגע",
         "remember": "זכור את מיקומם",
         "findPairs": "מצא את כל הזוגות התואמים",
-        "scoring": "נקודות לכל זוג שנמצא"
+        "scoring": "נקודות לכל זוג שנמצא",
+        "findPairsRule": "מצא את כל זוגות האימוג'ים הזהים",
+        "openTwoCards": "פתח 2 קלפים בכל פעם",
+        "rememberPositions": "זכור את מיקום הקלפים",
+        "fourLevels": "4 רמות קושי עולות",
+        "from6to20": "מ-6 עד 20 קלפים"
       }
     },
     "sequence-recall": {
@@ -175,7 +241,9 @@
     "correctAnswers": "תשובות נכונות",
     "find": "מצא",
     "sec": "שנ'",
-    "ms": "מ״ש"
+    "ms": "מ״ש",
+    "totalRounds": "סה״כ סיבובים",
+    "of": "מתוך"
   },
   "gameCard": {
     "bestScore": "הטוב ביותר",
@@ -237,7 +305,21 @@
       "tap": "הקש עליו",
       "difficulty": "הקושי עולה בכל סיבוב!"
     },
-    "findOdd": "מצא את הסמל השונה"
+    "findOdd": "מצא את הסמל השונה",
+    "results": {
+      "perfect": "🏆 ללא רבב! אתה אלוף הניתוח החזותי!",
+      "excellent": "⚡ מעולה! עין חדה מאוד!",
+      "good": "👍 טוב! המשך להתאמן!",
+      "notBad": "💪 לא רע! היה קשוב יותר!",
+      "keepPracticing": "🎯 אמן את הקשב לפרטים!"
+    },
+    "difficultyLevels": "רמות קושי",
+    "rounds1to3": "סיבובים 1-3",
+    "rounds4to7": "סיבובים 4-7",
+    "rounds8to10": "סיבובים 8-10",
+    "selectSymbol": "בחר סמל {{number}}",
+    "pointsPerCorrect": "+1 לתשובה נכונה",
+    "byDifficulty": "לפי רמת קושי"
   },
   "nBack": {
     "title": "N-אחורה (2-אחורה)",

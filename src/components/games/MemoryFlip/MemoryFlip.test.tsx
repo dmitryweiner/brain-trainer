@@ -18,12 +18,12 @@ describe('MemoryFlip Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<MemoryFlip onBack={onBack} />);
 
-    const titles = screen.getAllByText('🃏 Memory Flip');
+    const titles = screen.getAllByText(/🃏.*Memory Flip|🃏.*Мемори/i);
     expect(titles.length).toBeGreaterThan(0);
-    expect(screen.getByText(/Тренировка кратковременной памяти/i)).toBeInTheDocument();
-    expect(screen.getByText(/Найдите все пары одинаковых эмодзи/i)).toBeInTheDocument();
-    expect(screen.getByText(/4 уровня возрастающей сложности/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Начать игру/i })).toBeInTheDocument();
+    expect(screen.getByText(/Тренировка кратковременной памяти|Short-term memory training/i)).toBeInTheDocument();
+    expect(screen.getByText(/Найдите все.*пары|Find all.*pairs/i)).toBeInTheDocument();
+    expect(screen.getByText(/4 уровня|4 levels/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Начать игру|Start game/i })).toBeInTheDocument();
   });
 
   it('should start game on button click', async () => {
@@ -31,11 +31,11 @@ describe('MemoryFlip Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<MemoryFlip onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start game/i });
     await user.click(startButton);
 
     // Должна появиться сетка карт
-    const cards = screen.getAllByRole('button', { name: /Карта/i });
+    const cards = screen.getAllByRole('button', { name: /Карта|Card/i });
     expect(cards).toHaveLength(6); // Уровень 1: 2x3
   });
 
@@ -44,10 +44,10 @@ describe('MemoryFlip Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<MemoryFlip onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start game/i });
     await user.click(startButton);
 
-    const cards = screen.getAllByRole('button', { name: /Карта/i });
+    const cards = screen.getAllByRole('button', { name: /Карта|Card/i });
     cards.forEach((card) => {
       expect(card.textContent).toContain('?');
     });
@@ -58,10 +58,10 @@ describe('MemoryFlip Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<MemoryFlip onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start game/i });
     await user.click(startButton);
 
-    const cards = screen.getAllByRole('button', { name: /Карта/i });
+    const cards = screen.getAllByRole('button', { name: /Карта|Card/i });
     const firstCard = cards[0];
 
     await user.click(firstCard);
@@ -77,7 +77,7 @@ describe('MemoryFlip Component', () => {
     const onBack = vi.fn();
     const { container } = renderWithProvider(<MemoryFlip onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start game/i });
     await user.click(startButton);
 
     // Проверяем наличие статистики в footer
@@ -86,9 +86,9 @@ describe('MemoryFlip Component', () => {
     });
 
     const stats = container.querySelector('.memory-flip-stats');
-    expect(stats?.textContent).toContain('Ходов:');
-    expect(stats?.textContent).toContain('Время:');
-    expect(stats?.textContent).toContain('Уровень:');
+    expect(stats?.textContent).toMatch(/Ходов|Moves/);
+    expect(stats?.textContent).toMatch(/Время|Time/);
+    expect(stats?.textContent).toMatch(/Уровень|Level/);
     expect(stats?.textContent).toContain('1/4');
   });
 
@@ -97,10 +97,10 @@ describe('MemoryFlip Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<MemoryFlip onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start game/i });
     await user.click(startButton);
 
-    const cards = screen.getAllByRole('button', { name: /Карта/i });
+    const cards = screen.getAllByRole('button', { name: /Карта|Card/i });
 
     // Получаем все эмодзи
     const emojis = cards.map((card) => card.querySelector('.card-back')?.textContent);
@@ -121,12 +121,12 @@ describe('MemoryFlip Component', () => {
     // Должен появиться экран завершения уровня 1
     await waitFor(
       () => {
-        expect(screen.getByText(/Уровень 1 завершён/i)).toBeInTheDocument();
+        expect(screen.getByText(/Уровень пройден|Level Complete|Рівень завершено/i)).toBeInTheDocument();
       },
       { timeout: 3000 }
     );
 
-    expect(screen.getByRole('button', { name: /Перейти к уровню 2/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Перейти к уровню|Go to Level/i })).toBeInTheDocument();
   });
 
   it('should proceed to level 2 on button click', async () => {
@@ -134,10 +134,10 @@ describe('MemoryFlip Component', () => {
     const onBack = vi.fn();
     renderWithProvider(<MemoryFlip onBack={onBack} />);
 
-    const startButton = screen.getByRole('button', { name: /Начать игру/i });
+    const startButton = screen.getByRole('button', { name: /Начать игру|Start game/i });
     await user.click(startButton);
 
-    let cards = screen.getAllByRole('button', { name: /Карта/i });
+    let cards = screen.getAllByRole('button', { name: /Карта|Card/i });
 
     // Завершаем уровень 1
     const emojis = cards.map((card) => card.querySelector('.card-back')?.textContent);
@@ -155,12 +155,12 @@ describe('MemoryFlip Component', () => {
     }
 
     // Переходим на уровень 2
-    const level2Button = await screen.findByRole('button', { name: /Перейти к уровню 2/i });
+    const level2Button = await screen.findByRole('button', { name: /Перейти к уровню|Go to Level/i });
     await user.click(level2Button);
 
     // Должна появиться новая сетка карт (3x4 = 12)
     await waitFor(() => {
-      cards = screen.getAllByRole('button', { name: /Карта/i });
+      cards = screen.getAllByRole('button', { name: /Карта|Card/i });
       expect(cards).toHaveLength(12);
     });
   });

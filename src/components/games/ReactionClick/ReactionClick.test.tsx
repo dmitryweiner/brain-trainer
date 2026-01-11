@@ -18,10 +18,10 @@ describe('ReactionClick', () => {
     
     render(<ReactionClick onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    const titles = screen.getAllByText('⚡ Reaction Click');
+    const titles = screen.getAllByText(/⚡.*Reaction Click|Скорость реакции/i);
     expect(titles.length).toBeGreaterThan(0);
-    expect(screen.getByText('Тренировка скорости реакции')).toBeInTheDocument();
-    expect(screen.getByText('Начать игру')).toBeInTheDocument();
+    expect(screen.getByText(/скорости реакции|Reaction speed/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /начать игру|start game/i })).toBeInTheDocument();
   });
 
   it('should display game instructions on intro screen', () => {
@@ -49,10 +49,10 @@ describe('ReactionClick', () => {
     
     render(<ReactionClick onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    await user.click(screen.getByText('Начать игру'));
+    await user.click(screen.getByRole('button', { name: /начать игру|start game/i }));
     
     await waitFor(() => {
-      expect(screen.getByText('Ждите...')).toBeInTheDocument();
+      expect(screen.getByText(/Ждите|Wait/i)).toBeInTheDocument();
     });
   });
 
@@ -62,11 +62,11 @@ describe('ReactionClick', () => {
     
     render(<ReactionClick onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    await user.click(screen.getByText('Начать игру'));
+    await user.click(screen.getByRole('button', { name: /начать игру|start game/i }));
     
     await waitFor(() => {
       // New format: "Попытка 1 / 5"
-      expect(screen.getByText(/1 \/ 5/)).toBeInTheDocument();
+      expect(screen.getByText(/1.*\/.*5/)).toBeInTheDocument();
     });
   });
 
@@ -76,11 +76,11 @@ describe('ReactionClick', () => {
     
     render(<ReactionClick onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    await user.click(screen.getByText('Начать игру'));
+    await user.click(screen.getByRole('button', { name: /начать игру|start game/i }));
     
     await waitFor(() => {
       // After starting, should show waiting or ready state
-      expect(screen.getByText('Ждите...')).toBeInTheDocument();
+      expect(screen.getByText(/Ждите|Wait/i)).toBeInTheDocument();
     });
   });
 
@@ -90,7 +90,7 @@ describe('ReactionClick', () => {
     
     render(<ReactionClick onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    await user.click(screen.getByText('Начать игру'));
+    await user.click(screen.getByRole('button', { name: /начать игру|start game/i }));
     
     await waitFor(() => {
       expect(screen.getByText('💣')).toBeInTheDocument();
@@ -102,7 +102,7 @@ describe('ReactionClick', () => {
     
     render(<ReactionClick onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    expect(screen.queryByText('Игра завершена!')).not.toBeInTheDocument();
+    expect(screen.queryByText(/Игра завершена|Game Over/i)).not.toBeInTheDocument();
   });
 
   it('should render with onNextGame prop', () => {
@@ -117,7 +117,7 @@ describe('ReactionClick', () => {
       { wrapper }
     );
     
-    const titles = screen.getAllByText('⚡ Reaction Click');
+    const titles = screen.getAllByText(/⚡.*Reaction Click|Скорость реакции/i);
     expect(titles.length).toBeGreaterThan(0);
   });
 
@@ -138,7 +138,7 @@ describe('ReactionClick', () => {
       { wrapper }
     );
     
-    const titles = screen.getAllByText('⚡ Reaction Click');
+    const titles = screen.getAllByText(/⚡.*Reaction Click|Скорость реакции/i);
     expect(titles.length).toBeGreaterThan(0);
   });
 

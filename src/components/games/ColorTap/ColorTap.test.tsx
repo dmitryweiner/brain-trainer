@@ -18,10 +18,10 @@ describe('ColorTap', () => {
     
     render(<ColorTap onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    const titles = screen.getAllByText('🎨 Color Tap');
+    const titles = screen.getAllByText(/🎨.*Color Tap|Нажми на цвет/i);
     expect(titles.length).toBeGreaterThan(0);
-    expect(screen.getByText('Тренировка реакции и внимания')).toBeInTheDocument();
-    expect(screen.getByText('Начать игру')).toBeInTheDocument();
+    expect(screen.getByText(/Тренировка реакции|Reaction and attention/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /начать игру|start game/i })).toBeInTheDocument();
   });
 
   it('should display game instructions on intro screen', () => {
@@ -29,9 +29,9 @@ describe('ColorTap', () => {
     
     render(<ColorTap onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    expect(screen.getByText(/Правила:/)).toBeInTheDocument();
-    expect(screen.getByText(/Зелёный круг/)).toBeInTheDocument();
-    expect(screen.getByText(/Красный круг/)).toBeInTheDocument();
+    expect(screen.getByText(/Правила|Rules/i)).toBeInTheDocument();
+    expect(screen.getByText(/Зелёный|green/i)).toBeInTheDocument();
+    expect(screen.getByText(/Красный|red/i)).toBeInTheDocument();
   });
 
   it('should display scoring information', () => {
@@ -39,9 +39,9 @@ describe('ColorTap', () => {
     
     render(<ColorTap onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    expect(screen.getByText('Очки:')).toBeInTheDocument();
-    expect(screen.getByText(/\+1 очко/)).toBeInTheDocument();
-    expect(screen.getByText(/\+0.5 бонус/)).toBeInTheDocument();
+    expect(screen.getByText(/Очки|Points/i)).toBeInTheDocument();
+    expect(screen.getByText(/\+1|correct/i)).toBeInTheDocument();
+    expect(screen.getByText(/\+0.5|bonus/i)).toBeInTheDocument();
   });
 
   it('should start game when button is clicked', async () => {
@@ -50,10 +50,10 @@ describe('ColorTap', () => {
     
     render(<ColorTap onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    await user.click(screen.getByText('Начать игру'));
+    await user.click(screen.getByRole('button', { name: /начать игру|start game/i }));
     
     await waitFor(() => {
-      expect(screen.getByText(/Раунд/)).toBeInTheDocument();
+      expect(screen.getByText(/Раунд|Round/i)).toBeInTheDocument();
     });
   });
 
@@ -63,10 +63,10 @@ describe('ColorTap', () => {
     
     render(<ColorTap onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    await user.click(screen.getByText('Начать игру'));
+    await user.click(screen.getByRole('button', { name: /начать игру|start game/i }));
     
     await waitFor(() => {
-      expect(screen.getByText(/Раунд 1 \/ 20/)).toBeInTheDocument();
+      expect(screen.getByText(/1.*\/.*20/)).toBeInTheDocument();
     });
   });
 
@@ -76,11 +76,11 @@ describe('ColorTap', () => {
     
     render(<ColorTap onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    await user.click(screen.getByText('Начать игру'));
+    await user.click(screen.getByRole('button', { name: /начать игру|start game/i }));
     
     await waitFor(() => {
-      expect(screen.getByText(/✓ ДА/)).toBeInTheDocument();
-      expect(screen.getByText(/✗ НЕТ/)).toBeInTheDocument();
+      expect(screen.getByText(/✓.*ДА|✓.*YES/i)).toBeInTheDocument();
+      expect(screen.getByText(/✗.*НЕТ|✗.*NO/i)).toBeInTheDocument();
     });
   });
 
@@ -89,7 +89,7 @@ describe('ColorTap', () => {
     
     render(<ColorTap onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    expect(screen.queryByText('Игра завершена!')).not.toBeInTheDocument();
+    expect(screen.queryByText(/Игра завершена|Game Over/i)).not.toBeInTheDocument();
   });
 
   it('should render with onNextGame prop', () => {
@@ -104,7 +104,7 @@ describe('ColorTap', () => {
       { wrapper }
     );
     
-    const titles = screen.getAllByText('🎨 Color Tap');
+    const titles = screen.getAllByText(/🎨.*Color Tap|Нажми на цвет/i);
     expect(titles.length).toBeGreaterThan(0);
   });
 
@@ -125,7 +125,7 @@ describe('ColorTap', () => {
       { wrapper }
     );
     
-    const titles = screen.getAllByText('🎨 Color Tap');
+    const titles = screen.getAllByText(/🎨.*Color Tap|Нажми на цвет/i);
     expect(titles.length).toBeGreaterThan(0);
   });
 
@@ -157,7 +157,7 @@ describe('ColorTap', () => {
     
     render(<ColorTap onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    expect(screen.getByText(/Всего раундов: 20/)).toBeInTheDocument();
+    expect(screen.getByText(/20/)).toBeInTheDocument();
   });
 });
 

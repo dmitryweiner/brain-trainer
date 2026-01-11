@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useMemoryFlip } from './useMemoryFlip';
 import { useScoreContext } from '../../../context/ScoreContext';
 import { useGameHistoryContext } from '../../../context/GameHistoryContext';
@@ -20,13 +21,14 @@ const LEVEL_GRID_KEYS = {
 };
 
 const LEVEL_NAMES = {
-  1: '2×3 (6 карт)',
-  2: '3×4 (12 карт)',
-  3: '4×4 (16 карт)',
-  4: '4×5 (20 карт)',
+  1: '2×3 (6)',
+  2: '3×4 (12)',
+  3: '4×4 (16)',
+  4: '4×5 (20)',
 };
 
 export default function MemoryFlip({ onBack }: MemoryFlipProps) {
+  const { t } = useTranslation();
   const {
     status,
     level,
@@ -74,21 +76,21 @@ export default function MemoryFlip({ onBack }: MemoryFlipProps) {
 
   return (
     <GameLayout
-      title="🃏 Memory Flip"
+      title={`🃏 ${t('games.memory-flip.title')}`}
       onBack={onBack}
       footer={
         status === 'playing' ? (
           <div className="memory-flip-stats">
             <div className="stat-item">
-              <span className="stat-label">Ходов:</span>
+              <span className="stat-label">{t('games.memory-flip.moves')}:</span>
               <span className="stat-value">{moves}</span>
             </div>
             <div className="stat-item">
-              <span className="stat-label">Время:</span>
+              <span className="stat-label">{t('games.memory-flip.time')}:</span>
               <span className="stat-value">{formatTime(elapsedTime)}</span>
             </div>
             <div className="stat-item">
-              <span className="stat-label">Уровень:</span>
+              <span className="stat-label">{t('common.level')}:</span>
               <span className="stat-value">{level}/4</span>
             </div>
           </div>
@@ -100,16 +102,16 @@ export default function MemoryFlip({ onBack }: MemoryFlipProps) {
         {status === 'intro' && (
           <div className="memory-flip-intro">
             <div className="game-icon">🃏</div>
-            <h2>Memory Flip</h2>
-            <p className="game-description">Тренировка кратковременной памяти</p>
+            <h2>{t('games.memory-flip.title')}</h2>
+            <p className="game-description">{t('games.memory-flip.instructions.lead')}</p>
             <div className="game-rules">
-              <h3>Как играть:</h3>
+              <h3>{t('common.howToPlay')}:</h3>
               <ul>
-                <li>Найдите все пары одинаковых эмодзи</li>
-                <li>Открывайте по 2 карты за раз</li>
-                <li>Запоминайте расположение карт</li>
-                <li>4 уровня возрастающей сложности</li>
-                <li>От 6 до 20 карт</li>
+                <li>{t('games.memory-flip.instructions.findPairsRule')}</li>
+                <li>{t('games.memory-flip.instructions.openTwoCards')}</li>
+                <li>{t('games.memory-flip.instructions.rememberPositions')}</li>
+                <li>{t('games.memory-flip.instructions.fourLevels')}</li>
+                <li>{t('games.memory-flip.instructions.from6to20')}</li>
               </ul>
             </div>
             <Button
@@ -117,7 +119,7 @@ export default function MemoryFlip({ onBack }: MemoryFlipProps) {
               size="lg"
               onClick={startGame}
             >
-              Начать игру
+              {t('common.startGame')}
             </Button>
           </div>
         )}
@@ -140,7 +142,7 @@ export default function MemoryFlip({ onBack }: MemoryFlipProps) {
                   }`}
                   onClick={() => handleCardClick(index)}
                   disabled={card.isFlipped || card.isMatched}
-                  aria-label={`Карта ${index + 1}`}
+                  aria-label={t('games.memory-flip.card', { number: index + 1 })}
                 >
                   <div className="card-inner">
                     <div className="card-front">?</div>
@@ -156,17 +158,17 @@ export default function MemoryFlip({ onBack }: MemoryFlipProps) {
         {status === 'level-complete' && (
           <div className="memory-flip-level-complete">
             <div className="completion-icon">🎉</div>
-            <h2>Уровень {level} завершён!</h2>
+            <h2>{t('games.memory-flip.levelComplete')}</h2>
             <div className="level-info">
-              <p className="level-size">{LEVEL_NAMES[level]}</p>
+              <p className="level-size">{t('common.level')} {level}: {LEVEL_NAMES[level]}</p>
             </div>
             <div className="level-stats">
               <div className="stat-box">
-                <div className="stat-label">Ходов</div>
+                <div className="stat-label">{t('games.memory-flip.moves')}</div>
                 <div className="stat-value">{levelStats[level - 1]?.moves || 0}</div>
               </div>
               <div className="stat-box">
-                <div className="stat-label">Очки</div>
+                <div className="stat-label">{t('common.score')}</div>
                 <div className="stat-value">{levelStats[level - 1]?.score || 0}</div>
               </div>
             </div>
@@ -175,7 +177,7 @@ export default function MemoryFlip({ onBack }: MemoryFlipProps) {
               size="lg"
               onClick={proceedToNextLevel}
             >
-              {level < 4 ? `Перейти к уровню ${level + 1}` : 'Завершить игру'}
+              {level < 4 ? t('games.memory-flip.goToLevel', { level: level + 1 }) : t('games.memory-flip.finishGame')}
             </Button>
           </div>
         )}
@@ -184,26 +186,26 @@ export default function MemoryFlip({ onBack }: MemoryFlipProps) {
         {status === 'results' && (
           <ResultsModal
             show={true}
-            title="Игра завершена!"
+            title={`🎮 ${t('games.memory-flip.gameComplete')}`}
             score={totalScore}
-            message={`Отлично! Вы прошли все ${levelStats.length} уровня!`}
+            message={t('games.memory-flip.completedAllLevels', { count: levelStats.length })}
             onPlayAgain={startGame}
             onBackToMenu={onBack}
             details={
               <div className="memory-flip-results-details">
                 {levelStats.map((stats, index) => (
                   <div key={index} className="results-section">
-                    <h4>Уровень {index + 1} ({LEVEL_NAMES[(index + 1) as 1 | 2 | 3 | 4]})</h4>
-                    <p>Ходов: {stats.moves}</p>
-                    <p>Очки: {stats.score}</p>
+                    <h4>{t('common.level')} {index + 1} ({LEVEL_NAMES[(index + 1) as 1 | 2 | 3 | 4]})</h4>
+                    <p>{t('games.memory-flip.moves')}: {stats.moves}</p>
+                    <p>{t('common.score')}: {stats.score}</p>
                   </div>
                 ))}
                 <div className="results-section">
-                  <h4>Общее время</h4>
+                  <h4>{t('games.memory-flip.totalTime')}</h4>
                   <p>{formatTime(elapsedTime)}</p>
                 </div>
                 <div className="results-section results-total">
-                  <h4>Итого очков</h4>
+                  <h4>{t('games.memory-flip.totalPoints')}</h4>
                   <p className="total-score">🏆 {totalScore}</p>
                 </div>
               </div>

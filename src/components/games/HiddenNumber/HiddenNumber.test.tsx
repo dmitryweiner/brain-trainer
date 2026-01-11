@@ -18,9 +18,9 @@ describe('HiddenNumber', () => {
     
     render(<HiddenNumber onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    const titles = screen.getAllByText('🔢 Hidden Number');
+    const titles = screen.getAllByText(/🔢.*Hidden Number|Скрытое число/i);
     expect(titles.length).toBeGreaterThan(0);
-    expect(screen.getByText('Начать игру')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Начать игру|Start game/i })).toBeInTheDocument();
   });
 
   it('should display instructions', () => {
@@ -28,8 +28,8 @@ describe('HiddenNumber', () => {
     
     render(<HiddenNumber onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    expect(screen.getByText(/Правила:/)).toBeInTheDocument();
-    expect(screen.getByText(/визуального поиска/)).toBeInTheDocument();
+    expect(screen.getByText(/Правила|Rules/i)).toBeInTheDocument();
+    expect(screen.getByText(/визуального поиска|visual search/i)).toBeInTheDocument();
   });
 
   it('should start game on button click', async () => {
@@ -38,10 +38,10 @@ describe('HiddenNumber', () => {
     
     render(<HiddenNumber onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    await user.click(screen.getByText('Начать игру'));
+    await user.click(screen.getByRole('button', { name: /Начать игру|Start game/i }));
     
     await waitFor(() => {
-      expect(screen.getByText(/Раунд/)).toBeInTheDocument();
+      expect(screen.getByText(/Раунд|Round/i)).toBeInTheDocument();
     });
   });
 
@@ -51,10 +51,10 @@ describe('HiddenNumber', () => {
     
     render(<HiddenNumber onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    await user.click(screen.getByText('Начать игру'));
+    await user.click(screen.getByRole('button', { name: /Начать игру|Start game/i }));
     
     await waitFor(() => {
-      expect(screen.getByText(/Раунд 1 \/ 10/)).toBeInTheDocument();
+      expect(screen.getByText(/1.*\/.*10/)).toBeInTheDocument();
     });
   });
 
@@ -67,7 +67,7 @@ describe('HiddenNumber', () => {
       { wrapper }
     );
     
-    await user.click(screen.getByText('Начать игру'));
+    await user.click(screen.getByRole('button', { name: /Начать игру|Start game/i }));
     
     await waitFor(() => {
       const cells = container.querySelectorAll('.grid-cell');

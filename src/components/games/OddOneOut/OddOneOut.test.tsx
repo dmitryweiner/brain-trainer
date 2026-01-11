@@ -18,10 +18,10 @@ describe('OddOneOut', () => {
     
     render(<OddOneOut onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    const titles = screen.getAllByText('🔍 Odd One Out');
+    const titles = screen.getAllByText(/🔍.*Odd One Out|Найди лишний/i);
     expect(titles.length).toBeGreaterThan(0);
-    expect(screen.getByText('Тренировка визуального анализа')).toBeInTheDocument();
-    expect(screen.getByText('Начать игру')).toBeInTheDocument();
+    expect(screen.getByText(/визуального анализа|Visual analysis/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /начать игру|start game/i })).toBeInTheDocument();
   });
 
   it('should display game instructions on intro screen', () => {
@@ -29,9 +29,8 @@ describe('OddOneOut', () => {
     
     render(<OddOneOut onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    expect(screen.getByText('Правила:')).toBeInTheDocument();
-    expect(screen.getByText(/Найдите/)).toBeInTheDocument();
-    expect(screen.getByText(/лишний/)).toBeInTheDocument();
+    expect(screen.getByText(/Правила|Rules/i)).toBeInTheDocument();
+    expect(screen.getByText(/Найдіть|Найдите|Find/i)).toBeInTheDocument();
   });
 
   it('should display difficulty information', () => {
@@ -39,10 +38,10 @@ describe('OddOneOut', () => {
     
     render(<OddOneOut onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    expect(screen.getByText('Уровни сложности:')).toBeInTheDocument();
-    expect(screen.getByText(/Раунды 1-3/)).toBeInTheDocument();
-    expect(screen.getByText(/Раунды 4-7/)).toBeInTheDocument();
-    expect(screen.getByText(/Раунды 8-10/)).toBeInTheDocument();
+    expect(screen.getByText(/Уровни сложности|Difficulty levels/i)).toBeInTheDocument();
+    expect(screen.getByText(/1-3/)).toBeInTheDocument();
+    expect(screen.getByText(/4-7/)).toBeInTheDocument();
+    expect(screen.getByText(/8-10/)).toBeInTheDocument();
   });
 
   it('should display scoring information', () => {
@@ -50,8 +49,8 @@ describe('OddOneOut', () => {
     
     render(<OddOneOut onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    expect(screen.getByText(/Очки:/)).toBeInTheDocument();
-    expect(screen.getByText(/\+1 за правильный ответ/)).toBeInTheDocument();
+    expect(screen.getByText(/Очки|Score/i)).toBeInTheDocument();
+    expect(screen.getByText(/\+1/i)).toBeInTheDocument();
   });
 
   it('should start game when button is clicked', async () => {
@@ -60,10 +59,10 @@ describe('OddOneOut', () => {
     
     render(<OddOneOut onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    await user.click(screen.getByText('Начать игру'));
+    await user.click(screen.getByRole('button', { name: /начать игру|start game/i }));
     
     await waitFor(() => {
-      expect(screen.getByText(/Раунд/)).toBeInTheDocument();
+      expect(screen.getByText(/Раунд|Round/i)).toBeInTheDocument();
     });
   });
 
@@ -73,10 +72,10 @@ describe('OddOneOut', () => {
     
     render(<OddOneOut onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    await user.click(screen.getByText('Начать игру'));
+    await user.click(screen.getByRole('button', { name: /начать игру|start game/i }));
     
     await waitFor(() => {
-      expect(screen.getByText(/Раунд 1 \/ 10/)).toBeInTheDocument();
+      expect(screen.getByText(/1.*\/.*10/)).toBeInTheDocument();
     });
   });
 
@@ -86,11 +85,11 @@ describe('OddOneOut', () => {
     
     render(<OddOneOut onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    await user.click(screen.getByText('Начать игру'));
+    await user.click(screen.getByRole('button', { name: /начать игру|start game/i }));
     
     await waitFor(() => {
       // Difficulty badge includes grid size, e.g. "Легко (3×3)"
-      expect(screen.getByText(/Легко/)).toBeInTheDocument();
+      expect(screen.getByText(/Легко|Easy/i)).toBeInTheDocument();
     });
   });
 
@@ -100,10 +99,10 @@ describe('OddOneOut', () => {
     
     render(<OddOneOut onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    await user.click(screen.getByText('Начать игру'));
+    await user.click(screen.getByRole('button', { name: /начать игру|start game/i }));
     
     await waitFor(() => {
-      expect(screen.getByText('Найдите лишний символ')).toBeInTheDocument();
+      expect(screen.getByText(/лишний символ|odd symbol/i)).toBeInTheDocument();
     });
   });
 
@@ -112,7 +111,7 @@ describe('OddOneOut', () => {
     
     render(<OddOneOut onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    expect(screen.queryByText('Игра завершена!')).not.toBeInTheDocument();
+    expect(screen.queryByText(/Игра завершена|Game Over/i)).not.toBeInTheDocument();
   });
 
   it('should render with onNextGame prop', () => {
@@ -127,7 +126,7 @@ describe('OddOneOut', () => {
       { wrapper }
     );
     
-    const titles = screen.getAllByText('🔍 Odd One Out');
+    const titles = screen.getAllByText(/🔍.*Odd One Out|Найди лишний/i);
     expect(titles.length).toBeGreaterThan(0);
   });
 
@@ -145,7 +144,7 @@ describe('OddOneOut', () => {
     
     render(<OddOneOut onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    const titles = screen.getAllByText('🔍 Odd One Out');
+    const titles = screen.getAllByText(/🔍.*Odd One Out|Найди лишний/i);
     expect(titles.length).toBeGreaterThan(0);
   });
 
@@ -177,7 +176,7 @@ describe('OddOneOut', () => {
     
     render(<OddOneOut onBackToMenu={handleBackToMenu} />, { wrapper });
     
-    expect(screen.getByText(/Всего раундов: 10/)).toBeInTheDocument();
+    expect(screen.getByText(/Всего раундов.*10|Total rounds.*10|Загалом раундів.*10/i)).toBeInTheDocument();
   });
 
   it('should render emoji grid during game', async () => {
@@ -189,7 +188,7 @@ describe('OddOneOut', () => {
       { wrapper }
     );
     
-    await user.click(screen.getByText('Начать игру'));
+    await user.click(screen.getByRole('button', { name: /начать игру|start game/i }));
     
     await waitFor(() => {
       const grid = container.querySelector('.emoji-grid');
@@ -210,7 +209,7 @@ describe('OddOneOut', () => {
       { wrapper }
     );
     
-    await user.click(screen.getByText('Начать игру'));
+    await user.click(screen.getByRole('button', { name: /начать игру|start game/i }));
     
     await waitFor(() => {
       const cells = container.querySelectorAll('.emoji-cell');

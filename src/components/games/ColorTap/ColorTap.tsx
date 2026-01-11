@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { GameLayout, ResultsModal, Button } from '../../common';
 import { useScoreContext } from '../../../context/ScoreContext';
 import { useGameHistoryContext } from '../../../context/GameHistoryContext';
@@ -12,6 +13,7 @@ export interface ColorTapProps {
 }
 
 export const ColorTap: React.FC<ColorTapProps> = ({ onBackToMenu, onNextGame }) => {
+  const { t } = useTranslation();
   const { addScore } = useScoreContext();
   const { addGameResult } = useGameHistoryContext();
   const scoreAddedRef = useRef(false);
@@ -56,25 +58,25 @@ export const ColorTap: React.FC<ColorTapProps> = ({ onBackToMenu, onNextGame }) 
       return (
         <div className="color-tap-intro">
           <div className="intro-card">
-            <h2>🎨 Color Tap</h2>
+            <h2>🎨 {t('games.color-tap.title')}</h2>
             <div className="intro-instructions">
-              <p className="lead">Тренировка реакции и внимания</p>
+              <p className="lead">{t('games.color-tap.instructions.lead')}</p>
               <div className="rules">
-                <h3>Правила:</h3>
+                <h3>{t('common.rules')}:</h3>
                 <ul>
-                  <li>🟢 Зелёный круг → нажмите <strong>ДА</strong></li>
-                  <li>🔴 Красный круг → нажмите <strong>НЕТ</strong></li>
-                  <li>⚡ Быстрый ответ (&lt; 1сек) = бонус!</li>
+                  <li>{t('games.color-tap.instructions.greenYes')}</li>
+                  <li>{t('games.color-tap.instructions.redNo')}</li>
+                  <li>{t('games.color-tap.instructions.fastBonus')}</li>
                 </ul>
               </div>
               <div className="scoring-info">
-                <p><strong>Очки:</strong></p>
+                <p><strong>{t('games.color-tap.instructions.scoring')}:</strong></p>
                 <ul>
-                  <li>Правильный ответ: <strong>+1 очко</strong></li>
-                  <li>Быстрый ответ: <strong>+0.5 бонус</strong></li>
+                  <li>{t('games.color-tap.instructions.correct')}</li>
+                  <li>{t('games.color-tap.instructions.fast')}</li>
                 </ul>
               </div>
-              <p className="text-muted">Всего раундов: {ROUNDS.COLOR_TAP}</p>
+              <p className="text-muted">{t('common.totalRounds')}: {ROUNDS.COLOR_TAP}</p>
             </div>
             <Button
               variant="primary"
@@ -82,7 +84,7 @@ export const ColorTap: React.FC<ColorTapProps> = ({ onBackToMenu, onNextGame }) 
               onClick={startGame}
               fullWidth
             >
-              Начать игру
+              {t('common.startGame')}
             </Button>
           </div>
         </div>
@@ -93,7 +95,7 @@ export const ColorTap: React.FC<ColorTapProps> = ({ onBackToMenu, onNextGame }) 
       return (
         <div className="color-tap-game">
           <div className="round-indicator">
-            Раунд {currentRound + 1} / {ROUNDS.COLOR_TAP}
+            {t('games.color-tap.round')} {currentRound + 1} / {ROUNDS.COLOR_TAP}
           </div>
 
           <div className={`color-circle ${currentColor}`}>
@@ -108,7 +110,7 @@ export const ColorTap: React.FC<ColorTapProps> = ({ onBackToMenu, onNextGame }) 
               fullWidth
               className="answer-btn yes-btn"
             >
-              ✓ ДА
+              ✓ {t('games.color-tap.yes')}
             </Button>
             <Button
               variant="danger"
@@ -117,7 +119,7 @@ export const ColorTap: React.FC<ColorTapProps> = ({ onBackToMenu, onNextGame }) 
               fullWidth
               className="answer-btn no-btn"
             >
-              ✗ НЕТ
+              ✗ {t('games.color-tap.no')}
             </Button>
           </div>
         </div>
@@ -131,12 +133,12 @@ export const ColorTap: React.FC<ColorTapProps> = ({ onBackToMenu, onNextGame }) 
             {lastAnswerCorrect ? (
               <>
                 <div className="feedback-icon">✓</div>
-                <div className="feedback-text">Правильно!</div>
+                <div className="feedback-text">{t('games.color-tap.correct')}</div>
               </>
             ) : (
               <>
                 <div className="feedback-icon">✗</div>
-                <div className="feedback-text">Неправильно</div>
+                <div className="feedback-text">{t('games.color-tap.incorrect')}</div>
               </>
             )}
           </div>
@@ -152,22 +154,22 @@ export const ColorTap: React.FC<ColorTapProps> = ({ onBackToMenu, onNextGame }) 
       <div className="results-details">
         <div className="results-summary">
           <p className="summary-text">
-            Правильных ответов: {correctAnswers} из {ROUNDS.COLOR_TAP}
+            {t('games.color-tap.correctAnswers')}: {correctAnswers} {t('common.of')} {ROUNDS.COLOR_TAP}
           </p>
         </div>
 
         <div className="stat-item highlight">
-          <span className="stat-label">🎯 Точность:</span>
+          <span className="stat-label">🎯 {t('common.accuracy')}:</span>
           <span className="stat-value stat-best">{getAccuracy()}%</span>
         </div>
         
         <div className="stat-item">
-          <span className="stat-label">⏱️ Среднее время:</span>
-          <span className="stat-value">{getAverageTime()}ms</span>
+          <span className="stat-label">⏱️ {t('common.averageTime')}:</span>
+          <span className="stat-value">{getAverageTime()}{t('common.ms')}</span>
         </div>
 
         <div className="stat-item">
-          <span className="stat-label">⚡ Быстрых ответов:</span>
+          <span className="stat-label">⚡ {t('games.color-tap.fastAnswers')}:</span>
           <span className="stat-value">{getFastAnswers()}</span>
         </div>
       </div>
@@ -179,28 +181,28 @@ export const ColorTap: React.FC<ColorTapProps> = ({ onBackToMenu, onNextGame }) 
     const fastAnswers = getFastAnswers();
     
     if (accuracy === 100 && fastAnswers >= 15) {
-      return '🏆 Безупречно! Вы мастер реакции!';
+      return t('games.color-tap.results.perfect');
     }
     if (accuracy >= 90) {
-      return '⚡ Отлично! Очень точная работа!';
+      return t('games.color-tap.results.excellent');
     }
     if (accuracy >= 75) {
-      return '👍 Хорошо! Продолжайте тренироваться!';
+      return t('games.color-tap.results.good');
     }
     if (accuracy >= 60) {
-      return '💪 Неплохо! Есть куда расти!';
+      return t('games.color-tap.results.notBad');
     }
-    return '🎯 Продолжайте практиковаться!';
+    return t('games.color-tap.results.keepPracticing');
   };
 
   return (
     <GameLayout
-      title="🎨 Color Tap"
+      title={`🎨 ${t('games.color-tap.title')}`}
       footerContent={
         (status === 'playing' || status === 'feedback') && (
           <div className="game-stats">
-            <span>Правильно: {correctAnswers}/{currentRound}</span>
-            <span>Очки: {currentScore.toFixed(1)}</span>
+            <span>{t('common.correct')}: {correctAnswers}/{currentRound}</span>
+            <span>{t('common.score')}: {currentScore.toFixed(1)}</span>
           </div>
         )
       }
@@ -209,7 +211,7 @@ export const ColorTap: React.FC<ColorTapProps> = ({ onBackToMenu, onNextGame }) 
 
       <ResultsModal
         show={status === 'results'}
-        title="🎮 Игра завершена!"
+        title={`🎮 ${t('common.gameOver')}`}
         score={Math.round(currentScore * 10) / 10}
         message={getMessage()}
         details={renderDetails()}
