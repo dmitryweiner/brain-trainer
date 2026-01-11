@@ -176,9 +176,9 @@
         "watchIndicator": "Следите за индикатором правила!",
         "scoring": "Правильный ответ: +1 очко"
       },
-    "shapeRule": "ФОРМА",
-    "colorRule": "ЦВЕТ",
-    "left": "Лево",
+      "shapeRule": "ФОРМА",
+      "colorRule": "ЦВЕТ",
+      "left": "Лево",
     "right": "Право",
     "errors": "Ошибки",
     "excellentFlexibility": "Отличная когнитивная гибкость!",
@@ -194,7 +194,7 @@
     "guessNewRule": "Догадайтесь сами, какое новое правило",
     "correctAnswer1point": "Правильный ответ: +1 очко",
     "errorMinus05": "Ошибка: -0.5 очка"
-  },
+    },
     "n-back": {
       "title": "Что было раньше",
       "description": "Рабочая память"

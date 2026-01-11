@@ -233,7 +233,7 @@ describe('usePhoneRecall', () => {
     await waitFor(() => {
       expect(result.current.status).toBe('feedback');
     });
-    
+
     expect(result.current.lastAnswerCorrect).toBe(false);
 
     // Wait for memorize phase (game continues with same length)

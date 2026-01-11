@@ -145,7 +145,7 @@ export function useSequenceRecall(): UseSequenceRecallReturn {
         feedbackTimeoutRef.current = window.setTimeout(() => {
           // Проверяем, достигнут ли максимум
           if (state.currentLength >= MAX_LENGTH) {
-            setStatus('results');
+          setStatus('results');
           } else {
             // Продолжаем с той же длиной
             const nextSequence = generateSequence(state.currentLength);

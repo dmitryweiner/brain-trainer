@@ -176,9 +176,9 @@
         "watchIndicator": "עקוב אחר מחוון החוק!",
         "scoring": "תשובה נכונה: +1 נקודה"
       },
-    "shapeRule": "צורה",
-    "colorRule": "צבע",
-    "left": "שמאל",
+      "shapeRule": "צורה",
+      "colorRule": "צבע",
+      "left": "שמאל",
     "right": "ימין",
     "errors": "שגיאות",
     "excellentFlexibility": "גמישות קוגניטיבית מעולה!",
@@ -194,7 +194,7 @@
     "guessNewRule": "נחש בעצמך מה החוק החדש",
     "correctAnswer1point": "תשובה נכונה: +1 נקודה",
     "errorMinus05": "שגיאה: -0.5 נקודה"
-  },
+    },
     "n-back": {
       "title": "N-אחורה",
       "description": "זיכרון עבודה"

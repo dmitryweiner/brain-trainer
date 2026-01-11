@@ -77,6 +77,8 @@
   flex-direction: column;
   align-items: center;
   padding: $spacing-md;
+  overflow-x: auto; // Позволяем скролл если сетка шире экрана
+  width: 100%;
 
   .progress-container {
     width: 100%;
@@ -132,13 +134,14 @@
   .emoji-grid {
     display: grid;
     gap: 6px;
-    max-width: min(350px, 85vw);
     width: 100%;
+    max-width: 400px;
     
-    // Динамический gap для больших сеток
+    // Для 8x8 сетки - делаем шире чтобы кнопки были больше
     &.grid-8x8 {
-      gap: 3px;
-      max-width: min(320px, 90vw);
+      gap: 4px;
+      max-width: 100%;
+      width: calc(8 * 44px + 7 * 4px); // 8 кнопок по 44px + 7 gaps
     }
   }
 
@@ -147,15 +150,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: clamp(20px, 6vw, 36px);
+    font-size: clamp(22px, 5vw, 36px);
     background: #f5f5f5;
     border: 2px solid #e0e0e0;
     border-radius: 10px;
     cursor: pointer;
     transition: all 0.15s ease;
     padding: 0;
-    min-width: 0;
-    min-height: 0;
+    min-width: 44px; // Минимум для удобного нажатия
+    min-height: 44px;
 
     &:hover {
       background: #eeeeee;
@@ -296,37 +299,41 @@
 
     .emoji-grid {
       gap: 4px;
-      max-width: min(300px, 92vw);
+      max-width: 100%;
       
       &.grid-8x8 {
-        gap: 2px;
-        max-width: min(280px, 95vw);
+        gap: 3px;
+        width: calc(8 * 40px + 7 * 3px); // 8 кнопок по 40px + 7 gaps
       }
     }
 
     .emoji-cell {
-      font-size: clamp(16px, 4.5vw, 28px);
-      border-radius: 6px;
+      font-size: clamp(18px, 5vw, 28px);
+      border-radius: 8px;
       border-width: 1px;
+      min-width: 40px;
+      min-height: 40px;
     }
   }
 }
 
-// Extra small screens
+// Extra small screens - всё равно кнопки должны быть достаточно большими
 @media (max-width: 360px) {
   .emoji-hunt-game {
     .emoji-grid {
       gap: 3px;
-      max-width: 95vw;
       
       &.grid-8x8 {
         gap: 2px;
+        width: calc(8 * 38px + 7 * 2px); // 8 кнопок по 38px + 7 gaps
       }
     }
 
     .emoji-cell {
-      font-size: clamp(14px, 4vw, 24px);
-      border-radius: 4px;
+      font-size: clamp(16px, 4.5vw, 24px);
+      border-radius: 6px;
+      min-width: 38px;
+      min-height: 38px;
     }
   }
 }

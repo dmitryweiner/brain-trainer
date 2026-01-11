@@ -108,7 +108,7 @@ export function usePhoneRecall(): UsePhoneRecallReturn {
       feedbackTimeoutRef.current = window.setTimeout(() => {
         // Проверяем, достигнут ли максимум
         if (currentLength >= MAX_LENGTH) {
-          setStatus('results');
+        setStatus('results');
         } else {
           // Продолжаем с той же длиной
           const nextNumber = generateNumber(currentLength);

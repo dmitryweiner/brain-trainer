@@ -176,9 +176,9 @@
         "watchIndicator": "Watch the rule indicator!",
         "scoring": "Correct answer: +1 point"
       },
-    "shapeRule": "SHAPE",
-    "colorRule": "COLOR",
-    "left": "Left",
+      "shapeRule": "SHAPE",
+      "colorRule": "COLOR",
+      "left": "Left",
     "right": "Right",
     "errors": "Errors",
     "excellentFlexibility": "Excellent cognitive flexibility!",
@@ -194,7 +194,7 @@
     "guessNewRule": "Guess the new rule yourself",
     "correctAnswer1point": "Correct answer: +1 point",
     "errorMinus05": "Error: -0.5 point"
-  },
+    },
     "n-back": {
       "title": "N-Back",
       "description": "Working memory"
