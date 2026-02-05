@@ -77,7 +77,7 @@ export default function FlagsGame({ onBack }: FlagsGameProps) {
       title={`🏳️ ${t('flagsGame.title')}`}
       onBack={onBack}
       footer={
-        status === 'playing' ? (
+        (status === 'playing' || status === 'feedback') ? (
           <div className="flags-game-stats">
             <div className="stat-item">
               <span className="stat-label">{t('common.round')}:</span>
@@ -191,14 +191,14 @@ export default function FlagsGame({ onBack }: FlagsGameProps) {
               })}
             </div>
 
-            {status === 'feedback' && (
-              <div className={`feedback-message ${lastAnswerCorrect ? 'correct' : 'incorrect'}`}>
-                {lastAnswerCorrect 
+            <div className={`feedback-message ${status === 'feedback' ? (lastAnswerCorrect ? 'correct' : 'incorrect') : 'hidden'}`}>
+              {status === 'feedback' && (
+                lastAnswerCorrect 
                   ? `${t('common.correct')} +${roundResults[roundResults.length - 1]?.points || 0}`
                   : t('common.incorrect')
-                }
-              </div>
-            )}
+              )}
+              {status !== 'feedback' && '\u00A0'} {/* Non-breaking space to maintain height */}
+            </div>
           </div>
         )}
 

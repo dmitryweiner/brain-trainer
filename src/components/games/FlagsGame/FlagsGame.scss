@@ -227,16 +227,25 @@
     border-radius: 8px;
     font-size: 18px;
     font-weight: 600;
-    animation: fadeIn 0.2s ease;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.hidden {
+      visibility: hidden;
+    }
 
     &.correct {
       background: rgba($game-green, 0.1);
       color: $game-green;
+      animation: fadeIn 0.2s ease;
     }
 
     &.incorrect {
       background: rgba($danger, 0.1);
       color: $danger;
+      animation: fadeIn 0.2s ease;
     }
   }
 }
