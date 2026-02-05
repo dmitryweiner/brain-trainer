@@ -17,6 +17,7 @@ import NBack from './components/games/NBack';
 import LogicPairConcept from './components/games/LogicPairConcept';
 import { PhoneRecall } from './components/games/PhoneRecall';
 import { EmojiHunt } from './components/games/EmojiHunt';
+import { FlagsGame } from './components/games/FlagsGame';
 import { Profile } from './components/Profile';
 
 type AppView = 'menu' | 'game' | 'profile';
@@ -135,6 +136,8 @@ function AppContent() {
           <PhoneRecall onBack={handleBackToMenu} />
         ) : currentGame === GAME_IDS.EMOJI_HUNT ? (
           <EmojiHunt onBack={handleBackToMenu} />
+        ) : currentGame === GAME_IDS.FLAGS_GAME ? (
+          <FlagsGame onBack={handleBackToMenu} />
         ) : (
           <div className="game-placeholder">
             <div className="card-custom text-center">

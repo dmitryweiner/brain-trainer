@@ -12,7 +12,8 @@ export type GameId =
   | 'n-back'
   | 'logic-pair-concept'
   | 'phone-recall'
-  | 'emoji-hunt';
+  | 'emoji-hunt'
+  | 'flags-game';
 
 export interface GameMeta {
   id: GameId;

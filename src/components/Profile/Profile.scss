@@ -382,6 +382,66 @@
           }
         }
       }
+
+      .game-daily-chart {
+        margin-top: $spacing-md;
+        padding-top: $spacing-md;
+        border-top: 1px solid $light;
+
+        h4 {
+          font-size: 14px;
+          color: $dark;
+          margin: 0 0 $spacing-sm 0;
+          font-weight: 600;
+        }
+
+        .chart-container {
+          background: $light;
+          border-radius: 8px;
+          padding: $spacing-sm;
+        }
+
+        .chart-bars {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-end;
+          height: 80px;
+          gap: $spacing-xs;
+
+          .chart-bar-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+
+            .chart-bar-container {
+              flex: 1;
+              width: 100%;
+              max-width: 24px;
+              display: flex;
+              flex-direction: column;
+              justify-content: flex-end;
+
+              .chart-bar {
+                width: 100%;
+                background: linear-gradient(180deg, $primary 0%, darken($primary, 10%) 100%);
+                border-radius: 4px 4px 0 0;
+                min-height: 4px;
+                transition: height 0.3s ease;
+              }
+            }
+
+            .chart-bar-label {
+              margin-top: 4px;
+              font-size: 9px;
+              color: $gray;
+              font-weight: 500;
+              text-transform: uppercase;
+            }
+          }
+        }
+      }
     }
   }
 }

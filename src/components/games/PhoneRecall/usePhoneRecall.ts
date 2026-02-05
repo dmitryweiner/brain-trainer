@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { INITIAL_LENGTH, MAX_LENGTH, MEMORIZE_TIME_BASE, MEMORIZE_TIME_PER_DIGIT } from './constants';
 
 type GameStatus = 'intro' | 'memorize' | 'input' | 'feedback' | 'results';
 
@@ -22,11 +23,6 @@ interface UsePhoneRecallReturn {
   handleBackspace: () => void;
   handleSubmit: () => void;
 }
-
-const INITIAL_LENGTH = 4;
-const MAX_LENGTH = 6;
-const MEMORIZE_TIME_BASE = 2000; // базовое время
-const MEMORIZE_TIME_PER_DIGIT = 500; // доп. время за каждую цифру
 
 export function usePhoneRecall(): UsePhoneRecallReturn {
   const [status, setStatus] = useState<GameStatus>('intro');

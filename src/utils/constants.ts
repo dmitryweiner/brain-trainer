@@ -14,6 +14,7 @@ export const GAME_IDS = {
   LOGIC_PAIR: 'logic-pair-concept',
   PHONE_RECALL: 'phone-recall',
   EMOJI_HUNT: 'emoji-hunt',
+  FLAGS_GAME: 'flags-game',
 } as const;
 
 // Метаданные игр
@@ -100,6 +101,13 @@ export const GAMES_META: GameMeta[] = [
     title: 'Emoji Hunt',
     description: 'Визуальный поиск',
     icon: '🔎',
+    difficulty: 2,
+  },
+  {
+    id: GAME_IDS.FLAGS_GAME,
+    title: 'Flags Game',
+    description: 'Флаги стран',
+    icon: '🏳️',
     difficulty: 2,
   },
 ];

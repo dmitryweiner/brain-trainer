@@ -35,6 +35,18 @@ export interface DailyStats {
   }>;
 }
 
+/** Daily statistics for a specific game */
+export interface GameDailyStats {
+  /** Date string (YYYY-MM-DD) */
+  date: string;
+  /** Number of games played */
+  gamesPlayed: number;
+  /** Average score for this day */
+  averageScore: number;
+  /** Average accuracy for this day */
+  averageAccuracy: number;
+}
+
 export interface UseGameHistoryReturn {
   /** All game results history */
   history: GameResult[];
@@ -44,6 +56,8 @@ export interface UseGameHistoryReturn {
   getGameHistory: (gameId: GameId) => GameResult[];
   /** Get daily statistics */
   getDailyStats: (days?: number) => DailyStats[];
+  /** Get daily statistics for a specific game */
+  getGameDailyStats: (gameId: GameId, days?: number) => GameDailyStats[];
   /** Get statistics for a specific game */
   getGameStats: (gameId: GameId) => {
     totalGames: number;
@@ -147,6 +161,56 @@ export function useGameHistory(): UseGameHistoryReturn {
     [history]
   );
 
+  const getGameDailyStats = useCallback(
+    (gameId: GameId, days: number = 14): GameDailyStats[] => {
+      const now = new Date();
+      const cutoffDate = new Date(now);
+      cutoffDate.setDate(cutoffDate.getDate() - days);
+      
+      // Filter results for this game within the date range
+      const filteredResults = history.filter(
+        r => r.gameId === gameId && r.timestamp >= cutoffDate.getTime()
+      );
+
+      if (filteredResults.length === 0) {
+        return [];
+      }
+
+      // Group by date
+      const dailyMap = new Map<string, GameResult[]>();
+      
+      filteredResults.forEach(result => {
+        const date = new Date(result.timestamp);
+        const dateKey = date.toISOString().split('T')[0]; // YYYY-MM-DD
+        
+        if (!dailyMap.has(dateKey)) {
+          dailyMap.set(dateKey, []);
+        }
+        dailyMap.get(dateKey)!.push(result);
+      });
+
+      // Convert to GameDailyStats array
+      const stats: GameDailyStats[] = [];
+      
+      dailyMap.forEach((results, date) => {
+        const gamesPlayed = results.length;
+        const averageScore = results.reduce((sum, r) => sum + r.score, 0) / gamesPlayed;
+        const averageAccuracy = results.reduce((sum, r) => sum + r.accuracy, 0) / gamesPlayed;
+
+        stats.push({
+          date,
+          gamesPlayed,
+          averageScore: Math.round(averageScore * 10) / 10,
+          averageAccuracy: Math.round(averageAccuracy * 10) / 10,
+        });
+      });
+
+      // Sort by date ascending (oldest first for charts)
+      return stats.sort((a, b) => a.date.localeCompare(b.date));
+    },
+    [history]
+  );
+
   const getGameStats = useCallback(
     (gameId: GameId) => {
       const gameHistory = getGameHistory(gameId);
@@ -206,6 +270,7 @@ export function useGameHistory(): UseGameHistoryReturn {
     addGameResult,
     getGameHistory,
     getDailyStats,
+    getGameDailyStats,
     getGameStats,
     clearHistory,
   };

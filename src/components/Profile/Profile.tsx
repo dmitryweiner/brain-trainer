@@ -13,7 +13,7 @@ type TabType = 'overview' | 'daily' | 'games';
 
 export const Profile: React.FC<ProfileProps> = ({ onBack }) => {
   const { t } = useTranslation();
-  const { history, getDailyStats, getGameStats, clearHistory } = useGameHistoryContext();
+  const { history, getDailyStats, getGameStats, getGameDailyStats, clearHistory } = useGameHistoryContext();
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [selectedGame, setSelectedGame] = useState<GameId | null>(null);
 
@@ -204,6 +204,40 @@ export const Profile: React.FC<ProfileProps> = ({ onBack }) => {
                       {t(`profile.trends.${stats.recentTrend}`)}
                     </span>
                   </div>
+                  
+                  {/* Daily Progress Chart */}
+                  {(() => {
+                    const gameDailyStats = getGameDailyStats(game.id, 14);
+                    if (gameDailyStats.length < 2) return null;
+                    
+                    const maxScore = Math.max(...gameDailyStats.map(d => d.averageScore), 1);
+                    
+                    return (
+                      <div className="game-daily-chart">
+                        <h4>{t('profile.dailyProgress')}</h4>
+                        <div className="chart-container">
+                          <div className="chart-bars">
+                            {gameDailyStats.slice(-7).map((day) => (
+                              <div key={day.date} className="chart-bar-item">
+                                <div className="chart-bar-container">
+                                  <div 
+                                    className="chart-bar"
+                                    style={{ height: `${(day.averageScore / maxScore) * 100}%` }}
+                                    title={`${day.averageScore} ${t('common.points')}`}
+                                  />
+                                </div>
+                                <div className="chart-bar-label">
+                                  {new Date(day.date).toLocaleDateString(undefined, { 
+                                    weekday: 'short' 
+                                  })}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </div>
               )}
               

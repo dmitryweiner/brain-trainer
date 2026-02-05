@@ -7,14 +7,12 @@ import GameLayout from '../../common/GameLayout';
 import Button from '../../common/Button';
 import ResultsModal from '../../common/ResultsModal';
 import ProgressBar from '../../common/ProgressBar';
+import { MAX_LENGTH, INITIAL_LENGTH } from './constants';
 import './PhoneRecall.scss';
 
 interface PhoneRecallProps {
   onBack: () => void;
 }
-
-const MAX_LENGTH = 6;
-const INITIAL_LENGTH = 4;
 
 export default function PhoneRecall({ onBack }: PhoneRecallProps) {
   const { t } = useTranslation();
