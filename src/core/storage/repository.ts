@@ -50,6 +50,8 @@ export class Repository {
   private readonly listeners = new Set<() => void>();
   private writing: Promise<void> = Promise.resolve();
   private unwatch: (() => void) | undefined;
+  /** Ids the cloud confirmed during this run; stale copies of the outbox must not bring them back */
+  private readonly confirmed = new Set<string>();
 
   private constructor(private readonly options: RepositoryOptions, data: StoredDataV2) {
     this.data = data;
@@ -127,8 +129,14 @@ export class Repository {
 
   /** Cloud confirmed these events */
   markSynced(ids: readonly string[]): void {
-    const done = new Set(ids);
-    this.commit({ ...this.data, outbox: this.data.outbox.filter(id => !done.has(id)) }, done);
+    for (const id of ids) this.confirmed.add(id);
+    this.commit({ ...this.data, outbox: this.withoutConfirmed(this.data.outbox) });
+  }
+
+  /** After switching to another sync key: everything local goes up again, everything remote comes down. */
+  resetSync(): void {
+    this.confirmed.clear();
+    this.commit({ ...this.data, outbox: this.data.events.map(e => e.id), cursor: 0 });
   }
 
   /** Resolves when everything written so far is persisted. */
@@ -150,16 +158,25 @@ export class Repository {
     });
   }
 
-  private commit(next: StoredDataV2, synced: ReadonlySet<string> = new Set()): void {
+  private commit(next: StoredDataV2): void {
     this.data = next;
     this.notify();
-    this.writing = this.writing.then(() => this.persist(synced)).catch(err => this.options.onError?.(err));
+    this.writing = this.writing.then(() => this.persist()).catch(err => this.options.onError?.(err));
   }
 
-  private async persist(synced: ReadonlySet<string>): Promise<void> {
+  private withoutConfirmed(outbox: readonly string[]): string[] {
+    return outbox.filter(id => !this.confirmed.has(id));
+  }
+
+  private async persist(): Promise<void> {
     const stored = sanitizeData(parse(await this.options.store.get(STORAGE_KEYS.v2))) ?? emptyData();
     // Another tab may have confirmed or added events meanwhile; keep both.
-    const merged = mergeData(this.data, { ...stored, outbox: stored.outbox.filter(id => !synced.has(id)) });
+    const merged = {
+      ...mergeData(this.data, { ...stored, outbox: this.withoutConfirmed(stored.outbox) }),
+      // This tab's cursor wins: it may have been reset on purpose, and a
+      // lower cursor only means re-downloading events we already have.
+      cursor: this.data.cursor,
+    };
     await this.options.store.set(STORAGE_KEYS.v2, JSON.stringify(merged));
     if (merged.events.length !== this.data.events.length || merged.outbox.length !== this.data.outbox.length) {
       this.data = merged;
@@ -170,7 +187,7 @@ export class Repository {
   private async reloadFromStore(): Promise<void> {
     const stored = sanitizeData(parse(await this.options.store.get(STORAGE_KEYS.v2)));
     if (!stored) return;
-    const merged = mergeData(this.data, stored);
+    const merged = mergeData(this.data, { ...stored, outbox: this.withoutConfirmed(stored.outbox) });
     if (merged.events.length !== this.data.events.length) {
       this.data = merged;
       this.notify();

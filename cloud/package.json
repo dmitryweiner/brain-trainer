@@ -1,0 +1,19 @@
+{
+  "name": "brain-trainer-sync-worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "esbuild src/index.ts --bundle --format=esm --platform=browser --outfile=dist/index.js",
+    "check": "tsc --noEmit",
+    "test": "npm run build && node --test test/*.test.mjs",
+    "dev": "wrangler dev",
+    "deploy": "wrangler d1 migrations apply brain-trainer-sync --remote && wrangler deploy"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260911.1",
+    "esbuild": "^0.25.0",
+    "miniflare": "5.20260911.1-alpha",
+    "typescript": "^5.9.0",
+    "wrangler": "4.131.2"
+  }
+}

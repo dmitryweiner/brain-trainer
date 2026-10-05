@@ -112,6 +112,17 @@ npm run build
 
 Проект будет собран в папку `dist/`. На GitHub Pages его публикует CI при каждом push в `main`; собранные файлы в репозиторий не коммитятся.
 
+### Облачная синхронизация
+
+Воркер Cloudflare + D1 в `cloud/` (адрес `https://brain-trainer-sync.dmitry-weiner.workers.dev`, описание — `PLAN-IMPROVEMENTS.md`, раздел 6.3). Требуется Node 22.
+
+```bash
+npm run check:cloud    # типы и контрактные тесты в Miniflare
+npm run deploy:cloud   # миграции D1 и wrangler deploy
+```
+
+Адрес API для клиента можно переопределить через `VITE_SYNC_API`.
+
 ### Запуск тестов
 
 ```bash

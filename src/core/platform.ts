@@ -30,7 +30,9 @@ export interface Clock {
 export type Route =
   | { view: 'menu' }
   | { view: 'profile' }
-  | { view: 'game'; gameId: string };
+  | { view: 'game'; gameId: string }
+  /** Opened from another device's sync link */
+  | { view: 'link'; key: string };
 
 export interface Navigation {
   current(): Route;

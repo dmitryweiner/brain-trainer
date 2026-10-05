@@ -12,10 +12,17 @@ import { textDirection, normalizeLanguage } from './core/i18n/languages';
 import { ServicesProvider, useServices } from './ui/services';
 import { createWebServices, type AppServices } from './ui/webServices';
 import { GAME_SCREENS } from './ui/gameScreens';
+import { ConfirmDialog } from './ui/ConfirmDialog';
+import { formatKey, parseKey } from './core/sync/key';
 
-/** Unknown or retired game ids fall back to the menu */
-function normalize(route: Route): Route {
-  return route.view === 'game' && !findActiveGame(route.gameId) ? { view: 'menu' } : route;
+/** Unknown or retired game ids and unusable sync links fall back to the menu */
+function normalize(route: Route, canSync: boolean): Route {
+  if (route.view === 'game' && !findActiveGame(route.gameId)) return { view: 'menu' };
+  if (route.view === 'link') {
+    const key = parseKey(route.key);
+    return canSync && key ? { view: 'link', key } : { view: 'menu' };
+  }
+  return route;
 }
 
 /** Keeps <html dir/lang> in line with i18n and remembers the user's choice. */
@@ -38,14 +45,14 @@ function useDocumentLanguage() {
 }
 
 function AppContent() {
-  const { navigation } = useServices();
+  const { navigation, sync } = useServices();
   const { t } = useTranslation();
-  const [route, setRoute] = useState<Route>(() => normalize(navigation.current()));
+  const [route, setRoute] = useState<Route>(() => normalize(navigation.current(), !!sync));
   const { totalScore } = useScoreContext();
   useDocumentLanguage();
 
   // Browser back/forward (and, in Capacitor, the hardware back button)
-  useEffect(() => navigation.subscribe(r => setRoute(normalize(r))), [navigation]);
+  useEffect(() => navigation.subscribe(r => setRoute(normalize(r, !!sync))), [navigation, sync]);
 
   const go = (next: Route) => {
     navigation.go(next);
@@ -76,6 +83,19 @@ function AppContent() {
           <GameMenu onGameSelect={(gameId: GameId) => go({ view: 'game', gameId })} />
         )}
       </div>
+
+      {/* Opened from another device's link: #sync=<key> */}
+      <ConfirmDialog
+        open={route.view === 'link'}
+        title={t('sync.connectTitle')}
+        message={route.view === 'link' ? t('sync.connectText', { code: formatKey(route.key) }) : ''}
+        confirmLabel={t('sync.connect')}
+        onCancel={backToMenu}
+        onConfirm={() => {
+          if (route.view === 'link' && sync) void sync.connect(route.key);
+          go({ view: 'profile' });
+        }}
+      />
     </div>
   );
 }

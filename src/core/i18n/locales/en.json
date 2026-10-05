@@ -179,21 +179,21 @@
       "shapeRule": "SHAPE",
       "colorRule": "COLOR",
       "left": "Left",
-    "right": "Right",
-    "errors": "Errors",
-    "excellentFlexibility": "Excellent cognitive flexibility!",
-    "goodResultKeepPracticing": "Good result, keep practicing!",
-    "tryAgainBeAttentive": "Try again, be more attentive!",
-    "totalErrors": "Total errors",
-    "circleA": "Circle → A",
-    "squareB": "Square → B",
-    "figureShown": "A figure with color is shown",
-    "pressAorB": "Press button A or B by the rule",
-    "rounds1to15": "Rounds 1-15: by shape",
-    "rounds16to30": "Rounds 16-30: rule changes!",
-    "guessNewRule": "Guess the new rule yourself",
-    "correctAnswer1point": "Correct answer: +1 point",
-    "errorMinus05": "Error: -0.5 point"
+      "right": "Right",
+      "errors": "Errors",
+      "excellentFlexibility": "Excellent cognitive flexibility!",
+      "goodResultKeepPracticing": "Good result, keep practicing!",
+      "tryAgainBeAttentive": "Try again, be more attentive!",
+      "totalErrors": "Total errors",
+      "circleA": "Circle → A",
+      "squareB": "Square → B",
+      "figureShown": "A figure with color is shown",
+      "pressAorB": "Press button A or B by the rule",
+      "rounds1to15": "Rounds 1-15: by shape",
+      "rounds16to30": "Rounds 16-30: rule changes!",
+      "guessNewRule": "Guess the new rule yourself",
+      "correctAnswer1point": "Correct answer: +1 point",
+      "errorMinus05": "Error: -0.5 point"
     },
     "n-back": {
       "title": "N-Back",
@@ -442,8 +442,10 @@
     "tabs": {
       "overview": "Overview",
       "daily": "Daily",
-      "games": "Games"
-    }
+      "games": "Games",
+      "sync": "Sync"
+    },
+    "clearTitle": "Delete history?"
   },
   "countries": {
     "AD": "Andorra",
@@ -528,6 +530,39 @@
     "VE": "Venezuela",
     "VN": "Vietnam",
     "ZA": "South Africa"
+  },
+  "dialog": {
+    "confirm": "Confirm",
+    "cancel": "Cancel"
+  },
+  "sync": {
+    "title": "Sync",
+    "intro": "Your progress is stored on this device and copied to the cloud. To continue on another device, open the link there or enter the code.",
+    "enabled": "Cloud sync",
+    "status": {
+      "idle": "Synced at {{time}}",
+      "never": "Not synced yet",
+      "syncing": "Syncing…",
+      "offline": "Offline. Results will be sent later ({{count}} waiting)",
+      "error": "Sync error ({{code}}). We will try again later",
+      "disabled": "Sync is off"
+    },
+    "codeLabel": "Your code",
+    "copy": "Copy code",
+    "copied": "Copied",
+    "share": "Share link",
+    "qrHint": "Scan with the other device's camera",
+    "keepCode": "Keep this code: without it, your cloud progress cannot be restored.",
+    "enterCode": "Code from another device",
+    "connect": "Connect",
+    "invalidCode": "Code not recognized: it has 24 letters and digits",
+    "connectTitle": "Connect this device?",
+    "connectText": "This device's progress will be merged with code {{code}}, and the devices will stay in sync.",
+    "connected": "Device connected",
+    "syncNow": "Sync now",
+    "delete": "Delete cloud data",
+    "deleteTitle": "Delete the cloud copy?",
+    "deleteText": "Data on this device stays, and sync is turned off.",
+    "deleted": "Cloud data deleted"
   }
 }
-

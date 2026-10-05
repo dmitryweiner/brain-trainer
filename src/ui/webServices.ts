@@ -3,6 +3,7 @@ import { Repository } from '../core/storage/repository';
 import { STORAGE_KEYS } from '../core/storage/migrate';
 import { getGame, legacyRating } from '../core/games/registry';
 import { hashNavigation, LocalStorageStore, webClock, webLocale, webScheduler } from '../platform/web';
+import { createWebSync, type WebSync } from '../platform/web/sync';
 
 export interface AppServices {
   repository: Repository;
@@ -10,12 +11,14 @@ export interface AppServices {
   clock: Clock;
   navigation: Navigation;
   locale: LocaleProvider;
+  /** Cloud sync; absent in tests and wherever the app runs without it */
+  sync?: WebSync;
 }
 
 const reportError = (error: unknown) => console.warn('[brain-trainer] storage error:', error);
 
 /** Web services; localStorage reads synchronously, so no loading screen is needed. */
-export function createWebServices(): AppServices {
+export function createWebServices(options: { sync?: boolean } = {}): AppServices {
   const store = new LocalStorageStore();
   const repository = Repository.restore(
     { store, clock: webClock, legacyRating: (id, score) => legacyRating(score, getGame(id).legacyMaxScore), onError: reportError },
@@ -25,5 +28,6 @@ export function createWebServices(): AppServices {
       v1TotalScore: store.getSync(STORAGE_KEYS.v1TotalScore),
     },
   );
-  return { repository, scheduler: webScheduler, clock: webClock, navigation: hashNavigation, locale: webLocale(store) };
+  const sync = options.sync ? createWebSync({ repository, scheduler: webScheduler, clock: webClock, store }) : undefined;
+  return { repository, scheduler: webScheduler, clock: webClock, navigation: hashNavigation, locale: webLocale(store), sync };
 }

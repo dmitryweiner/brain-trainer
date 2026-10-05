@@ -71,12 +71,14 @@ function parseHash(hash: string): Route {
   const h = hash.replace(/^#/, '');
   if (h === '' || h === 'menu') return { view: 'menu' };
   if (h === 'profile') return { view: 'profile' };
+  if (h.startsWith('sync=')) return { view: 'link', key: h.slice('sync='.length) };
   return { view: 'game', gameId: h };
 }
 
 function routeHash(route: Route): string {
   if (route.view === 'profile') return 'profile';
   if (route.view === 'game') return route.gameId;
+  if (route.view === 'link') return `sync=${route.key}`;
   return '';
 }
 

@@ -1,0 +1,22 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "brain-trainer-sync",
+  "account_id": "ecdb8df324a8713baec2d0b0ac88e49e",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-01",
+  "workers_dev": true,
+  "vars": {
+    // GitHub Pages, Vite dev/preview, and the Capacitor Android WebView
+    "ALLOWED_ORIGINS": "https://dmitryweiner.github.io http://localhost:5173 http://localhost:4173 https://localhost"
+  },
+  "d1_databases": [{
+    "binding": "DB", "database_name": "brain-trainer-sync",
+    "database_id": "cae863a0-dc37-4199-aa53-b693d77cb653",
+    "migrations_dir": "migrations"
+  }],
+  "ratelimits": [
+    { "name": "WRITE_LIMIT", "namespace_id": "3001", "simple": { "limit": 30, "period": 60 } },
+    { "name": "READ_LIMIT", "namespace_id": "3002", "simple": { "limit": 120, "period": 60 } }
+  ],
+  "observability": { "enabled": false }
+}

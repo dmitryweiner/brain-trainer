@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGameHistoryContext } from '../../context/GameHistoryContext';
 import { GAMES_META } from '../../utils/constants';
+import { ConfirmDialog } from '../../ui/ConfirmDialog';
+import { SyncPanel } from '../../ui/SyncPanel';
+import { useOptionalServices } from '../../ui/services';
 import type { GameId } from '../../types/game.types';
 import './Profile.scss';
 
@@ -9,13 +12,15 @@ export interface ProfileProps {
   onBack: () => void;
 }
 
-type TabType = 'overview' | 'daily' | 'games';
+type TabType = 'overview' | 'daily' | 'games' | 'sync';
 
 export const Profile: React.FC<ProfileProps> = ({ onBack }) => {
   const { t } = useTranslation();
   const { history, getDailyStats, getGameStats, getGameDailyStats, clearHistory } = useGameHistoryContext();
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [selectedGame, setSelectedGame] = useState<GameId | null>(null);
+  const [confirmClear, setConfirmClear] = useState(false);
+  const sync = useOptionalServices()?.sync;
 
   const dailyStats = getDailyStats(14); // Last 14 days
   const totalGames = history.length;
@@ -28,11 +33,7 @@ export const Profile: React.FC<ProfileProps> = ({ onBack }) => {
   const maxDailyScore = Math.max(...dailyStats.map(d => d.totalScore), 1);
   const maxDailyGames = Math.max(...dailyStats.map(d => d.gamesPlayed), 1);
 
-  const handleClearHistory = () => {
-    if (window.confirm(t('profile.confirmClear'))) {
-      clearHistory();
-    }
-  };
+  const handleClearHistory = () => setConfirmClear(true);
 
   const renderOverview = () => (
     <div className="profile-overview">
@@ -286,13 +287,34 @@ export const Profile: React.FC<ProfileProps> = ({ onBack }) => {
         >
           {t('profile.tabs.games')}
         </button>
+        {sync && (
+          <button
+            className={`tab ${activeTab === 'sync' ? 'active' : ''}`}
+            onClick={() => setActiveTab('sync')}
+          >
+            {t('profile.tabs.sync')}
+          </button>
+        )}
       </div>
 
       <div className="profile-content">
         {activeTab === 'overview' && renderOverview()}
         {activeTab === 'daily' && renderDailyStats()}
         {activeTab === 'games' && renderGamesStats()}
+        {activeTab === 'sync' && sync && <SyncPanel sync={sync} />}
       </div>
+
+      <ConfirmDialog
+        open={confirmClear}
+        danger
+        title={t('profile.clearTitle')}
+        message={t('profile.confirmClear')}
+        onCancel={() => setConfirmClear(false)}
+        onConfirm={() => {
+          setConfirmClear(false);
+          clearHistory();
+        }}
+      />
     </div>
   );
 };

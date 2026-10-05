@@ -1,0 +1,41 @@
+@use '../styles/variables.scss' as *;
+
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  padding: $spacing-md;
+}
+
+.confirm-dialog {
+  background: white;
+  border-radius: 16px;
+  padding: $spacing-lg;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.confirm-title {
+  font-size: $font-size-large;
+  margin: 0 0 $spacing-sm;
+  color: $dark;
+}
+
+.confirm-message {
+  font-size: 18px;
+  color: $dark;
+  margin-bottom: $spacing-lg;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.confirm-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-sm;
+}
