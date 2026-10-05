@@ -22,7 +22,7 @@
 - **Build Tool**: Vite
 - **Testing**: Vitest + React Testing Library
 - **Internationalization**: react-i18next
-- **Deployment**: GitHub Pages (сборка в папку `docs`)
+- **Deployment**: GitHub Pages через GitHub Actions (`.github/workflows/deploy.yml`)
 
 ## 🎯 Ключевые требования
 
@@ -62,7 +62,6 @@
 
 ```
 brain-trainer/
-├── docs/                      # Папка для сборки (GitHub Pages)
 ├── public/
 ├── src/
 │   ├── components/
@@ -111,7 +110,7 @@ npm run dev
 npm run build
 ```
 
-Проект будет собран в папку `docs/` для деплоя на GitHub Pages.
+Проект будет собран в папку `dist/`. На GitHub Pages его публикует CI при каждом push в `main`; собранные файлы в репозиторий не коммитятся.
 
 ### Запуск тестов
 

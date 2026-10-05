@@ -93,6 +93,15 @@ button:focus-visible {
     }
   }
   
+  &.btn-light {
+    background-color: #f1f3f5;
+    color: #343a40;
+
+    &:hover:not(:disabled) {
+      background-color: #e2e6ea;
+    }
+  }
+
   &.btn-large {
     min-height: 64px;
     min-width: 180px;

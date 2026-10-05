@@ -89,6 +89,18 @@ describe('useLocalStorage', () => {
     expect(result.current[0]).toBe(6);
   });
 
+  it('should apply consecutive functional updates in the same tick', () => {
+    const { result } = renderHook(() => useLocalStorage('test-count', 0));
+
+    act(() => {
+      result.current[1](prev => prev + 1);
+      result.current[1](prev => prev + 2);
+    });
+
+    expect(result.current[0]).toBe(3);
+    expect(JSON.parse(localStorage.getItem('test-count')!)).toBe(3);
+  });
+
   it('should remove value from localStorage', () => {
     localStorage.setItem('test-key', JSON.stringify('stored'));
     

@@ -77,8 +77,8 @@ describe('App', () => {
     const playButtons = screen.getAllByRole('button', { name: /играть/i });
     await user.click(playButtons[0]);
 
-    // Заголовок должен содержать название игры (может быть несколько совпадений)
-    const titles = screen.getAllByText(/⚡ Reaction Click/);
+    // Название в шапке переведено (раньше там был английский title из GAMES_META)
+    const titles = screen.getAllByText(/⚡ Скорость реакции/);
     expect(titles.length).toBeGreaterThan(0);
   });
 
@@ -101,10 +101,29 @@ describe('App', () => {
     const backButton = container.querySelector('.back-button') as HTMLElement;
     await user.click(backButton);
 
-    // Переход ко второй игре (ColorTap)
+    // Переход ко второй игре (Odd One Out)
     playButtons = screen.getAllByRole('button', { name: /играть/i });
     await user.click(playButtons[1]);
-    expect(screen.getByText('Тренировка реакции и внимания')).toBeInTheDocument();
+    expect(screen.getByText(/Уровни сложности/)).toBeInTheDocument();
+  });
+
+  it('should send a retired game id back to the menu', () => {
+    window.location.hash = 'color-tap';
+    render(<App />);
+    expect(screen.getByText('Выберите игру')).toBeInTheDocument();
+  });
+
+  it('should set RTL and remember the language when switching to Hebrew', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole('button', { name: 'Change language' }));
+    await user.click(screen.getByText('עברית'));
+    expect(document.documentElement.dir).toBe('rtl');
+    expect(document.documentElement.lang).toBe('he');
+    expect(localStorage.getItem('brain-trainer-language')).toBe('he');
+
+    await user.click(screen.getByRole('button', { name: 'Change language' }));
+    await user.click(screen.getByText('Русский'));
+    expect(document.documentElement.dir).toBe('ltr');
   });
 });
-

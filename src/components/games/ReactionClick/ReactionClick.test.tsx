@@ -65,8 +65,8 @@ describe('ReactionClick', () => {
     await user.click(screen.getByRole('button', { name: /начать игру|start game/i }));
     
     await waitFor(() => {
-      // New format: "Попытка 1 / 5"
-      expect(screen.getByText(/1.*\/.*5/)).toBeInTheDocument();
+      // Shown both on the field and in the footer
+      expect(screen.getAllByText(/1.*\/.*5/).length).toBeGreaterThan(0);
     });
   });
 
@@ -133,7 +133,7 @@ describe('ReactionClick', () => {
   it('should display game layout title', () => {
     const handleBackToMenu = vi.fn();
     
-    const { container } = render(
+    render(
       <ReactionClick onBackToMenu={handleBackToMenu} />, 
       { wrapper }
     );

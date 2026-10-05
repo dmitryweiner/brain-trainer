@@ -69,7 +69,6 @@ export default function NBack({ onBack }: NBackProps) {
   return (
     <GameLayout
       title={`🔄 ${t('nBack.title')}`}
-      onBack={onBack}
       footer={
         status === 'playing' ? (
           <div className="n-back-stats">
@@ -111,7 +110,7 @@ export default function NBack({ onBack }: NBackProps) {
                 <li>{t('nBack.instructions.rejectScore')}</li>
               </ul>
             </div>
-            <Button variant="primary" size="lg" onClick={startGame}>
+            <Button variant="primary" size="large" onClick={startGame}>
               {t('common.startGame')}
             </Button>
           </div>
@@ -157,7 +156,7 @@ export default function NBack({ onBack }: NBackProps) {
             <div className="answer-section">
               <Button
                 variant="primary"
-                size="lg"
+                size="large"
                 onClick={handleMatch}
                 disabled={!canAnswer}
                 className="match-button"

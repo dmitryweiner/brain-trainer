@@ -1,169 +1,100 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ScoreProvider, useScoreContext } from './context/ScoreContext';
 import { GameHistoryProvider } from './context/GameHistoryContext';
 import { Header } from './components/common';
 import GameMenu from './components/GameMenu';
-import type { GameId } from './types/game.types';
-import { GAMES_META, GAME_IDS } from './utils/constants';
-import { ReactionClick } from './components/games/ReactionClick';
-import { ColorTap } from './components/games/ColorTap';
-import { SymbolMatch } from './components/games/SymbolMatch';
-import { OddOneOut } from './components/games/OddOneOut';
-import { HiddenNumber } from './components/games/HiddenNumber';
-import MemoryFlip from './components/games/MemoryFlip';
-import SequenceRecall from './components/games/SequenceRecall';
-import DualRuleReaction from './components/games/DualRuleReaction';
-import NBack from './components/games/NBack';
-import LogicPairConcept from './components/games/LogicPairConcept';
-import { PhoneRecall } from './components/games/PhoneRecall';
-import { EmojiHunt } from './components/games/EmojiHunt';
-import { FlagsGame } from './components/games/FlagsGame';
 import { Profile } from './components/Profile';
+import type { GameId } from './types/game.types';
+import type { Route } from './core/platform';
+import { findActiveGame } from './core/games/registry';
+import { textDirection, normalizeLanguage } from './core/i18n/languages';
+import { ServicesProvider, useServices } from './ui/services';
+import { createWebServices, type AppServices } from './ui/webServices';
+import { GAME_SCREENS } from './ui/gameScreens';
 
-type AppView = 'menu' | 'game' | 'profile';
+/** Unknown or retired game ids fall back to the menu */
+function normalize(route: Route): Route {
+  return route.view === 'game' && !findActiveGame(route.gameId) ? { view: 'menu' } : route;
+}
 
-// Parse hash from URL
-const parseHash = (): { view: AppView; gameId: GameId | null } => {
-  const hash = window.location.hash.replace('#', '');
-  
-  if (hash === 'profile') {
-    return { view: 'profile', gameId: null };
-  }
-  
-  // Check if hash is a valid game ID
-  const gameIds = Object.values(GAME_IDS);
-  if (gameIds.includes(hash as GameId)) {
-    return { view: 'game', gameId: hash as GameId };
-  }
-  
-  return { view: 'menu', gameId: null };
-};
+/** Keeps <html dir/lang> in line with i18n and remembers the user's choice. */
+function useDocumentLanguage() {
+  const { i18n } = useTranslation();
+  const { locale } = useServices();
+  useEffect(() => {
+    const apply = (lng: string) => {
+      document.documentElement.lang = normalizeLanguage(lng);
+      document.documentElement.dir = textDirection(lng);
+    };
+    const onChange = (lng: string) => {
+      apply(lng);
+      locale.save(normalizeLanguage(lng));
+    };
+    apply(i18n.language);
+    i18n.on('languageChanged', onChange);
+    return () => i18n.off('languageChanged', onChange);
+  }, [i18n, locale]);
+}
 
 function AppContent() {
-  // Initialize state from URL
-  const initialState = parseHash();
-  const [currentGame, setCurrentGame] = useState<GameId | null>(initialState.gameId);
-  const [currentView, setCurrentView] = useState<AppView>(initialState.view);
+  const { navigation } = useServices();
+  const { t } = useTranslation();
+  const [route, setRoute] = useState<Route>(() => normalize(navigation.current()));
   const { totalScore } = useScoreContext();
+  useDocumentLanguage();
 
-  // Update URL when view/game changes
-  const updateUrl = useCallback((view: AppView, gameId: GameId | null) => {
-    let newHash = '';
-    if (view === 'profile') {
-      newHash = 'profile';
-    } else if (view === 'game' && gameId) {
-      newHash = gameId;
-    }
-    
-    // Only update if hash actually changed
-    if (window.location.hash.replace('#', '') !== newHash) {
-      window.location.hash = newHash;
-    }
-  }, []);
+  // Browser back/forward (and, in Capacitor, the hardware back button)
+  useEffect(() => navigation.subscribe(r => setRoute(normalize(r))), [navigation]);
 
-  // Listen for browser back/forward
-  useEffect(() => {
-    const handleHashChange = () => {
-      const { view, gameId } = parseHash();
-      setCurrentView(view);
-      setCurrentGame(gameId);
-    };
-
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
-
-  const handleGameSelect = (gameId: GameId) => {
-    setCurrentGame(gameId);
-    setCurrentView('game');
-    updateUrl('game', gameId);
+  const go = (next: Route) => {
+    navigation.go(next);
+    setRoute(next);
   };
+  const backToMenu = () => go({ view: 'menu' });
 
-  const handleBackToMenu = () => {
-    setCurrentGame(null);
-    setCurrentView('menu');
-    updateUrl('menu', null);
-  };
-
-  const handleProfileClick = () => {
-    setCurrentView('profile');
-    updateUrl('profile', null);
-  };
-
-  const getCurrentGameTitle = () => {
-    if (!currentGame) return undefined;
-    const game = GAMES_META.find(g => g.id === currentGame);
-    return game ? `${game.icon} ${game.title}` : undefined;
-  };
+  const game = route.view === 'game' ? findActiveGame(route.gameId) : undefined;
+  const Screen = game ? GAME_SCREENS[game.id] : undefined;
 
   return (
     <div className="app-container">
       <Header
         totalScore={totalScore}
-        showBackButton={currentView !== 'menu'}
-        onBack={handleBackToMenu}
-        gameTitle={currentView === 'game' ? getCurrentGameTitle() : undefined}
-        onProfileClick={handleProfileClick}
-        showProfileButton={currentView === 'menu'}
+        showBackButton={route.view !== 'menu'}
+        onBack={backToMenu}
+        gameTitle={game ? `${game.icon} ${t(`games.${game.id}.title`)}` : undefined}
+        onProfileClick={() => go({ view: 'profile' })}
+        showProfileButton={route.view === 'menu'}
       />
 
       <div className="main-content">
-        {currentView === 'profile' ? (
-          <Profile onBack={handleBackToMenu} />
-        ) : currentView === 'menu' ? (
-          <GameMenu onGameSelect={handleGameSelect} />
-        ) : currentGame === GAME_IDS.REACTION_CLICK ? (
-          <ReactionClick onBackToMenu={handleBackToMenu} />
-        ) : currentGame === GAME_IDS.COLOR_TAP ? (
-          <ColorTap onBackToMenu={handleBackToMenu} />
-        ) : currentGame === GAME_IDS.SYMBOL_MATCH ? (
-          <SymbolMatch onBackToMenu={handleBackToMenu} />
-        ) : currentGame === GAME_IDS.ODD_ONE_OUT ? (
-          <OddOneOut onBackToMenu={handleBackToMenu} />
-        ) : currentGame === GAME_IDS.HIDDEN_NUMBER ? (
-          <HiddenNumber onBackToMenu={handleBackToMenu} />
-        ) : currentGame === GAME_IDS.MEMORY_FLIP ? (
-          <MemoryFlip onBack={handleBackToMenu} />
-        ) : currentGame === GAME_IDS.SEQUENCE_RECALL ? (
-          <SequenceRecall onBack={handleBackToMenu} />
-        ) : currentGame === GAME_IDS.DUAL_RULE ? (
-          <DualRuleReaction onBack={handleBackToMenu} />
-        ) : currentGame === GAME_IDS.N_BACK ? (
-          <NBack onBack={handleBackToMenu} />
-        ) : currentGame === GAME_IDS.LOGIC_PAIR ? (
-          <LogicPairConcept onBack={handleBackToMenu} />
-        ) : currentGame === GAME_IDS.PHONE_RECALL ? (
-          <PhoneRecall onBack={handleBackToMenu} />
-        ) : currentGame === GAME_IDS.EMOJI_HUNT ? (
-          <EmojiHunt onBack={handleBackToMenu} />
-        ) : currentGame === GAME_IDS.FLAGS_GAME ? (
-          <FlagsGame onBack={handleBackToMenu} />
+        {route.view === 'profile' ? (
+          <Profile onBack={backToMenu} />
+        ) : Screen ? (
+          <Screen key={game!.id} onBack={backToMenu} />
         ) : (
-          <div className="game-placeholder">
-            <div className="card-custom text-center">
-              <h2>Игра: {currentGame}</h2>
-              <p>Компонент игры будет реализован позже</p>
-              <button 
-                className="btn-custom btn-primary btn-large"
-                onClick={handleBackToMenu}
-              >
-                Вернуться в меню
-              </button>
-            </div>
-          </div>
+          <GameMenu onGameSelect={(gameId: GameId) => go({ view: 'game', gameId })} />
         )}
       </div>
     </div>
   );
 }
 
-function App() {
+export interface AppProps {
+  /** Injected by main.tsx; tests may omit it */
+  services?: AppServices;
+}
+
+function App({ services }: AppProps) {
+  const [own] = useState(() => services ?? createWebServices());
   return (
-    <ScoreProvider>
-      <GameHistoryProvider>
-        <AppContent />
-      </GameHistoryProvider>
-    </ScoreProvider>
+    <ServicesProvider services={own}>
+      <ScoreProvider>
+        <GameHistoryProvider>
+          <AppContent />
+        </GameHistoryProvider>
+      </ScoreProvider>
+    </ServicesProvider>
   );
 }
 

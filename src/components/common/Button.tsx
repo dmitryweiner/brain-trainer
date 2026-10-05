@@ -2,7 +2,7 @@ import React from 'react';
 import '../../styles/global.scss';
 
 export interface ButtonProps {
-  variant?: 'primary' | 'secondary' | 'success' | 'danger';
+  variant?: 'primary' | 'secondary' | 'success' | 'danger' | 'light';
   size?: 'small' | 'medium' | 'large';
   fullWidth?: boolean;
   disabled?: boolean;

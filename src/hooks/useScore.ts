@@ -1,85 +1,37 @@
-import { useCallback } from 'react';
-import { useLocalStorage } from './useLocalStorage';
-import { STORAGE_KEYS } from '../utils/constants';
+import { useCallback, useMemo } from 'react';
 import type { GameId } from '../types/game.types';
+import type { Repository } from '../core/storage/repository';
+import { totalXp } from '../core/stats';
+import { useEvents } from '../ui/services';
 
 export interface UseScoreReturn {
-  /** Общий счёт */
+  /** "Очки опыта": every point earned, derived from the event log */
   totalScore: number;
-  /** Счета по играм */
+  /** Points earned per game */
   gameScores: Record<string, number>;
-  /** Добавить очки */
+  /**
+   * Kept for the v1 game components. Points now come from the recorded
+   * session (addGameResult), so this does nothing.
+   */
   addScore: (gameId: GameId, points: number) => void;
-  /** Получить счёт игры */
   getGameScore: (gameId: GameId) => number;
-  /** Сбросить весь счёт */
-  resetScore: () => void;
-  /** Сбросить счёт конкретной игры */
-  resetGameScore: (gameId: GameId) => void;
 }
 
-/**
- * Хук для управления счётом пользователя
- * Автоматически сохраняет данные в LocalStorage
- */
-export function useScore(): UseScoreReturn {
-  const [totalScore, setTotalScore] = useLocalStorage(STORAGE_KEYS.TOTAL_SCORE, 0);
-  const [gameScores, setGameScores] = useLocalStorage<Record<string, number>>(
-    STORAGE_KEYS.GAME_SCORES,
-    {}
-  );
+export function useScore(repository: Repository): UseScoreReturn {
+  const events = useEvents(repository);
+  const totalScore = useMemo(() => totalXp(events), [events]);
+  const gameScores = useMemo(() => {
+    const out: Record<string, number> = {};
+    for (const e of events) {
+      if (e.kind === 'session') out[e.session.gameId] = (out[e.session.gameId] ?? 0) + e.session.score;
+    }
+    return out;
+  }, [events]);
 
-  const addScore = useCallback(
-    (gameId: GameId, points: number) => {
-      if (points < 0) {
-        console.warn('Cannot add negative points');
-        return;
-      }
+  const addScore = useCallback(() => undefined, []);
+  const getGameScore = useCallback((gameId: GameId) => gameScores[gameId] ?? 0, [gameScores]);
 
-      setTotalScore(prev => prev + points);
-      setGameScores(prev => ({
-        ...prev,
-        [gameId]: (prev[gameId] || 0) + points,
-      }));
-    },
-    [setTotalScore, setGameScores]
-  );
-
-  const getGameScore = useCallback(
-    (gameId: GameId): number => {
-      return gameScores[gameId] || 0;
-    },
-    [gameScores]
-  );
-
-  const resetScore = useCallback(() => {
-    setTotalScore(0);
-    setGameScores({});
-  }, [setTotalScore, setGameScores]);
-
-  const resetGameScore = useCallback(
-    (gameId: GameId) => {
-      const currentGameScore = gameScores[gameId] || 0;
-      
-      setTotalScore(prev => Math.max(0, prev - currentGameScore));
-      setGameScores(prev => {
-        const newScores = { ...prev };
-        delete newScores[gameId];
-        return newScores;
-      });
-    },
-    [gameScores, setTotalScore, setGameScores]
-  );
-
-  return {
-    totalScore,
-    gameScores,
-    addScore,
-    getGameScore,
-    resetScore,
-    resetGameScore,
-  };
+  return { totalScore, gameScores, addScore, getGameScore };
 }
 
 export default useScore;
-

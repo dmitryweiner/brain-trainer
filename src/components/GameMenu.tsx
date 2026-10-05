@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { GameCard } from './common';
 import { GAMES_META } from '../utils/constants';
-import { useScoreContext } from '../context/ScoreContext';
+import { useGameHistoryContext } from '../context/GameHistoryContext';
 import type { GameId } from '../types/game.types';
 import './GameMenu.scss';
 
@@ -11,7 +11,8 @@ export interface GameMenuProps {
 }
 
 export const GameMenu: React.FC<GameMenuProps> = ({ onGameSelect }) => {
-  const { getGameScore } = useScoreContext();
+  // Best single-session score, not the running total from useScore
+  const { getGameStats } = useGameHistoryContext();
   const { t } = useTranslation();
 
   return (
@@ -26,7 +27,7 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onGameSelect }) => {
           <GameCard
             key={game.id}
             game={game}
-            bestScore={getGameScore(game.id)}
+            bestScore={getGameStats(game.id).bestScore}
             onPlay={onGameSelect}
           />
         ))}

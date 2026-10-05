@@ -2,12 +2,12 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { GameMenu } from './GameMenu';
-import { ScoreProvider } from '../context/ScoreContext';
+import { GameHistoryProvider } from '../context/GameHistoryContext';
 import { GAMES_META } from '../utils/constants';
 import React from 'react';
 
 const wrapper = ({ children }: { children: React.ReactNode }) => (
-  <ScoreProvider>{children}</ScoreProvider>
+  <GameHistoryProvider>{children}</GameHistoryProvider>
 );
 
 describe('GameMenu', () => {
@@ -50,7 +50,7 @@ describe('GameMenu', () => {
     
     // Проверяем несколько описаний
     expect(screen.getByText('Тренировка скорости реакции')).toBeInTheDocument();
-    expect(screen.getByText('Реакция и селекция')).toBeInTheDocument();
+    expect(screen.getByText('Визуальный анализ')).toBeInTheDocument();
   });
 
   it('should display game icons', () => {
@@ -60,7 +60,7 @@ describe('GameMenu', () => {
     
     // Проверяем несколько иконок
     expect(screen.getByText('⚡')).toBeInTheDocument();
-    expect(screen.getByText('🎨')).toBeInTheDocument();
+    expect(screen.getByText('🔍')).toBeInTheDocument();
   });
 
   it('should display footer text', () => {
@@ -121,5 +121,19 @@ describe('GameMenu', () => {
     expect(handleGameSelect).toHaveBeenNthCalledWith(2, GAMES_META[1].id);
     expect(handleGameSelect).toHaveBeenNthCalledWith(3, GAMES_META[2].id);
   });
-});
 
+  it('should show the best single session, not the sum of scores', () => {
+    localStorage.clear();
+    const now = Date.now();
+    localStorage.setItem('brain-trainer-results', JSON.stringify([
+      { gameId: GAMES_META[0].id, score: 12, accuracy: 100, averageTime: 300, timestamp: now - 2000 },
+      { gameId: GAMES_META[0].id, score: 20, accuracy: 100, averageTime: 300, timestamp: now - 1000 },
+    ]));
+
+    const { container } = render(<GameMenu onGameSelect={vi.fn()} />, { wrapper });
+
+    const values = Array.from(container.querySelectorAll('.best-score .stat-value')).map(e => e.textContent);
+    expect(values).toEqual(['20']);
+    localStorage.clear();
+  });
+});

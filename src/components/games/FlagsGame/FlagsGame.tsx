@@ -75,7 +75,6 @@ export default function FlagsGame({ onBack }: FlagsGameProps) {
   return (
     <GameLayout
       title={`🏳️ ${t('flagsGame.title')}`}
-      onBack={onBack}
       footer={
         (status === 'playing' || status === 'feedback') ? (
           <div className="flags-game-stats">
@@ -107,7 +106,7 @@ export default function FlagsGame({ onBack }: FlagsGameProps) {
                 <li>{t('flagsGame.instructions.scoring')}</li>
               </ul>
             </div>
-            <Button variant="primary" size="lg" onClick={startGame}>
+            <Button variant="primary" size="large" onClick={startGame}>
               {t('common.startGame')}
             </Button>
           </div>

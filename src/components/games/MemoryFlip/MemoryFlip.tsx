@@ -50,18 +50,15 @@ export default function MemoryFlip({ onBack }: MemoryFlipProps) {
   useEffect(() => {
     if (status === 'results' && !scoreAddedRef.current) {
       addScore('memory-flip', totalScore);
-      // Calculate average time and accuracy from level stats
-      const totalTime = levelStats.reduce((sum, s) => sum + s.time, 0);
-      const avgTime = levelStats.length > 0 ? Math.round((totalTime / levelStats.length) * 1000) : 0;
       addGameResult({
         gameId: 'memory-flip',
         score: totalScore,
         accuracy: 100, // Completed all levels
-        averageTime: avgTime,
+        averageTime: 0, // per-level time is not tracked yet
       });
       scoreAddedRef.current = true;
     }
-  }, [status, totalScore, addScore, addGameResult, levelStats]);
+  }, [status, totalScore, addScore, addGameResult]);
 
   // Форматирование времени
   const formatTime = (seconds: number): string => {
@@ -77,7 +74,6 @@ export default function MemoryFlip({ onBack }: MemoryFlipProps) {
   return (
     <GameLayout
       title={`🃏 ${t('games.memory-flip.title')}`}
-      onBack={onBack}
       footer={
         status === 'playing' ? (
           <div className="memory-flip-stats">
@@ -116,7 +112,7 @@ export default function MemoryFlip({ onBack }: MemoryFlipProps) {
             </div>
             <Button
               variant="primary"
-              size="lg"
+              size="large"
               onClick={startGame}
             >
               {t('common.startGame')}
@@ -174,7 +170,7 @@ export default function MemoryFlip({ onBack }: MemoryFlipProps) {
             </div>
             <Button
               variant="primary"
-              size="lg"
+              size="large"
               onClick={proceedToNextLevel}
             >
               {level < 4 ? t('games.memory-flip.goToLevel', { level: level + 1 }) : t('games.memory-flip.finishGame')}

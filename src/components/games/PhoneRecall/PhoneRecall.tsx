@@ -75,7 +75,6 @@ export default function PhoneRecall({ onBack }: PhoneRecallProps) {
   return (
     <GameLayout
       title={`📞 ${t('phoneRecall.title')}`}
-      onBack={onBack}
       footer={
         status === 'input' ? (
           <div className="phone-recall-stats">
@@ -109,7 +108,7 @@ export default function PhoneRecall({ onBack }: PhoneRecallProps) {
                 <li>{t('phoneRecall.instructions.scoring')}</li>
               </ul>
             </div>
-            <Button variant="primary" size="lg" onClick={startGame}>
+            <Button variant="primary" size="large" onClick={startGame}>
               {t('common.startGame')}
             </Button>
           </div>

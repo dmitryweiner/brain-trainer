@@ -1,10 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { GameLayout, ResultsModal } from '../../common';
-import { useScoreContext } from '../../../context/ScoreContext';
-import { useGameHistoryContext } from '../../../context/GameHistoryContext';
-import { GAME_IDS, ROUNDS } from '../../../utils/constants';
-import useReactionClick from './useReactionClick';
+import { GameShell, type GameViews } from '../../../ui/GameShell';
+import { getGame } from '../../../core/games/registry';
+import {
+  REACTION_CLICK, type ReactionClickEvent, type ReactionClickState,
+} from '../../../core/games/reactionClick/engine';
 import './ReactionClick.scss';
 
 export interface ReactionClickProps {
@@ -12,120 +12,71 @@ export interface ReactionClickProps {
   onNextGame?: () => void;
 }
 
-export const ReactionClick: React.FC<ReactionClickProps> = ({ onBackToMenu, onNextGame }) => {
+const TOTAL = REACTION_CLICK.attempts;
+
+const Intro: GameViews<ReactionClickState, ReactionClickEvent>['Intro'] = ({ onStart }) => {
   const { t } = useTranslation();
-  const { addScore } = useScoreContext();
-  const { addGameResult } = useGameHistoryContext();
-  const scoreAddedRef = useRef(false);
-  const {
-    status,
-    currentAttempt,
-    reactionTimes,
-    currentScore,
-    tooEarlyCount,
-    startGame,
-    handleClick,
-    playAgain,
-    getAverageTime,
-    getBestTime,
-    getWorstTime,
-  } = useReactionClick();
-
-  // Auto-add score when game ends (only once)
-  useEffect(() => {
-    if (status === 'results' && !scoreAddedRef.current) {
-      if (currentScore > 0) {
-        addScore(GAME_IDS.REACTION_CLICK, currentScore);
-      }
-      // Record game history
-      const successRate = reactionTimes.length > 0 
-        ? (reactionTimes.length / ROUNDS.REACTION_CLICK) * 100 
-        : 0;
-      addGameResult({
-        gameId: GAME_IDS.REACTION_CLICK,
-        score: currentScore,
-        accuracy: Math.round(successRate),
-        averageTime: getAverageTime() || 0,
-      });
-      scoreAddedRef.current = true;
-    }
-    // Reset flag when starting a new game
-    if (status === 'intro' || status === 'waiting') {
-      scoreAddedRef.current = false;
-    }
-  }, [status, currentScore, addScore, addGameResult, reactionTimes, getAverageTime]);
-
-  const renderContent = () => {
-    if (status === 'intro') {
-      return (
-        <div className="reaction-intro">
-          <div className="intro-card">
-            <h2>⚡ {t('games.reaction-click.title')}</h2>
-            <div className="intro-instructions">
-              <p className="lead">{t('games.reaction-click.instructions.lead')}</p>
-              <ol className="instructions-list">
-                <li>{t('games.reaction-click.instructions.wait')}</li>
-                <li>{t('games.reaction-click.instructions.clickFast')}</li>
-                <li>{t('games.reaction-click.instructions.dontClickEarly')}</li>
-              </ol>
-              <div className="scoring-info">
-                <p><strong>{t('games.reaction-click.instructions.scoring')}:</strong></p>
-                <ul>
-                  <li><strong>{t('games.reaction-click.instructions.score5')}</strong></li>
-                  <li><strong>{t('games.reaction-click.instructions.score3')}</strong></li>
-                  <li><strong>{t('games.reaction-click.instructions.score2')}</strong></li>
-                  <li><strong>{t('games.reaction-click.instructions.score1')}</strong></li>
-                </ul>
-              </div>
-              <p className="text-muted">{t('games.reaction-click.instructions.totalAttempts')}: {ROUNDS.REACTION_CLICK}</p>
-            </div>
-            <button
-              className="btn btn-primary btn-large"
-              onClick={startGame}
-            >
-              {t('common.startGame')}
-            </button>
+  return (
+    <div className="reaction-intro">
+      <div className="intro-card">
+        <h2>⚡ {t('games.reaction-click.title')}</h2>
+        <div className="intro-instructions">
+          <p className="lead">{t('games.reaction-click.instructions.lead')}</p>
+          <ol className="instructions-list">
+            <li>{t('games.reaction-click.instructions.wait')}</li>
+            <li>{t('games.reaction-click.instructions.clickFast')}</li>
+            <li>{t('games.reaction-click.instructions.dontClickEarly')}</li>
+          </ol>
+          <div className="scoring-info">
+            <p><strong>{t('games.reaction-click.instructions.scoring')}:</strong></p>
+            <ul>
+              <li><strong>{t('games.reaction-click.instructions.score5')}</strong></li>
+              <li><strong>{t('games.reaction-click.instructions.score3')}</strong></li>
+              <li><strong>{t('games.reaction-click.instructions.score2')}</strong></li>
+              <li><strong>{t('games.reaction-click.instructions.score1')}</strong></li>
+            </ul>
           </div>
+          <p className="text-muted">{t('games.reaction-click.instructions.totalAttempts')}: {TOTAL}</p>
         </div>
-      );
-    }
+        <button className="btn btn-primary btn-large" onClick={onStart}>
+          {t('common.startGame')}
+        </button>
+      </div>
+    </div>
+  );
+};
 
-    if (status === 'waiting') {
+const Board: GameViews<ReactionClickState, ReactionClickEvent>['Board'] = ({ state, dispatch }) => {
+  const { t } = useTranslation();
+  const tap = () => dispatch({ type: 'tap' });
+  const tappable = {
+    onClick: tap,
+    role: 'button',
+    tabIndex: 0,
+    onKeyDown: (e: React.KeyboardEvent) => e.key === 'Enter' && tap(),
+  };
+
+  switch (state.phase) {
+    case 'waiting':
       return (
-        <div
-          className="reaction-area reaction-waiting"
-          onClick={handleClick}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => e.key === 'Enter' && handleClick()}
-        >
+        <div className="reaction-area reaction-waiting" {...tappable}>
           <div className="reaction-content">
             <div className="reaction-emoji">💣</div>
             <h2>{t('games.reaction-click.waiting')}</h2>
-            <p className="attempt-counter">{t('games.reaction-click.attempt')} {currentAttempt + 1} / {ROUNDS.REACTION_CLICK}</p>
+            <p className="attempt-counter">{t('games.reaction-click.attempt')} {state.attempt + 1} / {TOTAL}</p>
           </div>
         </div>
       );
-    }
-
-    if (status === 'ready') {
+    case 'ready':
       return (
-        <div
-          className="reaction-area reaction-ready"
-          onClick={handleClick}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => e.key === 'Enter' && handleClick()}
-        >
+        <div className="reaction-area reaction-ready" {...tappable}>
           <div className="reaction-content">
             <div className="reaction-emoji">🔘</div>
             <h2>{t('games.reaction-click.clickNow')}</h2>
           </div>
         </div>
       );
-    }
-
-    if (status === 'clicked') {
+    case 'clicked':
       return (
         <div className="reaction-area reaction-clicked">
           <div className="reaction-content">
@@ -134,9 +85,7 @@ export const ReactionClick: React.FC<ReactionClickProps> = ({ onBackToMenu, onNe
           </div>
         </div>
       );
-    }
-
-    if (status === 'tooEarly') {
+    case 'tooEarly':
       return (
         <div className="reaction-area reaction-too-early">
           <div className="reaction-content">
@@ -146,107 +95,102 @@ export const ReactionClick: React.FC<ReactionClickProps> = ({ onBackToMenu, onNe
           </div>
         </div>
       );
-    }
+    default:
+      return null;
+  }
+};
 
-    return null;
-  };
+const Footer: GameViews<ReactionClickState, ReactionClickEvent>['Footer'] = ({ state }) => {
+  const { t } = useTranslation();
+  return (
+    <div className="game-stats">
+      <span>{t('games.reaction-click.attempt')}: {Math.min(state.attempt + 1, TOTAL)}/{TOTAL}</span>
+      <span>{t('common.score')}: {state.score}</span>
+    </div>
+  );
+};
 
-  const renderDetails = () => {
-    if (reactionTimes.length === 0) {
-      return (
-        <div className="results-details">
-          <p className="text-muted">{t('games.reaction-click.noSuccessfulAttempts')}</p>
-        </div>
-      );
-    }
-
+const Details: GameViews<ReactionClickState, ReactionClickEvent>['Details'] = ({ state, outcome }) => {
+  const { t } = useTranslation();
+  const times = state.reactionTimes;
+  if (times.length === 0) {
     return (
       <div className="results-details">
-        <div className="results-summary">
-          <p className="summary-text">
-            {t('games.reaction-click.completedAttempts', { completed: reactionTimes.length, total: ROUNDS.REACTION_CLICK })}
-            {tooEarlyCount > 0 && ` (${t('games.reaction-click.tooEarlyCount', { count: tooEarlyCount })})`}
-          </p>
-        </div>
-
-        <div className="stat-item highlight">
-          <span className="stat-label">⚡ {t('games.reaction-click.bestReaction')}:</span>
-          <span className="stat-value stat-best">{getBestTime()}{t('common.ms')}</span>
-        </div>
-        
-        <div className="stat-item">
-          <span className="stat-label">📊 {t('games.reaction-click.averageReaction')}:</span>
-          <span className="stat-value">{getAverageTime()}{t('common.ms')}</span>
-        </div>
-
-        {reactionTimes.length > 1 && (
-          <div className="stat-item">
-            <span className="stat-label">🐌 {t('games.reaction-click.worstReaction')}:</span>
-            <span className="stat-value stat-worst">{getWorstTime()}{t('common.ms')}</span>
-          </div>
-        )}
-
-        {reactionTimes.length > 0 && (
-          <div className="all-times">
-            <div className="stat-label">{t('games.reaction-click.allResults')}:</div>
-            <div className="times-list">
-              {reactionTimes.map((time, index) => (
-                <span 
-                  key={index} 
-                  className={`time-chip ${time === getBestTime() ? 'best' : time === getWorstTime() && reactionTimes.length > 1 ? 'worst' : ''}`}
-                >
-                  {index + 1}. {time}{t('common.ms')}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
+        <p className="text-muted">{t('games.reaction-click.noSuccessfulAttempts')}</p>
       </div>
     );
-  };
-
-  const getMessage = () => {
-    if (reactionTimes.length === 0) {
-      return t('games.reaction-click.results.tryAgain');
-    }
-    
-    const avgTime = getAverageTime();
-    const bestTime = getBestTime();
-    
-    if (bestTime < 250) return t('games.reaction-click.results.incredible');
-    if (avgTime < 300) return t('games.reaction-click.results.excellent');
-    if (avgTime < 500) return t('games.reaction-click.results.good');
-    if (avgTime < 700) return t('games.reaction-click.results.notBad');
-    return t('games.reaction-click.results.keepPracticing');
-  };
-
+  }
+  const best = outcome.metrics.bestReactionMs;
+  const worst = outcome.metrics.worstReactionMs;
   return (
-    <GameLayout
-      title={`⚡ ${t('games.reaction-click.title')}`}
-      footerContent={
-        status !== 'intro' && status !== 'results' && (
-          <div className="game-stats">
-            <span>{t('games.reaction-click.attempt')}: {currentAttempt + 1}/{ROUNDS.REACTION_CLICK}</span>
-            <span>{t('common.score')}: {currentScore}</span>
-          </div>
-        )
-      }
-    >
-      {renderContent()}
+    <div className="results-details">
+      <div className="results-summary">
+        <p className="summary-text">
+          {t('games.reaction-click.completedAttempts', { completed: times.length, total: TOTAL })}
+          {state.falseStarts > 0 && ` (${t('games.reaction-click.tooEarlyCount', { count: state.falseStarts })})`}
+        </p>
+      </div>
 
-      <ResultsModal
-        show={status === 'results'}
-        title={`🎮 ${t('common.gameOver')}`}
-        score={currentScore}
-        message={getMessage()}
-        details={renderDetails()}
-        onPlayAgain={playAgain}
-        onBackToMenu={onBackToMenu}
-        onNextGame={onNextGame}
-      />
-    </GameLayout>
+      <div className="stat-item highlight">
+        <span className="stat-label">⚡ {t('games.reaction-click.bestReaction')}:</span>
+        <span className="stat-value stat-best">{best}{t('common.ms')}</span>
+      </div>
+
+      <div className="stat-item">
+        <span className="stat-label">📊 {t('games.reaction-click.averageReaction')}:</span>
+        <span className="stat-value">{outcome.avgTimeMs}{t('common.ms')}</span>
+      </div>
+
+      {times.length > 1 && (
+        <div className="stat-item">
+          <span className="stat-label">🐌 {t('games.reaction-click.worstReaction')}:</span>
+          <span className="stat-value stat-worst">{worst}{t('common.ms')}</span>
+        </div>
+      )}
+
+      <div className="all-times">
+        <div className="stat-label">{t('games.reaction-click.allResults')}:</div>
+        <div className="times-list">
+          {times.map((time, index) => (
+            <span
+              key={index}
+              className={`time-chip ${time === best ? 'best' : time === worst && times.length > 1 ? 'worst' : ''}`}
+            >
+              {index + 1}. {time}{t('common.ms')}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const views: GameViews<ReactionClickState, ReactionClickEvent> = {
+  Intro,
+  Board,
+  Footer,
+  Details,
+  message: (outcome, t) => {
+    if (outcome.metrics.hits === 0) return t('games.reaction-click.results.tryAgain');
+    if (outcome.metrics.bestReactionMs < 250) return t('games.reaction-click.results.incredible');
+    if (outcome.avgTimeMs < 300) return t('games.reaction-click.results.excellent');
+    if (outcome.avgTimeMs < 500) return t('games.reaction-click.results.good');
+    if (outcome.avgTimeMs < 700) return t('games.reaction-click.results.notBad');
+    return t('games.reaction-click.results.keepPracticing');
+  },
+};
+
+export const ReactionClick: React.FC<ReactionClickProps> = ({ onBackToMenu, onNextGame }) => {
+  const { t } = useTranslation();
+  return (
+    <GameShell
+      game={getGame('reaction-click')}
+      views={views}
+      title={`⚡ ${t('games.reaction-click.title')}`}
+      onBack={onBackToMenu}
+      onNextGame={onNextGame}
+    />
   );
 };
 
 export default ReactionClick;
-

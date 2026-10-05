@@ -42,7 +42,7 @@ describe('NBack Component', () => {
   it('should show history section', async () => {
     const user = userEvent.setup();
     const onBack = vi.fn();
-    const { container } = renderWithProvider(<NBack onBack={onBack} />);
+    renderWithProvider(<NBack onBack={onBack} />);
 
     const startButton = screen.getByRole('button', { name: /Начать игру|Start/i });
     await user.click(startButton);

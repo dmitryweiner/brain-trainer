@@ -6,8 +6,8 @@ node_modules/
 # Testing
 /coverage
 
-# Production (НЕ игнорируем docs/ так как это наша сборка для GitHub Pages)
-# docs/ - закоммитим
+# Production: сборку публикует GitHub Actions (.github/workflows/deploy.yml)
+docs/
 
 # Misc
 .DS_Store

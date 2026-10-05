@@ -2,10 +2,10 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { GameCard } from './GameCard';
-import { GameMeta } from '../../types/game.types';
+import type { GameMeta } from '../../types/game.types';
 
 const mockGame: GameMeta = {
-  id: 'test-game',
+  id: 'test-game' as GameMeta['id'],
   title: 'Test Game',
   description: 'A test game description',
   icon: '🎮',

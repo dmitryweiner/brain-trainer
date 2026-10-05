@@ -22,7 +22,6 @@ export default function DualRuleReaction({ onBack }: DualRuleReactionProps) {
     currentRound,
     shape,
     color,
-    currentRule,
     errors,
     score,
     reactionTimes,
@@ -84,7 +83,6 @@ export default function DualRuleReaction({ onBack }: DualRuleReactionProps) {
   return (
     <GameLayout
       title={`↔️ ${t('games.dual-rule-reaction.title')}`}
-      onBack={onBack}
       footer={
         status === 'playing' || status === 'feedback' ? (
           <div className="dual-rule-stats">
@@ -123,7 +121,7 @@ export default function DualRuleReaction({ onBack }: DualRuleReactionProps) {
                 <li>{t('games.dual-rule-reaction.errorMinus05')}</li>
               </ul>
             </div>
-            <Button variant="primary" size="lg" onClick={startGame}>
+            <Button variant="primary" size="large" onClick={startGame}>
               {t('common.startGame')}
             </Button>
           </div>
@@ -162,7 +160,7 @@ export default function DualRuleReaction({ onBack }: DualRuleReactionProps) {
               <div className="answer-buttons">
                 <Button
                   variant="primary"
-                  size="lg"
+                  size="large"
                   onClick={() => handleAnswer('A')}
                   className="answer-btn"
                 >
@@ -170,7 +168,7 @@ export default function DualRuleReaction({ onBack }: DualRuleReactionProps) {
                 </Button>
                 <Button
                   variant="secondary"
-                  size="lg"
+                  size="large"
                   onClick={() => handleAnswer('B')}
                   className="answer-btn"
                 >

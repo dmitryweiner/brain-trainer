@@ -20,4 +20,28 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  {
+    // core/ must run unchanged in React Native and the Cloudflare Worker
+    // (PLAN-IMPROVEMENTS.md, 5.1): no React, no browser globals, and time and
+    // randomness only through the platform ports.
+    files: ['src/core/**/*.ts'],
+    ignores: ['src/core/**/*.test.ts', 'src/core/testing/**'],
+    rules: {
+      'no-restricted-imports': ['error', {
+        patterns: [
+          { group: ['react', 'react-dom', 'react-*', 'i18next*'], message: 'core/ is UI-free' },
+          { group: ['**/ui/**', '**/platform/**', '**/components/**', '**/hooks/**', '**/context/**'], message: 'core/ must not depend on outer layers' },
+        ],
+      }],
+      'no-restricted-globals': ['error',
+        ...['window', 'document', 'navigator', 'localStorage', 'sessionStorage', 'location', 'history', 'performance', 'crypto', 'fetch',
+          'setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'requestAnimationFrame']
+          .map(name => ({ name, message: 'Use the ports in core/platform.ts' })),
+      ],
+      'no-restricted-properties': ['error',
+        { object: 'Date', property: 'now', message: 'Take time from Scheduler/Clock' },
+        { object: 'Math', property: 'random', message: 'Take randomness from Rng' },
+      ],
+    },
+  },
 ])

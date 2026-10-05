@@ -56,7 +56,6 @@ export default function SequenceRecall({ onBack }: SequenceRecallProps) {
   return (
     <GameLayout
       title={`🧠 ${t('sequenceRecall.title')}`}
-      onBack={onBack}
       footer={
         status === 'input' ? (
           <div className="sequence-recall-stats">
@@ -94,7 +93,7 @@ export default function SequenceRecall({ onBack }: SequenceRecallProps) {
                 <li>{t('sequenceRecall.instructions.scoring')}</li>
               </ul>
             </div>
-            <Button variant="primary" size="lg" onClick={startGame}>
+            <Button variant="primary" size="large" onClick={startGame}>
               {t('common.startGame')}
             </Button>
           </div>

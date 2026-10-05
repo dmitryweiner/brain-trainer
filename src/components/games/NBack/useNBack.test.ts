@@ -153,9 +153,6 @@ describe('useNBack', () => {
       { timeout: 8000 }
     );
 
-    const initialHits = result.current.hits;
-    const initialFalseAlarms = result.current.falseAlarms;
-
     // Нажимаем первый раз
     act(() => {
       result.current.handleMatch();

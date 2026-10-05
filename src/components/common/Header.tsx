@@ -28,11 +28,9 @@ export const Header: React.FC<HeaderProps> = ({
   const currentLangData = SUPPORTED_LANGUAGES[currentLang] || SUPPORTED_LANGUAGES.en;
 
   const handleLanguageChange = (lang: SupportedLanguage) => {
+    // App applies dir/lang and remembers the choice (useDocumentLanguage)
     i18n.changeLanguage(lang);
     setShowLangMenu(false);
-    
-    // Update document direction for RTL languages
-    document.documentElement.dir = SUPPORTED_LANGUAGES[lang].dir || 'ltr';
   };
 
   // Close menu when clicking outside
@@ -46,14 +44,6 @@ export const Header: React.FC<HeaderProps> = ({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
-  // Set initial direction
-  useEffect(() => {
-    const lang = currentLang as SupportedLanguage;
-    if (SUPPORTED_LANGUAGES[lang]) {
-      document.documentElement.dir = SUPPORTED_LANGUAGES[lang].dir || 'ltr';
-    }
-  }, [currentLang]);
 
   return (
     <header className="app-header">

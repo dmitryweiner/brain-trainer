@@ -1,44 +1,21 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
+import type { LocaleProvider } from '../core/platform';
+import { normalizeLanguage, RESOURCES } from '../core/i18n/languages';
 
-import en from './locales/en.json';
-import ru from './locales/ru.json';
-import he from './locales/he.json';
-import uk from './locales/uk.json';
+export { SUPPORTED_LANGUAGES, type SupportedLanguage } from '../core/i18n/languages';
 
-export const SUPPORTED_LANGUAGES = {
-  en: { name: 'English', flag: '🇬🇧' },
-  ru: { name: 'Русский', flag: '🇷🇺' },
-  he: { name: 'עברית', flag: '🇮🇱', dir: 'rtl' },
-  uk: { name: 'Українська', flag: '🇺🇦' },
-} as const;
-
-export type SupportedLanguage = keyof typeof SUPPORTED_LANGUAGES;
-
-i18n
-  .use(LanguageDetector)
-  .use(initReactI18next)
-  .init({
-    resources: {
-      en: { translation: en },
-      ru: { translation: ru },
-      he: { translation: he },
-      uk: { translation: uk },
-    },
+/** Starts i18next in the language the platform reports (saved choice or device language). */
+export function initI18n(locale: LocaleProvider) {
+  return i18n.use(initReactI18next).init({
+    resources: RESOURCES,
+    lng: normalizeLanguage(locale.initialLanguage()),
     fallbackLng: 'en',
     supportedLngs: ['en', 'ru', 'he', 'uk'],
-    
-    detection: {
-      order: ['localStorage', 'navigator', 'htmlTag'],
-      caches: ['localStorage'],
-      lookupLocalStorage: 'brain-trainer-language',
-    },
-
     interpolation: {
       escapeValue: false,
     },
   });
+}
 
 export default i18n;
-
