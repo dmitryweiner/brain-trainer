@@ -38,7 +38,7 @@ const Intro: GameViews<ReactionClickState, ReactionClickEvent>['Intro'] = ({ onS
           </div>
           <p className="text-muted">{t('games.reaction-click.instructions.totalAttempts')}: {TOTAL}</p>
         </div>
-        <button className="btn btn-primary btn-large" onClick={onStart}>
+        <button className="btn btn-primary btn-large" onClick={() => onStart()}>
           {t('common.startGame')}
         </button>
       </div>

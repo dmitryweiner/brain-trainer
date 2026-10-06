@@ -29,24 +29,3 @@ export const GAMES_META: GameMeta[] = GAMES.map(game => ({
   icon: game.icon,
   difficulty: game.difficulty,
 }));
-
-// Тайминги
-export const TIMINGS = {
-  SEQUENCE_SHOW: 800,
-  SEQUENCE_PAUSE: 200,
-  N_BACK_INTERVAL: 2500,
-  BLOCK_PAUSE: 3000,
-} as const;
-
-// Размеры сеток
-export const GRID_SIZES = {
-  MEMORY_FLIP_L1: { rows: 2, cols: 3 },
-  MEMORY_FLIP_L2: { rows: 3, cols: 4 },
-  MEMORY_FLIP_L3: { rows: 4, cols: 4 },
-  MEMORY_FLIP_L4: { rows: 4, cols: 5 },
-} as const;
-
-// Количество раундов
-export const ROUNDS = {
-  EMOJI_HUNT: 10,
-} as const;

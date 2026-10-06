@@ -15,7 +15,13 @@ export type GameId =
   | 'logic-pair-concept'
   | 'phone-recall'
   | 'emoji-hunt'
-  | 'flags-game';
+  | 'flags-game'
+  // stage 4
+  | 'memory-matrix'
+  | 'schulte'
+  | 'whack-a-mole'
+  | 'trace-line'
+  | 'rotate-shape';
 
 export type GameCategory = 'memory' | 'attention' | 'reaction' | 'spatial' | 'knowledge';
 
@@ -70,7 +76,8 @@ export interface TimerRequest<E> {
  * the runner (core/engine/runner.ts) owns them through the platform Scheduler.
  */
 export interface GameEngine<S, E> {
-  init(level: number, ctx: EngineContext): S;
+  /** `variant`: a choice made on the intro screen (e.g. the Flags quiz direction) */
+  init(level: number, ctx: EngineContext, variant?: string): S;
   reduce(state: S, event: E, ctx: EngineContext): S;
   timers(state: S): TimerRequest<E>[];
   isFinished(state: S): boolean;

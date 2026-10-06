@@ -18,6 +18,11 @@ export const GAME_IDS: readonly GameId[] = [
   'phone-recall',
   'emoji-hunt',
   'flags-game',
+  'memory-matrix',
+  'schulte',
+  'whack-a-mole',
+  'trace-line',
+  'rotate-shape',
 ];
 
 export interface SessionEvent {

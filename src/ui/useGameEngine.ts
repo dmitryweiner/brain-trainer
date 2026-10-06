@@ -18,7 +18,7 @@ export interface UseGameEngineReturn<S, E> {
   state: S | null;
   level: number;
   dispatch: (event: E) => void;
-  start: () => void;
+  start: (variant?: string) => void;
   finished: FinishedSession | null;
 }
 
@@ -40,7 +40,11 @@ export function useGameEngine<S, E>(game: GameDefinition): UseGameEngineReturn<S
   const events = useEvents(repository);
   const level = useMemo(() => currentLevel(activeSessions(events), game), [events, game]);
 
-  const start = useCallback(() => {
+  // the variant of the last start, so "play again" repeats it
+  const variantRef = useRef<string | undefined>(undefined);
+
+  const start = useCallback((variant?: string) => {
+    if (variant !== undefined) variantRef.current = variant;
     runnerRef.current?.dispose();
     setFinished(null);
     const startedAt = clock.wallNow();
@@ -48,6 +52,7 @@ export function useGameEngine<S, E>(game: GameDefinition): UseGameEngineReturn<S
     const next = new EngineRunner(engine, scheduler, {
       level: sessionLevel,
       seed: Math.floor(Math.random() * 2 ** 32),
+      variant: variantRef.current,
       onFinish: (outcome, durationMs) => {
         const session = buildSession(game, outcome, { id: clock.newId(), startedAt, durationMs, level: sessionLevel });
         repository.addSession(session);

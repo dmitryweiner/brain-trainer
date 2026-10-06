@@ -86,6 +86,7 @@ describe('useGameHistory', () => {
     ]));
     const { result } = setup();
     expect(result.current.history).toHaveLength(1);
-    expect(result.current.getGameStats('flags-game').bestRating).toBe(500);
+    // 50 of the v1 maximum 100, at level 1 (ceiling 460)
+    expect(result.current.getGameStats('flags-game').bestRating).toBe(230);
   });
 });

@@ -5,6 +5,7 @@ import { getGame, legacyRating } from '../core/games/registry';
 import { hashNavigation, LocalStorageStore, webClock, webLocale, webScheduler } from '../platform/web';
 import { createWebSync, type WebSync } from '../platform/web/sync';
 import type { PwaControl } from '../platform/web/pwa';
+import type { ToneOutput } from '../platform/web/audio';
 
 export interface AppServices {
   repository: Repository;
@@ -16,6 +17,8 @@ export interface AppServices {
   sync?: WebSync;
   /** Service worker state; started by main.tsx only */
   pwa?: PwaControl;
+  /** Game sounds; absent in tests */
+  audio?: ToneOutput;
 }
 
 const reportError = (error: unknown) => console.warn('[brain-trainer] storage error:', error);

@@ -162,12 +162,12 @@
       "card": "Card {{number}}"
     },
     "sequence-recall": {
-      "title": "Sequence Recall",
-      "description": "Visual memory"
+      "title": "Repeat",
+      "description": "Memory for sequences"
     },
     "dual-rule-reaction": {
-      "title": "Dual-Rule Reaction",
-      "description": "Cognitive flexibility",
+      "title": "Switch",
+      "description": "Mental flexibility",
       "instructions": {
         "lead": "Cognitive flexibility training",
         "twoRules": "Two rules alternate",
@@ -204,8 +204,8 @@
       "description": "Abstract thinking"
     },
     "phone-recall": {
-      "title": "Phone Recall",
-      "description": "Number memory"
+      "title": "Digit Span",
+      "description": "Working memory"
     },
     "emoji-hunt": {
       "title": "Emoji Hunt",
@@ -214,6 +214,26 @@
     "flags-game": {
       "title": "Flags Game",
       "description": "Country flags"
+    },
+    "memory-matrix": {
+      "title": "Memory Matrix",
+      "description": "Visual memory"
+    },
+    "schulte": {
+      "title": "Schulte Table",
+      "description": "Speed of attention"
+    },
+    "whack-a-mole": {
+      "title": "Whack-a-Mole",
+      "description": "Reaction and restraint"
+    },
+    "trace-line": {
+      "title": "Trace the Line",
+      "description": "Precise movement"
+    },
+    "rotate-shape": {
+      "title": "Rotate the Shape",
+      "description": "Spatial thinking"
     }
   },
   "flagsGame": {
@@ -298,7 +318,14 @@
     "levelSame": "Staying at level {{level}}",
     "recent": "Recent games",
     "barCurrent": "Now: {{value}}",
-    "barPast": "Game {{n}}: {{value}}"
+    "barPast": "Game {{n}}: {{value}}",
+    "verdict": {
+      "top": "Brilliant! That is master level.",
+      "great": "Excellent! A very strong result.",
+      "good": "Good! You are in shape.",
+      "ok": "Not bad. Every game makes it better.",
+      "low": "A start. Practice changes everything!"
+    }
   },
   "phoneRecall": {
     "title": "Phone Recall",
@@ -621,7 +648,26 @@
     "hits": "Clean attempts",
     "correct": "Correct answers",
     "rounds": "Rounds",
-    "maxGridSize": "Largest grid"
+    "maxGridSize": "Largest grid",
+    "perfectRounds": "Flawless rounds",
+    "errors": "Errors",
+    "tableMs": "Table time",
+    "misses": "Missed",
+    "bombHits": "Bombs tapped",
+    "maxCombo": "Best streak",
+    "completed": "Lines finished",
+    "maxSequence": "Longest sequence",
+    "maxForward": "Span (forward)",
+    "maxBackward": "Span (backward)",
+    "switchCostMs": "Switch cost",
+    "moves": "Moves",
+    "pairs": "Pairs found",
+    "falseAlarms": "False presses",
+    "timeouts": "Too late",
+    "cells": "Cells in pattern",
+    "size": "Table size",
+    "boardTimeMs": "Time per board",
+    "n": "N"
   },
   "pwa": {
     "updateReady": "A new version is available",
@@ -631,5 +677,173 @@
     "offlineReady": "Ready: the app now works offline",
     "ok": "OK",
     "dismiss": "Not now"
+  },
+  "game": {
+    "levelLine": "Level {{level}} of {{max}}",
+    "livesLeft": "Lives: {{left}} of {{total}}",
+    "roundOf": "Round {{n}} of {{total}}",
+    "time": "Time",
+    "timeLeft": "Left",
+    "seconds": "s"
+  },
+  "memoryMatrix": {
+    "rule1": "A few cells will light up.",
+    "rule2": "Remember them while they glow.",
+    "rule3": "When they go dark, tap the same cells.",
+    "layout": "{{size}}×{{size}} grid, {{cells}} cells",
+    "watch": "Remember…",
+    "tap": "Tap the cells that were lit ({{left}} left)",
+    "perfect": "Correct!",
+    "missed": "Not quite: missed cells have a green frame",
+    "cell": "Cell {{n}}"
+  },
+  "schulte": {
+    "rule1": "Find the numbers in order, starting at 1.",
+    "rule2": "Look at the centre and search with peripheral vision.",
+    "rule3": "The time is measured; errors count.",
+    "ruleRedBlack1": "Find black numbers going up and red numbers going down.",
+    "ruleRedBlack2": "Alternate: black 1, the highest red, black 2…",
+    "layout": "{{size}}×{{size}} table: numbers 1 to {{total}}",
+    "layoutRedBlack": "Red-black table: black 1…{{blacks}}, red {{reds}}…1",
+    "find": "Find {{value}}",
+    "findRed": "Find red {{value}}",
+    "found": "Found"
+  },
+  "whack": {
+    "rule1": "Tap the moles before they hide.",
+    "ruleBomb": "Do not touch the bombs!",
+    "rule2": "A miss or a bomb costs a life; you have three.",
+    "rule3": "Streaks earn more points. The game lasts a minute.",
+    "bombHere": "Bomb",
+    "moleHere": "Mole",
+    "empty": "Empty hole",
+    "combo": "Streak"
+  },
+  "trace": {
+    "rule1": "Put your finger on the green circle.",
+    "rule2": "Follow the line to its end without leaving the light band.",
+    "rule3": "If your finger slips, continue from the same spot.",
+    "start": "Start at the green circle",
+    "resume": "Continue from where you stopped",
+    "keepGoing": "Good, keep going",
+    "outside": "You left the band, get back on the line",
+    "done": "Line done!",
+    "timeUp": "Time is up",
+    "inside": "On the line",
+    "progress": "Done"
+  },
+  "rotate": {
+    "rule1": "The shape is at the top.",
+    "rule2": "Find the same shape below, only rotated.",
+    "rule3": "Watch out for mirror copies: no rotation makes them.",
+    "layout": "Shapes of {{cells}} cells",
+    "prompt": "Which option is the same shape, rotated?",
+    "target": "The shape",
+    "option": "Option {{n}}"
+  },
+  "repeat": {
+    "rule1": "The panels light up one after another.",
+    "rule2": "Repeat them in the same order.",
+    "rule3": "Each success adds one step. Two mistakes end the game.",
+    "layout": "{{panels}} panels, starting length {{length}}",
+    "watch": "Watch and listen…",
+    "yourTurn": "Your turn: {{done}} of {{total}}",
+    "correct": "Correct! One step longer next",
+    "wrong": "Mistake",
+    "panel": "Panel {{n}}",
+    "length": "Length"
+  },
+  "digits": {
+    "rule1": "Digits appear one at a time.",
+    "rule2": "Then type them on the keypad.",
+    "ruleBackward": "Sometimes type them in reverse order: watch the label.",
+    "rule3": "The length adapts to you: get it right and the next one is a digit longer.",
+    "layout": "Starting length: {{length}}",
+    "forward": "Same order",
+    "backward": "Reverse order!",
+    "correct": "Correct!",
+    "wasActually": "It was: {{digits}}",
+    "erase": "Erase",
+    "length": "Digits"
+  },
+  "switch": {
+    "ruleShape": "“Shape” rule: circle ←, square →.",
+    "ruleColor": "“Colour” rule: green ←, red →.",
+    "ruleInk": "“Ink” rule: a colour word is printed in a colour; answer by the ink, not the word.",
+    "ruleWarned": "You will be warned before the rule changes.",
+    "ruleUnwarned": "The rule changes without warning: watch the icon.",
+    "ruleTime": "Answers are timed. A mistake or a late answer costs a life.",
+    "circle": "Circle",
+    "square": "Square",
+    "green": "Green",
+    "red": "Red",
+    "changing": "The rule is changing!",
+    "rule": {
+      "shape": "By shape",
+      "color": "By colour",
+      "ink": "By ink colour"
+    },
+    "word": {
+      "green": "GREEN",
+      "red": "RED"
+    },
+    "figure": {
+      "circle": {
+        "green": "Green circle",
+        "red": "Red circle"
+      },
+      "square": {
+        "green": "Green square",
+        "red": "Red square"
+      }
+    }
+  },
+  "flip": {
+    "rule1": "Turn over two cards at a time.",
+    "rule2": "A match stays open; otherwise the cards turn back.",
+    "rule3": "Find all pairs in as few moves as you can.",
+    "layout": "Boards: {{boards}}",
+    "boardDone": "Board cleared!",
+    "boardOf": "Board {{n}} of {{total}}",
+    "hidden": "Hidden card {{n}}",
+    "pairs": "Pairs",
+    "moves": "Moves",
+    "efficiency": "Move economy"
+  },
+  "hunt": {
+    "rule1": "The emoji to find is shown at the top.",
+    "rule2": "Find it on the board and tap it.",
+    "rule3": "The faster, the more points.",
+    "layout": "Board from {{from}}×{{from}} to {{to}}×{{to}}",
+    "find": "Find:"
+  },
+  "flags": {
+    "rule1": "Guess the country from its flag, or the flag from the country.",
+    "rule2": "Quick answers earn more points.",
+    "modeFlagToCountry": "Flag → country",
+    "modeCountryToFlag": "Country → flag",
+    "layout": "Answer options: {{options}}",
+    "whichCountry": "Which country is it?",
+    "whichFlag": "Which is this country's flag?"
+  },
+  "nback": {
+    "rule1": "Cells of a 3×3 grid light up one after another.",
+    "rule2": "Press “Match” when it is the same cell as N steps back.",
+    "rule3": "Otherwise press nothing. The game lasts 90 seconds.",
+    "layout": "Now N = {{n}}",
+    "getReady": "Get ready…",
+    "remember": "Remember…",
+    "question": "Same cell as N steps back? (N = {{count}})",
+    "hit": "Correct",
+    "falseAlarm": "No match",
+    "match": "Match"
+  },
+  "metricsByGame": {
+    "whack-a-mole": {
+      "hits": "Hits"
+    },
+    "n-back": {
+      "hits": "Hits"
+    }
   }
 }

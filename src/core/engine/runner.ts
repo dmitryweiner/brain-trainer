@@ -7,6 +7,7 @@ import type { GameEngine, SessionOutcome } from '../types';
 export interface RunnerOptions {
   level: number;
   seed: number;
+  variant?: string;
   onFinish?: (outcome: SessionOutcome, durationMs: number) => void;
 }
 
@@ -26,7 +27,7 @@ export class EngineRunner<S, E> {
   ) {
     this.rng = createRng(options.seed);
     this.startedAt = scheduler.now();
-    this.current = engine.init(options.level, { now: this.startedAt, rng: this.rng });
+    this.current = engine.init(options.level, { now: this.startedAt, rng: this.rng }, options.variant);
     this.afterChange();
   }
 

@@ -2,7 +2,20 @@
 // routing, profile and stats read this list; the UI layer adds the views.
 import type { GameCategory, GameDefinition, GameId, GameSession, SessionOutcome } from '../types';
 import { reactionClickEngine, reactionClickRating } from './reactionClick/engine';
-import { oddOneOutEngine, oddOneOutRating, oddOneOutSessionLevel, ODD_ONE_OUT } from './oddOneOut/engine';
+import { oddOneOutEngine, oddOneOutRating, oddOneOutSessionLevel } from './oddOneOut/engine';
+import { memoryMatrixEngine, memoryMatrixRating } from './memoryMatrix/engine';
+import { schulteEngine, schulteRating } from './schulte/engine';
+import { whackEngine, whackRating } from './whackAMole/engine';
+import { traceEngine, traceRating } from './traceLine/engine';
+import { rotateShapeEngine, rotateShapeRating } from './rotateShape/engine';
+import { sequenceEngine, sequenceRating } from './sequenceRecall/engine';
+import { digitSpanEngine, digitSpanRating } from './digitSpan/engine';
+import { taskSwitchEngine, taskSwitchRating, taskSwitchSessionLevel } from './taskSwitch/engine';
+import { memoryFlipEngine, memoryFlipRating, memoryFlipSessionLevel } from './memoryFlip/engine';
+import { emojiHuntEngine, emojiHuntRating, emojiHuntSessionLevel } from './emojiHunt/engine';
+import { flagsEngine, flagsRating } from './flags/engine';
+import { nBackEngine, nBackRating, nBackSessionLevel } from './nBack/engine';
+import { MAX_LEVEL, MIN_LEVEL } from './common';
 
 export function clampRating(value: number): number {
   if (!Number.isFinite(value)) return 0;
@@ -25,10 +38,11 @@ interface Base {
   sessionLevel?: GameDefinition['sessionLevel'];
   minLevel?: number;
   maxLevel?: number;
+  sessionKind?: GameDefinition['sessionKind'];
 }
 
-// Games still on their v1 component keep the v1 rating (raw score against the
-// known maximum) and a single level until they are ported to the engine.
+// Defaults: a single level and the v1 rating (raw score against the known
+// maximum) — what the retired games keep for their history.
 function define(base: Base): GameDefinition {
   return {
     minLevel: 1,
@@ -39,23 +53,39 @@ function define(base: Base): GameDefinition {
   };
 }
 
+const LEVELS = { minLevel: MIN_LEVEL, maxLevel: MAX_LEVEL };
+
 /** Games in the menu, grouped by category in menu order (memory, attention, reaction, spatial, knowledge). */
 export const GAMES: readonly GameDefinition[] = [
-  define({ id: 'memory-flip', category: 'memory', icon: '🃏', difficulty: 2, legacyMaxScore: 100 }),
-  define({ id: 'sequence-recall', category: 'memory', icon: '🧠', difficulty: 3, legacyMaxScore: 18 }),
-  define({ id: 'n-back', category: 'memory', icon: '⏮️', difficulty: 4, legacyMaxScore: 45 }),
-  define({ id: 'phone-recall', category: 'memory', icon: '📞', difficulty: 3, legacyMaxScore: 22 }),
+  define({ id: 'memory-matrix', category: 'memory', icon: '🟩', difficulty: 2, legacyMaxScore: 0, engine: memoryMatrixEngine, rating: memoryMatrixRating, ...LEVELS }),
+  define({ id: 'sequence-recall', category: 'memory', icon: '🎹', difficulty: 2, legacyMaxScore: 18, engine: sequenceEngine, rating: sequenceRating, ...LEVELS }),
+  define({ id: 'phone-recall', category: 'memory', icon: '📞', difficulty: 3, legacyMaxScore: 22, engine: digitSpanEngine, rating: digitSpanRating, ...LEVELS }),
+  define({
+    id: 'n-back', category: 'memory', icon: '⏮️', difficulty: 4, legacyMaxScore: 45,
+    engine: nBackEngine, rating: nBackRating, sessionLevel: nBackSessionLevel, ...LEVELS,
+  }),
+  define({
+    id: 'memory-flip', category: 'memory', icon: '🃏', difficulty: 2, legacyMaxScore: 100,
+    engine: memoryFlipEngine, rating: memoryFlipRating, sessionLevel: memoryFlipSessionLevel, ...LEVELS,
+  }),
+  define({ id: 'schulte', category: 'attention', icon: '🔢', difficulty: 2, legacyMaxScore: 0, engine: schulteEngine, rating: schulteRating, ...LEVELS }),
   define({
     id: 'odd-one-out', category: 'attention', icon: '🔍', difficulty: 2, legacyMaxScore: 40,
-    engine: oddOneOutEngine, rating: oddOneOutRating, sessionLevel: oddOneOutSessionLevel, minLevel: ODD_ONE_OUT.minLevel, maxLevel: ODD_ONE_OUT.maxLevel,
+    engine: oddOneOutEngine, rating: oddOneOutRating, sessionLevel: oddOneOutSessionLevel, ...LEVELS,
   }),
-  define({ id: 'dual-rule-reaction', category: 'attention', icon: '🔄', difficulty: 3, legacyMaxScore: 30 }),
-  define({ id: 'emoji-hunt', category: 'attention', icon: '🔎', difficulty: 2, legacyMaxScore: 125 }),
   define({
-    id: 'reaction-click', category: 'reaction', icon: '⚡', difficulty: 1, legacyMaxScore: 25,
-    engine: reactionClickEngine, rating: reactionClickRating,
+    id: 'emoji-hunt', category: 'attention', icon: '🔎', difficulty: 2, legacyMaxScore: 125,
+    engine: emojiHuntEngine, rating: emojiHuntRating, sessionLevel: emojiHuntSessionLevel, ...LEVELS,
   }),
-  define({ id: 'flags-game', category: 'knowledge', icon: '🏳️', difficulty: 2, legacyMaxScore: 100 }),
+  define({
+    id: 'dual-rule-reaction', category: 'attention', icon: '🔀', difficulty: 3, legacyMaxScore: 30,
+    engine: taskSwitchEngine, rating: taskSwitchRating, sessionLevel: taskSwitchSessionLevel, ...LEVELS,
+  }),
+  define({ id: 'whack-a-mole', category: 'reaction', icon: '🐹', difficulty: 1, legacyMaxScore: 0, engine: whackEngine, rating: whackRating, sessionKind: 'timed', ...LEVELS }),
+  define({ id: 'reaction-click', category: 'reaction', icon: '⚡', difficulty: 1, legacyMaxScore: 25, engine: reactionClickEngine, rating: reactionClickRating }),
+  define({ id: 'trace-line', category: 'reaction', icon: '✍️', difficulty: 2, legacyMaxScore: 0, engine: traceEngine, rating: traceRating, ...LEVELS }),
+  define({ id: 'rotate-shape', category: 'spatial', icon: '🔷', difficulty: 3, legacyMaxScore: 0, engine: rotateShapeEngine, rating: rotateShapeRating, ...LEVELS }),
+  define({ id: 'flags-game', category: 'knowledge', icon: '🏳️', difficulty: 2, legacyMaxScore: 100, engine: flagsEngine, rating: flagsRating, ...LEVELS }),
 ];
 
 /**

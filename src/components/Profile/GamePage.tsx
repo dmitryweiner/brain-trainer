@@ -57,7 +57,9 @@ export const GamePage: React.FC<GamePageProps> = ({ gameId, sessions, level, now
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mine, period, now, t, i18n.language]);
 
-  const bestMetrics = Object.entries(stats.bestMetrics).filter(([k]) => !HIDDEN_METRICS.has(k) && i18n.exists(`metrics.${k}`));
+  // a game may name a shared metric its own way ("hits" of a mole vs a clean reaction attempt)
+  const metricKey = (k: string) => (i18n.exists(`metricsByGame.${gameId}.${k}`) ? `metricsByGame.${gameId}.${k}` : `metrics.${k}`);
+  const bestMetrics = Object.entries(stats.bestMetrics).filter(([k]) => !HIDDEN_METRICS.has(k) && i18n.exists(metricKey(k)));
   const recent = [...mine].reverse().slice(0, 10);
 
   return (
@@ -112,7 +114,7 @@ export const GamePage: React.FC<GamePageProps> = ({ gameId, sessions, level, now
           <dl className="best-metrics">
             {bestMetrics.map(([k, v]) => (
               <div key={k}>
-                <dt>{t(`metrics.${k}`)}</dt>
+                <dt>{t(metricKey(k))}</dt>
                 <dd>{k.endsWith('Ms') ? `${v} ${t('common.ms')}` : k === 'maxGridSize' ? `${v}×${v}` : v}</dd>
               </div>
             ))}

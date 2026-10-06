@@ -1,0 +1,156 @@
+@use '../../styles/variables.scss' as *;
+
+.game-intro {
+  display: flex;
+  justify-content: center;
+  padding: $spacing-md 0;
+
+  .intro-card {
+    background: white;
+    border-radius: 16px;
+    padding: $spacing-lg;
+    max-width: 560px;
+    width: 100%;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+
+    h2 {
+      font-size: $font-size-xl;
+      margin: 0 0 $spacing-sm;
+      text-align: center;
+    }
+
+    .lead {
+      font-size: 20px;
+      color: $gray;
+      text-align: center;
+      margin: 0 0 $spacing-md;
+    }
+  }
+
+  .intro-rules {
+    font-size: 19px;
+    line-height: 1.5;
+    padding-inline-start: 1.2em;
+    margin: 0 0 $spacing-md;
+  }
+
+  .intro-level {
+    font-weight: 700;
+    text-align: center;
+    color: #2e6b31;
+    background: rgba($primary, 0.1);
+    border-radius: 10px;
+    padding: $spacing-xs;
+    margin: 0 0 $spacing-md;
+  }
+
+  .intro-modes {
+    display: grid;
+    gap: $spacing-sm;
+  }
+}
+
+.lives {
+  font-style: normal;
+  letter-spacing: 2px;
+
+  i {
+    font-style: normal;
+  }
+
+
+  .life.lost {
+    opacity: 0.5;
+  }
+}
+
+.feedback-mark {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 96px;
+  font-weight: 700;
+  pointer-events: none;
+  animation: feedback-pop 0.25s ease-out;
+
+  &.correct { color: rgba(46, 125, 50, 0.85); }
+  &.incorrect { color: rgba(198, 40, 40, 0.85); }
+}
+
+@keyframes feedback-pop {
+  from { transform: scale(0.6); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+// A square board that fits the phone width and the viewport height. Sized
+// from the viewport: the game body is a flex column that would shrink it.
+.square-board {
+  position: relative;
+  width: min(calc(100vw - 32px), 520px, 62vh);
+  aspect-ratio: 1;
+  margin: 0 auto;
+}
+
+.cell-grid {
+  display: grid;
+  // equal rows: a cell's content (a mole, a digit) must not stretch its row
+  grid-auto-rows: 1fr;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+}
+
+.board-cell {
+  border: none;
+  border-radius: 12px;
+  background: #e8ecea;
+  font: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background 0.12s ease, transform 0.08s ease;
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  &:disabled {
+    cursor: default;
+  }
+}
+
+.game-prompt {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0 0 $spacing-md;
+  min-height: 1.5em;
+}
+
+// Footer chips (StatusLine). Defined here so new games do not depend on the
+// unscoped copies in the Odd One Out / Reaction Click styles.
+.game-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: $spacing-sm;
+  font-size: 18px;
+  font-weight: 600;
+
+  > span {
+    padding: $spacing-xs $spacing-md;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+}

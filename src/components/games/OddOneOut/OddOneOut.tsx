@@ -42,7 +42,7 @@ const Intro: Views['Intro'] = ({ onStart, level }) => {
           </div>
           <p className="text-muted">{t('common.totalRounds')}: {ROUNDS}</p>
         </div>
-        <button className="btn btn-primary btn-large" onClick={onStart}>
+        <button className="btn btn-primary btn-large" onClick={() => onStart()}>
           {t('common.startGame')}
         </button>
       </div>

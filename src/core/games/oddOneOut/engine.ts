@@ -3,6 +3,7 @@
 // session the grid grows by one halfway and the pairs get closer at the end.
 import type { EngineContext, GameEngine, GameSession, SessionOutcome, TimerRequest } from '../../types';
 import { ODD_ONE_OUT_EMOJIS, type OddOneOutDifficulty } from './data';
+import { levelCeiling, speedFactor } from '../common';
 
 export const ODD_ONE_OUT = {
   rounds: 10,
@@ -128,17 +129,10 @@ export const V1_EQUIVALENT_LEVEL = 4;
 /** Raw-score maximum of the v1 game (3·3 + 4·4 + 3·5) */
 const V1_MAX_SCORE = 40;
 
-/** Rating ceiling of a level: a perfect, quick session at level 10 is worth 1000. */
-export function levelCeiling(level: number): number {
-  return 400 + 60 * level;
-}
+export { levelCeiling };
 
 /** Answers within 1.5 s count fully; slower ones down to 70% at 5 s. */
-function speedFactor(avgTimeMs: number): number {
-  if (avgTimeMs <= 1500) return 1;
-  if (avgTimeMs >= 5000) return 0.7;
-  return 1 - (0.3 * (avgTimeMs - 1500)) / 3500;
-}
+const speed = (avgTimeMs: number) => speedFactor(avgTimeMs, 1500, 5000, 0.7);
 
 /** Sessions before levels were played at the v1 layout, whatever level they record */
 export function oddOneOutSessionLevel(session: GameSession): number {
@@ -151,5 +145,5 @@ export function oddOneOutRating(outcome: SessionOutcome, level: number): number 
   if (outcome.metrics.correct === undefined) {
     return (outcome.score / V1_MAX_SCORE) * levelCeiling(level);
   }
-  return (outcome.accuracy / 100) * levelCeiling(level) * speedFactor(outcome.avgTimeMs);
+  return (outcome.accuracy / 100) * levelCeiling(level) * speed(outcome.avgTimeMs);
 }
