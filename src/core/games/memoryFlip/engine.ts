@@ -2,7 +2,7 @@
 // that window along 2×3, 3×4, 4×4, 4×5, 5×6.
 import type { EngineContext, GameEngine, SessionOutcome, TimerRequest } from '../../types';
 import type { Rng } from '../../rng';
-import { clampLevel, elapsed, levelCeiling } from '../common';
+import { clampLevel, counterCues, elapsed, levelCeiling } from '../common';
 
 export const MEMORY_FLIP = {
   boardsPerSession: 3,
@@ -60,6 +60,12 @@ function startBoard(state: MemoryFlipState, index: number, rng: Rng, now: number
   return { ...state, phase: 'playing', board: index, cards: deal(rows, cols, rng), open: [], moves: 0, boardStartedAt: now };
 }
 
+/** Pairs found this session (a finished board is already in totalPairs) */
+export function pairsFound(s: MemoryFlipState): number {
+  const finished = s.phase === 'boardDone' || s.phase === 'done';
+  return s.totalPairs + (finished ? 0 : s.cards.filter(c => c.matched).length / 2);
+}
+
 export const memoryFlipEngine: GameEngine<MemoryFlipState, MemoryFlipEvent> = {
   init(level, ctx: EngineContext) {
     const L = clampLevel(level);
@@ -112,6 +118,9 @@ export const memoryFlipEngine: GameEngine<MemoryFlipState, MemoryFlipEvent> = {
       ? [{ id: `${state.phase}-${state.board}-${state.totalMoves}`, at: state.until, event: { type: 'tick' } }]
       : [];
   },
+
+  // a match is good; a move that found no pair is bad
+  cues: counterCues<MemoryFlipState>(pairsFound, s => s.totalMoves - pairsFound(s)),
 
   isFinished: state => state.phase === 'done',
 

@@ -2,7 +2,7 @@
 // cells. The level sets the grid (3×3…6×6), K (3…12) and how long the
 // pattern shows.
 import type { EngineContext, GameEngine, SessionOutcome, TimerRequest } from '../../types';
-import { clampLevel, levelCeiling, percent } from '../common';
+import { clampLevel, counterCues, levelCeiling, percent } from '../common';
 
 export const MEMORY_MATRIX = {
   rounds: 8,
@@ -110,6 +110,8 @@ export const memoryMatrixEngine: GameEngine<MemoryMatrixState, MemoryMatrixEvent
       ? [{ id: `${state.phase}-${state.round}`, at: state.until, event: { type: 'next' } }]
       : [];
   },
+
+  cues: counterCues<MemoryMatrixState>(s => s.correctTaps, s => s.wrongTaps),
 
   isFinished: state => state.phase === 'done',
 

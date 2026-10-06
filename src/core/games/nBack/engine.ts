@@ -3,7 +3,7 @@
 // level sets N (1–3) and the pace.
 import type { EngineContext, GameEngine, SessionOutcome, TimerRequest } from '../../types';
 import type { Rng } from '../../rng';
-import { clampLevel, levelCeiling, percent } from '../common';
+import { clampLevel, counterCues, levelCeiling, percent } from '../common';
 
 export const N_BACK = {
   sessionMs: 90_000,
@@ -108,6 +108,8 @@ export const nBackEngine: GameEngine<NBackState, NBackEvent> = {
     if (state.lit) timers.push({ id: `unlight-${state.index}`, at: state.shownAt + N_BACK.litMs, event: { type: 'unlight' } });
     return timers;
   },
+
+  cues: counterCues<NBackState>(s => s.hits, s => s.falseAlarms + s.misses),
 
   isFinished: state => state.phase === 'done',
 

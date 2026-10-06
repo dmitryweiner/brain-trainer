@@ -15,6 +15,11 @@ import { memoryFlipEngine, memoryFlipRating, memoryFlipSessionLevel } from './me
 import { emojiHuntEngine, emojiHuntRating, emojiHuntSessionLevel } from './emojiHunt/engine';
 import { flagsEngine, flagsRating } from './flags/engine';
 import { nBackEngine, nBackRating, nBackSessionLevel } from './nBack/engine';
+import { whereWasEngine, whereWasRating } from './whereWas/engine';
+import { mirrorEngine, mirrorRating } from './mirror/engine';
+import { mazeEngine, mazeRating } from './maze/engine';
+import { trackDotEngine, trackDotRating } from './trackDot/engine';
+import { fitPieceEngine, fitPieceRating } from './fitPiece/engine';
 import { MAX_LEVEL, MIN_LEVEL } from './common';
 
 export function clampRating(value: number): number {
@@ -58,6 +63,7 @@ const LEVELS = { minLevel: MIN_LEVEL, maxLevel: MAX_LEVEL };
 /** Games in the menu, grouped by category in menu order (memory, attention, reaction, spatial, knowledge). */
 export const GAMES: readonly GameDefinition[] = [
   define({ id: 'memory-matrix', category: 'memory', icon: '🟩', difficulty: 2, legacyMaxScore: 0, engine: memoryMatrixEngine, rating: memoryMatrixRating, ...LEVELS }),
+  define({ id: 'where-was', category: 'memory', icon: '📍', difficulty: 2, legacyMaxScore: 0, engine: whereWasEngine, rating: whereWasRating, ...LEVELS }),
   define({ id: 'sequence-recall', category: 'memory', icon: '🎹', difficulty: 2, legacyMaxScore: 18, engine: sequenceEngine, rating: sequenceRating, ...LEVELS }),
   define({ id: 'phone-recall', category: 'memory', icon: '📞', difficulty: 3, legacyMaxScore: 22, engine: digitSpanEngine, rating: digitSpanRating, ...LEVELS }),
   define({
@@ -82,9 +88,13 @@ export const GAMES: readonly GameDefinition[] = [
     engine: taskSwitchEngine, rating: taskSwitchRating, sessionLevel: taskSwitchSessionLevel, ...LEVELS,
   }),
   define({ id: 'whack-a-mole', category: 'reaction', icon: '🐹', difficulty: 1, legacyMaxScore: 0, engine: whackEngine, rating: whackRating, sessionKind: 'timed', ...LEVELS }),
-  define({ id: 'reaction-click', category: 'reaction', icon: '⚡', difficulty: 1, legacyMaxScore: 25, engine: reactionClickEngine, rating: reactionClickRating }),
+  define({ id: 'reaction-click', category: 'reaction', icon: '⚡', difficulty: 1, legacyMaxScore: 25, engine: reactionClickEngine, rating: reactionClickRating, ...LEVELS }),
+  define({ id: 'track-dot', category: 'reaction', icon: '🎯', difficulty: 2, legacyMaxScore: 0, engine: trackDotEngine, rating: trackDotRating, sessionKind: 'timed', ...LEVELS }),
   define({ id: 'trace-line', category: 'reaction', icon: '✍️', difficulty: 2, legacyMaxScore: 0, engine: traceEngine, rating: traceRating, ...LEVELS }),
   define({ id: 'rotate-shape', category: 'spatial', icon: '🔷', difficulty: 3, legacyMaxScore: 0, engine: rotateShapeEngine, rating: rotateShapeRating, ...LEVELS }),
+  define({ id: 'mirror', category: 'spatial', icon: '🦋', difficulty: 3, legacyMaxScore: 0, engine: mirrorEngine, rating: mirrorRating, ...LEVELS }),
+  define({ id: 'fit-piece', category: 'spatial', icon: '🧩', difficulty: 3, legacyMaxScore: 0, engine: fitPieceEngine, rating: fitPieceRating, ...LEVELS }),
+  define({ id: 'maze', category: 'spatial', icon: '🏁', difficulty: 2, legacyMaxScore: 0, engine: mazeEngine, rating: mazeRating, ...LEVELS }),
   define({ id: 'flags-game', category: 'knowledge', icon: '🏳️', difficulty: 2, legacyMaxScore: 100, engine: flagsEngine, rating: flagsRating, ...LEVELS }),
 ];
 

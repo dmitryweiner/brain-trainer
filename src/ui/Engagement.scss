@@ -1,0 +1,166 @@
+@use '../styles/variables.scss' as *;
+
+// Daily workout block (menu)
+.workout {
+  background: linear-gradient(135deg, #e8f5e9 0%, #ffffff 70%);
+  border: 1px solid #c8e6c9;
+  border-radius: 16px;
+  padding: $spacing-md;
+  margin-bottom: $spacing-xl;
+
+  .workout-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-sm;
+
+    h2 {
+      margin: 0;
+      font-size: $font-size-large;
+    }
+  }
+
+  .workout-streak {
+    font-weight: 700;
+    font-size: 18px;
+    white-space: nowrap;
+  }
+
+  .workout-games {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 $spacing-md;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: $spacing-xs;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 16px;
+      box-shadow: inset 0 0 0 1px #e0e6e2;
+
+      &.done {
+        box-shadow: inset 0 0 0 2px $primary;
+      }
+    }
+
+    .check {
+      margin-inline-start: auto;
+      color: #2e7d32;
+      font-weight: 700;
+    }
+  }
+
+  .workout-done {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    text-align: center;
+  }
+}
+
+// Achievements (profile)
+.achievements-summary {
+  font-weight: 600;
+  margin: 0 0 $spacing-sm;
+}
+
+.achievement-grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: $spacing-sm;
+}
+
+.achievement {
+  display: flex;
+  gap: $spacing-sm;
+  align-items: flex-start;
+  background: #fff;
+  border-radius: 12px;
+  padding: $spacing-sm;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  .achievement-icon {
+    font-size: 34px;
+    line-height: 1;
+  }
+
+  p {
+    margin: 2px 0 0;
+    font-size: 15px;
+    color: $gray;
+  }
+
+  &.locked .achievement-icon {
+    filter: grayscale(1);
+    opacity: 0.45;
+  }
+
+  .achievement-date {
+    color: #2e7d32;
+  }
+}
+
+.achievement-progress {
+  position: relative;
+  height: 18px;
+  margin-top: 6px;
+  background: #eceeed;
+  border-radius: 9px;
+  overflow: hidden;
+
+  span {
+    display: block;
+    height: 100%;
+    background: #a5d6a7;
+  }
+
+  em {
+    position: absolute;
+    inset: 0;
+    font-style: normal;
+    font-size: 12px;
+    line-height: 18px;
+    text-align: center;
+    color: $dark;
+  }
+}
+
+// Settings (profile)
+.settings {
+  background: #fff;
+  border-radius: 12px;
+  padding: $spacing-sm $spacing-md;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  .settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 56px;
+    font-size: 19px;
+    cursor: pointer;
+    border-bottom: 1px solid #eef1ef;
+
+    input {
+      width: 28px;
+      height: 28px;
+      accent-color: $primary;
+    }
+  }
+
+  .settings-hint {
+    font-size: 15px;
+    color: $gray;
+    margin: $spacing-sm 0 0;
+  }
+}

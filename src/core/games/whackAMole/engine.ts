@@ -3,7 +3,7 @@
 // combo multiplier for streaks. Level: grid, mole lifetime, bombs, how many
 // at once.
 import type { EngineContext, GameEngine, SessionOutcome, TimerRequest } from '../../types';
-import { average, clampLevel, elapsed, levelCeiling, percent, speedFactor } from '../common';
+import { average, clampLevel, counterCues, elapsed, levelCeiling, percent, speedFactor } from '../common';
 
 export const WHACK = {
   sessionMs: 60_000,
@@ -142,6 +142,8 @@ export const whackEngine: GameEngine<WhackState, WhackEvent> = {
     });
     return timers;
   },
+
+  cues: counterCues<WhackState>(s => s.hits, s => s.misses + s.bombHits),
 
   isFinished: state => state.phase === 'done',
 

@@ -4,6 +4,7 @@ import { GameShell, type GameViews } from '../GameShell';
 import { getGame } from '../../core/games/registry';
 import { schulteLayout, type SchulteEvent, type SchulteState } from '../../core/games/schulte/engine';
 import { GameIntro, StatusLine, useClock } from './common';
+import type { ScreenProps } from '../gameScreens';
 import './games.scss';
 
 type Views = GameViews<SchulteState, SchulteEvent>;
@@ -76,7 +77,7 @@ const Details: Views['Details'] = ({ outcome }) => {
 
 const views: Views = { Intro, Board, Footer, Details };
 
-export const Schulte: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+export const Schulte: React.FC<ScreenProps> = ({ onBack, onNextGame }) => {
   const { t } = useTranslation();
-  return <GameShell game={getGame('schulte')} views={views} title={`🔢 ${t('games.schulte.title')}`} onBack={onBack} />;
+  return <GameShell game={getGame('schulte')} views={views} title={`🔢 ${t('games.schulte.title')}`} onBack={onBack} onNextGame={onNextGame} />;
 };

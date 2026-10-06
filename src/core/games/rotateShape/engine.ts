@@ -3,7 +3,7 @@
 // replaces "other shape" distractors with mirrors and near misses.
 import type { EngineContext, GameEngine, SessionOutcome, TimerRequest } from '../../types';
 import type { Rng } from '../../rng';
-import { average, clampLevel, elapsed, levelCeiling, percent, speedFactor } from '../common';
+import { average, clampLevel, counterCues, elapsed, levelCeiling, percent, speedFactor } from '../common';
 import { key, mirror, nearMiss, randomChiral, rotate, sameUpToRotation, type Shape } from '../shapes/polyomino';
 
 export const ROTATE_SHAPE = {
@@ -101,6 +101,8 @@ export const rotateShapeEngine: GameEngine<RotateShapeState, RotateShapeEvent> =
   timers(state): TimerRequest<RotateShapeEvent>[] {
     return state.phase === 'feedback' ? [{ id: `next-${state.round}`, at: state.until, event: { type: 'next' } }] : [];
   },
+
+  cues: counterCues<RotateShapeState>(s => s.answers.filter(a => a.correct).length, s => s.answers.filter(a => !a.correct).length),
 
   isFinished: state => state.phase === 'done',
 

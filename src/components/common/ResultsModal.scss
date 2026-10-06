@@ -283,3 +283,20 @@
     margin-top: $spacing-sm;
   }
 }
+
+.new-achievements {
+  list-style: none;
+  padding: 0;
+  margin: $spacing-sm 0 0;
+  width: 100%;
+
+  li {
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    border-radius: 10px;
+    padding: $spacing-xs $spacing-sm;
+    margin-top: $spacing-xs;
+    font-size: 17px;
+    animation: fadeIn 0.4s ease-out;
+  }
+}

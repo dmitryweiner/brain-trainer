@@ -124,8 +124,11 @@
     transform: scale(0.96);
   }
 
+  // disabled while something is shown: the board must stay fully legible
   &:disabled {
     cursor: default;
+    opacity: 1;
+    color: inherit;
   }
 }
 

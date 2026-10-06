@@ -433,6 +433,97 @@ $lit: #43a047;
 // GameLayout's body centres its children in a flex column, which would
 // shrink them to their content; the game roots take the full width.
 .memory-matrix, .schulte, .whack, .trace, .rotate-shape, .repeat, .digit-span,
-.task-switch, .memory-flip, .emoji-hunt, .flags, .n-back, .game-intro {
+.task-switch, .memory-flip, .emoji-hunt, .flags, .n-back, .game-intro,
+.where-was, .maze, .track-dot {
   width: 100%;
+}
+
+// Where was it
+.where-cell {
+  background: #fff;
+  box-shadow: inset 0 0 0 1px #d6dcd8;
+  font-size: clamp(30px, 10vw, 64px);
+  line-height: 1;
+}
+
+// Mirror: a mirror line to the right of the target
+.rotate-target.with-mirror {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 8%;
+    bottom: 8%;
+    inset-inline-end: -10px;
+    width: 4px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, #90caf9, #e3f2fd, #90caf9);
+  }
+}
+
+// Fit the piece
+.fit-board {
+  width: 100%;
+  height: 100%;
+
+  .fit-solid { fill: #78909c; }
+  .fit-hole { fill: #fff; stroke: #b0bec5; stroke-width: 0.04; stroke-dasharray: 0.12 0.08; }
+  .fit-filled { fill: #43a047; }
+}
+
+// Maze
+.maze-board {
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  border-radius: 12px;
+  touch-action: none;
+
+  .maze-walls {
+    fill: none;
+    stroke: $dark;
+    stroke-width: 0.12;
+    stroke-linecap: round;
+  }
+
+  .maze-trail {
+    fill: none;
+    stroke: rgba($primary, 0.35);
+    stroke-width: 0.3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .maze-exit { fill: rgba($primary, 0.2); }
+  .maze-ball { fill: #1e88e5; transition: cx 0.15s ease, cy 0.15s ease; }
+}
+
+.maze-pad {
+  display: grid;
+  grid-template-columns: repeat(3, 64px);
+  grid-template-rows: repeat(2, 56px);
+  gap: 6px;
+  justify-content: center;
+  margin-top: $spacing-md;
+  direction: ltr;
+
+  .maze-arrow {
+    font-size: 28px;
+    font-weight: 700;
+    background: #fff;
+    box-shadow: inset 0 0 0 1px #d6dcd8;
+  }
+
+  .up { grid-column: 2; grid-row: 1; }
+  .left { grid-column: 1; grid-row: 2; }
+  .down { grid-column: 2; grid-row: 2; }
+  .right { grid-column: 3; grid-row: 2; }
+}
+
+// Track the dot
+.track-dot {
+  .dot-zone { fill: rgba($primary, 0.1); }
+  .dot-target { fill: #66bb6a; transition: fill 0.1s; }
+  .dot-target.on { fill: #2e7d32; }
 }

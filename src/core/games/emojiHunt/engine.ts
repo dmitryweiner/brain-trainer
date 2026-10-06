@@ -2,7 +2,7 @@
 // during the session and with the level; late rounds use look-alike sets.
 import type { EngineContext, GameEngine, SessionOutcome, TimerRequest } from '../../types';
 import type { Rng } from '../../rng';
-import { average, clampLevel, elapsed, levelCeiling, percent, speedFactor } from '../common';
+import { average, clampLevel, counterCues, elapsed, levelCeiling, percent, speedFactor } from '../common';
 
 export const EMOJI_HUNT = {
   rounds: 10,
@@ -102,6 +102,8 @@ export const emojiHuntEngine: GameEngine<EmojiHuntState, EmojiHuntEvent> = {
   timers(state): TimerRequest<EmojiHuntEvent>[] {
     return state.phase === 'feedback' ? [{ id: `next-${state.round}`, at: state.until, event: { type: 'next' } }] : [];
   },
+
+  cues: counterCues<EmojiHuntState>(s => s.answers.filter(a => a.correct).length, s => s.answers.filter(a => !a.correct).length),
 
   isFinished: state => state.phase === 'done',
 

@@ -3,7 +3,7 @@
 // session the grid grows by one halfway and the pairs get closer at the end.
 import type { EngineContext, GameEngine, GameSession, SessionOutcome, TimerRequest } from '../../types';
 import { ODD_ONE_OUT_EMOJIS, type OddOneOutDifficulty } from './data';
-import { levelCeiling, speedFactor } from '../common';
+import { counterCues, levelCeiling, speedFactor } from '../common';
 
 export const ODD_ONE_OUT = {
   rounds: 10,
@@ -108,6 +108,8 @@ export const oddOneOutEngine: GameEngine<OddOneOutState, OddOneOutEvent> = {
   timers(state): TimerRequest<OddOneOutEvent>[] {
     return state.phase === 'feedback' ? [{ id: `next-${state.round}`, at: state.until, event: { type: 'next' } }] : [];
   },
+
+  cues: counterCues<OddOneOutState>(s => s.results.filter(r => r.correct).length, s => s.results.filter(r => !r.correct).length),
 
   isFinished: state => state.phase === 'done',
 

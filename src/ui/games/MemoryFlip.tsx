@@ -4,6 +4,7 @@ import { GameShell, type GameViews } from '../GameShell';
 import { getGame } from '../../core/games/registry';
 import { boardsFor, type MemoryFlipEvent, type MemoryFlipState } from '../../core/games/memoryFlip/engine';
 import { GameIntro, StatusLine } from './common';
+import type { ScreenProps } from '../gameScreens';
 import './games.scss';
 
 type Views = GameViews<MemoryFlipState, MemoryFlipEvent>;
@@ -71,7 +72,7 @@ const Details: Views['Details'] = ({ outcome }) => {
 
 const views: Views = { Intro, Board, Footer, Details };
 
-export const MemoryFlip: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+export const MemoryFlip: React.FC<ScreenProps> = ({ onBack, onNextGame }) => {
   const { t } = useTranslation();
-  return <GameShell game={getGame('memory-flip')} views={views} title={`🃏 ${t('games.memory-flip.title')}`} onBack={onBack} />;
+  return <GameShell game={getGame('memory-flip')} views={views} title={`🃏 ${t('games.memory-flip.title')}`} onBack={onBack} onNextGame={onNextGame} />;
 };

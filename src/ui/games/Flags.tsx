@@ -4,6 +4,7 @@ import { GameShell, type GameViews } from '../GameShell';
 import { getGame } from '../../core/games/registry';
 import { FLAGS, optionCount, type FlagsEvent, type FlagsState } from '../../core/games/flags/engine';
 import { GameIntro, StatusLine } from './common';
+import type { ScreenProps } from '../gameScreens';
 import './games.scss';
 
 type Views = GameViews<FlagsState, FlagsEvent>;
@@ -84,7 +85,7 @@ const Details: Views['Details'] = ({ outcome }) => {
 
 const views: Views = { Intro, Board, Footer, Details };
 
-export const Flags: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+export const Flags: React.FC<ScreenProps> = ({ onBack, onNextGame }) => {
   const { t } = useTranslation();
-  return <GameShell game={getGame('flags-game')} views={views} title={`🏳️ ${t('games.flags-game.title')}`} onBack={onBack} />;
+  return <GameShell game={getGame('flags-game')} views={views} title={`🏳️ ${t('games.flags-game.title')}`} onBack={onBack} onNextGame={onNextGame} />;
 };

@@ -4,7 +4,7 @@
 // per answer and 3 lives (a wrong or late answer costs one).
 import type { EngineContext, GameEngine, SessionOutcome, TimerRequest } from '../../types';
 import type { Rng } from '../../rng';
-import { average, clampLevel, elapsed, levelCeiling, percent, speedFactor } from '../common';
+import { average, clampLevel, counterCues, elapsed, levelCeiling, percent, speedFactor } from '../common';
 
 export const SWITCH = {
   trials: 30,
@@ -143,6 +143,8 @@ export const taskSwitchEngine: GameEngine<SwitchState, SwitchEvent> = {
   timers(state): TimerRequest<SwitchEvent>[] {
     return state.phase === 'done' ? [] : [{ id: `${state.phase}-${state.trials.length}`, at: state.until, event: { type: 'tick' } }];
   },
+
+  cues: counterCues<SwitchState>(s => s.trials.filter(t => t.correct).length, s => s.trials.filter(t => !t.correct).length),
 
   isFinished: state => state.phase === 'done',
 

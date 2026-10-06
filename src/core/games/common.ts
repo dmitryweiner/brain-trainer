@@ -1,3 +1,5 @@
+import type { Cue } from '../types';
+
 // Helpers shared by the game engines: one rating scale and one level range
 // for every game, so ratings stay comparable (PLAN-IMPROVEMENTS.md, 4.1).
 
@@ -39,4 +41,18 @@ export interface TimedAnswer {
 
 export function elapsed(now: number, since: number): number {
   return Math.max(0, Math.round(now - since));
+}
+
+/**
+ * Cues from counters: "good" when a success counter grew, "bad" when a
+ * failure counter grew. Most engines describe their feedback this way.
+ */
+export function counterCues<S>(good: (s: S) => number, bad: (s: S) => number, tick?: (s: S) => number) {
+  return (prev: S, next: S): Cue[] => {
+    const cues: Cue[] = [];
+    if (good(next) > good(prev)) cues.push('good');
+    if (bad(next) > bad(prev)) cues.push('bad');
+    if (tick && tick(next) > tick(prev)) cues.push('tick');
+    return cues;
+  };
 }

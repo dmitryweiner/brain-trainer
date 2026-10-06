@@ -23,6 +23,11 @@ export const GAME_IDS: readonly GameId[] = [
   'whack-a-mole',
   'trace-line',
   'rotate-shape',
+  'where-was',
+  'mirror',
+  'maze',
+  'track-dot',
+  'fit-piece',
 ];
 
 export interface SessionEvent {

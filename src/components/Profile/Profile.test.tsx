@@ -38,13 +38,14 @@ describe('Profile', () => {
 
   it('shows streak, totals, category index and the activity calendar', () => {
     setup([session({}), session({ gameId: 'reaction-click', metrics: { hits: 5 }, avgTimeMs: 600 })]);
-    expect(screen.getByText('Дней подряд').previousSibling).toHaveTextContent('1');
+    // the streak counts days with the daily workout done; two games are not a workout
+    expect(screen.getByText('Серия тренировок').previousSibling).toHaveTextContent('0');
     expect(screen.getByText('Всего игр').previousSibling).toHaveTextContent('2');
     expect(screen.getByText('Время тренировок').previousSibling).toHaveTextContent('3 мин');
-    // odd-one-out: 90% accuracy at level 2, quick → 0.9 × 520 = 468; reaction: 5/5 at 600 ms → 500
+    // odd-one-out: 90% accuracy at level 2, quick → 0.9 × 520 = 468; reaction: 5/5 at 600 ms, level 2 → 0.5 × 1000 × 0.88 = 440
     const bars = screen.getByText('Индекс по категориям').parentElement!;
     expect(within(bars).getByText('Внимание').nextSibling).toHaveTextContent('468');
-    expect(within(bars).getByText('Реакция').nextSibling).toHaveTextContent('500');
+    expect(within(bars).getByText('Реакция').nextSibling).toHaveTextContent('440');
     expect(screen.getAllByRole('gridcell')).toHaveLength(28);
   });
 

@@ -5,6 +5,7 @@ import { getGame } from '../../core/games/registry';
 import { TRACE, type TraceEvent, type TraceState } from '../../core/games/traceLine/engine';
 import { pointAt } from '../../core/games/traceLine/geometry';
 import { GameIntro, StatusLine, toBoxPoint } from './common';
+import type { ScreenProps } from '../gameScreens';
 import './games.scss';
 
 type Views = GameViews<TraceState, TraceEvent>;
@@ -92,7 +93,7 @@ const Details: Views['Details'] = ({ outcome }) => {
 
 const views: Views = { Intro, Board, Footer, Details };
 
-export const TraceLine: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+export const TraceLine: React.FC<ScreenProps> = ({ onBack, onNextGame }) => {
   const { t } = useTranslation();
-  return <GameShell game={getGame('trace-line')} views={views} title={`✍️ ${t('games.trace-line.title')}`} onBack={onBack} />;
+  return <GameShell game={getGame('trace-line')} views={views} title={`✍️ ${t('games.trace-line.title')}`} onBack={onBack} onNextGame={onNextGame} />;
 };

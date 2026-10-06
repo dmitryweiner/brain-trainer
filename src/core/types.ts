@@ -21,7 +21,13 @@ export type GameId =
   | 'schulte'
   | 'whack-a-mole'
   | 'trace-line'
-  | 'rotate-shape';
+  | 'rotate-shape'
+  // stage 6
+  | 'where-was'
+  | 'mirror'
+  | 'maze'
+  | 'track-dot'
+  | 'fit-piece';
 
 export type GameCategory = 'memory' | 'attention' | 'reaction' | 'spatial' | 'knowledge';
 
@@ -71,6 +77,9 @@ export interface TimerRequest<E> {
   event: E;
 }
 
+/** What a state change sounds and feels like: played by the UI as a tone and a vibration */
+export type Cue = 'good' | 'bad' | 'tick';
+
 /**
  * A game as a deterministic state machine. Timers are declared, not started:
  * the runner (core/engine/runner.ts) owns them through the platform Scheduler.
@@ -82,6 +91,8 @@ export interface GameEngine<S, E> {
   timers(state: S): TimerRequest<E>[];
   isFinished(state: S): boolean;
   result(state: S): SessionOutcome;
+  /** Optional: feedback cues for a transition (a hit, a mistake, a step) */
+  cues?(prev: S, next: S): Cue[];
 }
 
 export interface GameDefinition {

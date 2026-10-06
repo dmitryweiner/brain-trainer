@@ -4,7 +4,7 @@
 // the starting length and the pace.
 import type { EngineContext, GameEngine, SessionOutcome, TimerRequest } from '../../types';
 import type { Rng } from '../../rng';
-import { clampLevel, percent } from '../common';
+import { clampLevel, counterCues, percent } from '../common';
 
 export const SEQUENCE = {
   lives: 2,
@@ -119,6 +119,8 @@ export const sequenceEngine: GameEngine<SequenceState, SequenceEvent> = {
       ? [{ id: `${state.phase}-${state.round}-${state.step}`, at: state.until, event: { type: 'tick' } }]
       : [];
   },
+
+  cues: counterCues<SequenceState>(s => s.successes * 100 + s.inputIndex, s => SEQUENCE.lives - s.lives),
 
   isFinished: state => state.phase === 'done',
 

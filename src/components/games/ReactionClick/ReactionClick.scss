@@ -460,3 +460,14 @@
   }
 }
 
+
+// Decoy: a yellow "signal" that must not be tapped (from level 4)
+.reaction-decoy {
+  background: linear-gradient(135deg, #f9a825 0%, #fdd835 100%);
+  color: #3e2723;
+}
+
+.details-heading {
+  font-size: 17px;
+  margin: 16px 0 8px;
+}

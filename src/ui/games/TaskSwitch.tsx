@@ -4,6 +4,7 @@ import { GameShell, type GameViews } from '../GameShell';
 import { getGame } from '../../core/games/registry';
 import { SWITCH, switchLayout, type Rule, type Side, type SwitchEvent, type SwitchState } from '../../core/games/taskSwitch/engine';
 import { FeedbackMark, GameIntro, Lives, StatusLine } from './common';
+import type { ScreenProps } from '../gameScreens';
 import './games.scss';
 
 type Views = GameViews<SwitchState, SwitchEvent>;
@@ -114,7 +115,7 @@ const Details: Views['Details'] = ({ outcome }) => {
 
 const views: Views = { Intro, Board, Footer, Details };
 
-export const TaskSwitch: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+export const TaskSwitch: React.FC<ScreenProps> = ({ onBack, onNextGame }) => {
   const { t } = useTranslation();
-  return <GameShell game={getGame('dual-rule-reaction')} views={views} title={`🔀 ${t('games.dual-rule-reaction.title')}`} onBack={onBack} />;
+  return <GameShell game={getGame('dual-rule-reaction')} views={views} title={`🔀 ${t('games.dual-rule-reaction.title')}`} onBack={onBack} onNextGame={onNextGame} />;
 };

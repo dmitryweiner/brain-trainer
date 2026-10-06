@@ -2,7 +2,7 @@
 // leaving the corridor. Three curves per session; the level picks the kind
 // of curve and narrows the corridor.
 import type { GameEngine, SessionOutcome, TimerRequest } from '../../types';
-import { average, clampLevel, elapsed, levelCeiling, percent, speedFactor } from '../common';
+import { average, clampLevel, counterCues, elapsed, levelCeiling, percent, speedFactor } from '../common';
 import { corridor, makePath, project, type Pt, type TracePath } from './geometry';
 
 export const TRACE = {
@@ -130,6 +130,8 @@ export const traceEngine: GameEngine<TraceState, TraceEvent> = {
     }
     return state.phase === 'feedback' ? [{ id: `next-${state.round}`, at: state.until, event: { type: 'next' } }] : [];
   },
+
+  cues: counterCues<TraceState>(s => s.results.filter(r => r.completed).length, s => s.results.filter(r => !r.completed).length),
 
   isFinished: state => state.phase === 'done',
 

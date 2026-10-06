@@ -2,7 +2,7 @@
 // variant chosen on the intro screen). The level adds answer options.
 import type { EngineContext, GameEngine, SessionOutcome, TimerRequest } from '../../types';
 import type { Rng } from '../../rng';
-import { average, clampLevel, elapsed, levelCeiling, percent, speedFactor } from '../common';
+import { average, clampLevel, counterCues, elapsed, levelCeiling, percent, speedFactor } from '../common';
 import { getAllCountries, type CountryData } from './data';
 
 export const FLAGS = {
@@ -85,6 +85,8 @@ export const flagsEngine: GameEngine<FlagsState, FlagsEvent> = {
   timers(state): TimerRequest<FlagsEvent>[] {
     return state.phase === 'feedback' ? [{ id: `next-${state.round}`, at: state.until, event: { type: 'next' } }] : [];
   },
+
+  cues: counterCues<FlagsState>(s => s.answers.filter(a => a.correct).length, s => s.answers.filter(a => !a.correct).length),
 
   isFinished: state => state.phase === 'done',
 

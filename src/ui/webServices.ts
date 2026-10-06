@@ -6,6 +6,8 @@ import { hashNavigation, LocalStorageStore, webClock, webLocale, webScheduler } 
 import { createWebSync, type WebSync } from '../platform/web/sync';
 import type { PwaControl } from '../platform/web/pwa';
 import type { ToneOutput } from '../platform/web/audio';
+import { WebPrefs } from '../platform/web/prefs';
+import type { FeedbackOutput } from '../platform/web/feedback';
 
 export interface AppServices {
   repository: Repository;
@@ -19,6 +21,10 @@ export interface AppServices {
   pwa?: PwaControl;
   /** Game sounds; absent in tests */
   audio?: ToneOutput;
+  /** Sound / vibration switches of this device */
+  prefs: WebPrefs;
+  /** Cue player; absent in tests */
+  feedback?: FeedbackOutput;
 }
 
 const reportError = (error: unknown) => console.warn('[brain-trainer] storage error:', error);
@@ -35,5 +41,8 @@ export function createWebServices(options: { sync?: boolean } = {}): AppServices
     },
   );
   const sync = options.sync ? createWebSync({ repository, scheduler: webScheduler, clock: webClock, store }) : undefined;
-  return { repository, scheduler: webScheduler, clock: webClock, navigation: hashNavigation, locale: webLocale(store), sync };
+  return {
+    repository, scheduler: webScheduler, clock: webClock, navigation: hashNavigation, locale: webLocale(store), sync,
+    prefs: new WebPrefs(store),
+  };
 }

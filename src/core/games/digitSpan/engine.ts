@@ -4,7 +4,7 @@
 // −1 after a miss, within 3…12.
 import type { EngineContext, GameEngine, SessionOutcome, TimerRequest } from '../../types';
 import type { Rng } from '../../rng';
-import { clampLevel, percent } from '../common';
+import { clampLevel, counterCues, percent } from '../common';
 
 export const DIGIT_SPAN = {
   trials: 8,
@@ -129,6 +129,8 @@ export const digitSpanEngine: GameEngine<DigitSpanState, DigitSpanEvent> = {
       ? [{ id: `${state.phase}-${state.trials.length}-${state.step}`, at: state.until, event: { type: 'tick' } }]
       : [];
   },
+
+  cues: counterCues<DigitSpanState>(s => s.trials.filter(t => t.correct).length, s => s.trials.filter(t => !t.correct).length),
 
   isFinished: state => state.phase === 'done',
 

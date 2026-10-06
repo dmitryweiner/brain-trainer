@@ -5,6 +5,7 @@ import { getGame } from '../../core/games/registry';
 import { cellsFor, ROTATE_SHAPE, type RotateShapeEvent, type RotateShapeState } from '../../core/games/rotateShape/engine';
 import { GameIntro, StatusLine } from './common';
 import { ShapeView } from './ShapeView';
+import type { ScreenProps } from '../gameScreens';
 import './games.scss';
 
 type Views = GameViews<RotateShapeState, RotateShapeEvent>;
@@ -72,7 +73,7 @@ const Details: Views['Details'] = ({ outcome }) => {
 
 const views: Views = { Intro, Board, Footer, Details };
 
-export const RotateShape: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+export const RotateShape: React.FC<ScreenProps> = ({ onBack, onNextGame }) => {
   const { t } = useTranslation();
-  return <GameShell game={getGame('rotate-shape')} views={views} title={`🔷 ${t('games.rotate-shape.title')}`} onBack={onBack} />;
+  return <GameShell game={getGame('rotate-shape')} views={views} title={`🔷 ${t('games.rotate-shape.title')}`} onBack={onBack} onNextGame={onNextGame} />;
 };

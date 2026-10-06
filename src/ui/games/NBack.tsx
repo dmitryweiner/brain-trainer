@@ -4,6 +4,7 @@ import { GameShell, type GameViews } from '../GameShell';
 import { getGame } from '../../core/games/registry';
 import { N_BACK, nBackLayout, type NBackEvent, type NBackState } from '../../core/games/nBack/engine';
 import { GameIntro, StatusLine } from './common';
+import type { ScreenProps } from '../gameScreens';
 import './games.scss';
 
 type Views = GameViews<NBackState, NBackEvent>;
@@ -83,7 +84,7 @@ const Details: Views['Details'] = ({ outcome }) => {
 
 const views: Views = { Intro, Board, Footer, Details };
 
-export const NBack: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+export const NBack: React.FC<ScreenProps> = ({ onBack, onNextGame }) => {
   const { t } = useTranslation();
-  return <GameShell game={getGame('n-back')} views={views} title={`⏮️ ${t('games.n-back.title')}`} onBack={onBack} />;
+  return <GameShell game={getGame('n-back')} views={views} title={`⏮️ ${t('games.n-back.title')}`} onBack={onBack} onNextGame={onNextGame} />;
 };

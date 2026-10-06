@@ -2,7 +2,7 @@
 // grow the table (4×4, 5×5, 6×6); from level 8 it is red-black: black
 // numbers go up, red go down, alternating (black 1, red N, black 2, …).
 import type { EngineContext, GameEngine, SessionOutcome, TimerRequest } from '../../types';
-import { clampLevel, elapsed, levelCeiling, percent } from '../common';
+import { clampLevel, counterCues, elapsed, levelCeiling, percent } from '../common';
 
 export const SCHULTE = {
   /** A table that takes longer than this ends the session */
@@ -93,6 +93,8 @@ export const schulteEngine: GameEngine<SchulteState, SchulteEvent> = {
     if (state.flash) timers.push({ id: `flash-${state.flashUntil}`, at: state.flashUntil, event: { type: 'unflash' } });
     return timers;
   },
+
+  cues: counterCues<SchulteState>(s => s.next, s => s.errors),
 
   isFinished: state => state.phase === 'done',
 

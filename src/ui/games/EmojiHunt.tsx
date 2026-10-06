@@ -4,6 +4,7 @@ import { GameShell, type GameViews } from '../GameShell';
 import { getGame } from '../../core/games/registry';
 import { EMOJI_HUNT, huntRound, type EmojiHuntEvent, type EmojiHuntState } from '../../core/games/emojiHunt/engine';
 import { FeedbackMark, GameIntro, StatusLine } from './common';
+import type { ScreenProps } from '../gameScreens';
 import './games.scss';
 
 type Views = GameViews<EmojiHuntState, EmojiHuntEvent>;
@@ -67,7 +68,7 @@ const Details: Views['Details'] = ({ outcome }) => {
 
 const views: Views = { Intro, Board, Footer, Details };
 
-export const EmojiHunt: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+export const EmojiHunt: React.FC<ScreenProps> = ({ onBack, onNextGame }) => {
   const { t } = useTranslation();
-  return <GameShell game={getGame('emoji-hunt')} views={views} title={`🔎 ${t('games.emoji-hunt.title')}`} onBack={onBack} />;
+  return <GameShell game={getGame('emoji-hunt')} views={views} title={`🔎 ${t('games.emoji-hunt.title')}`} onBack={onBack} onNextGame={onNextGame} />;
 };

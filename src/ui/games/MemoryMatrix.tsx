@@ -4,6 +4,7 @@ import { GameShell, type GameViews } from '../GameShell';
 import { getGame } from '../../core/games/registry';
 import { matrixLayout, MEMORY_MATRIX, type MemoryMatrixEvent, type MemoryMatrixState } from '../../core/games/memoryMatrix/engine';
 import { GameIntro, StatusLine } from './common';
+import type { ScreenProps } from '../gameScreens';
 import './games.scss';
 
 type Views = GameViews<MemoryMatrixState, MemoryMatrixEvent>;
@@ -79,7 +80,7 @@ const Details: Views['Details'] = ({ outcome }) => {
 
 const views: Views = { Intro, Board, Footer, Details };
 
-export const MemoryMatrix: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+export const MemoryMatrix: React.FC<ScreenProps> = ({ onBack, onNextGame }) => {
   const { t } = useTranslation();
-  return <GameShell game={getGame('memory-matrix')} views={views} title={`🟩 ${t('games.memory-matrix.title')}`} onBack={onBack} />;
+  return <GameShell game={getGame('memory-matrix')} views={views} title={`🟩 ${t('games.memory-matrix.title')}`} onBack={onBack} onNextGame={onNextGame} />;
 };

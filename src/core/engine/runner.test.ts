@@ -23,7 +23,8 @@ describe('EngineRunner', () => {
     expect(runner.state.phase).toBe('done');
     expect(onFinish).toHaveBeenCalledTimes(1);
     const [outcome, durationMs] = onFinish.mock.calls[0];
-    expect(outcome.score).toBe(25);
+    // 5 points each; quick streak multiplier 1,1,1,2,2,2,3,3,3,4
+    expect(outcome.score).toBe(5 * 22);
     expect(outcome.metrics.bestReactionMs).toBe(250);
     expect(durationMs).toBe(scheduler.now());
     expect(scheduler.pendingCount).toBe(0);

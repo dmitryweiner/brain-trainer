@@ -6,17 +6,21 @@ import { useGameHistoryContext } from '../context/GameHistoryContext';
 import { getGame } from '../core/games/registry';
 import type { GameCategory } from '../core/types';
 import type { GameId } from '../types/game.types';
+import { WorkoutBlock } from '../ui/WorkoutBlock';
 import './GameMenu.scss';
 
 export interface GameMenuProps {
   onGameSelect: (gameId: GameId) => void;
+  /** Starts (or continues) today's workout at this game; no block without it */
+  onWorkout?: (gameId: GameId) => void;
+  now?: number;
 }
 
 /** Menu order of the category groups (PLAN-IMPROVEMENTS.md, 3.5) */
 const CATEGORY_ORDER: readonly GameCategory[] = ['memory', 'attention', 'reaction', 'spatial', 'knowledge'];
 
-export const GameMenu: React.FC<GameMenuProps> = ({ onGameSelect }) => {
-  const { getGameStats, getGameLevel } = useGameHistoryContext();
+export const GameMenu: React.FC<GameMenuProps> = ({ onGameSelect, onWorkout, now }) => {
+  const { getGameStats, getGameLevel, sessions } = useGameHistoryContext();
   const { t } = useTranslation();
 
   const groups = CATEGORY_ORDER
@@ -29,6 +33,8 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onGameSelect }) => {
         <h1 className="menu-title">{t('menu.title')}</h1>
         <p className="menu-subtitle">{t('menu.subtitle')}</p>
       </div>
+
+      {onWorkout && <WorkoutBlock sessions={sessions} now={now ?? Date.now()} onPlay={onWorkout} />}
 
       {groups.map(({ category, games }) => (
         <section key={category} className="games-category" aria-labelledby={`category-${category}`}>

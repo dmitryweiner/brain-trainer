@@ -234,6 +234,26 @@
     "rotate-shape": {
       "title": "Rotate the Shape",
       "description": "Spatial thinking"
+    },
+    "where-was": {
+      "title": "Where Was It?",
+      "description": "Memory for places"
+    },
+    "mirror": {
+      "title": "Mirror",
+      "description": "Spatial thinking"
+    },
+    "maze": {
+      "title": "Maze",
+      "description": "Planning a route"
+    },
+    "track-dot": {
+      "title": "Track the Dot",
+      "description": "Smooth, precise movement"
+    },
+    "fit-piece": {
+      "title": "Fit the Piece",
+      "description": "Spatial thinking"
     }
   },
   "flagsGame": {
@@ -477,12 +497,14 @@
       "overview": "Overview",
       "daily": "Daily",
       "games": "Games",
-      "sync": "Sync"
+      "sync": "Sync",
+      "achievements": "Achievements",
+      "settings": "Settings"
     },
     "clearTitle": "Delete history?",
     "categoryIndex": "Category index",
     "categoryHint": "Average record of the played games in a category, out of 1000",
-    "streak": "Days in a row",
+    "streak": "Workout streak",
     "calendar": "Activity over 4 weeks",
     "calendarDay": "{{date}}: {{count}} games",
     "trainingTime": "Training time",
@@ -667,7 +689,14 @@
     "cells": "Cells in pattern",
     "size": "Table size",
     "boardTimeMs": "Time per board",
-    "n": "N"
+    "n": "N",
+    "questions": "Questions",
+    "objects": "Objects on the board",
+    "mazeTimeMs": "Time per maze",
+    "extraCells": "Extra cells",
+    "longestHoldMs": "Longest on target",
+    "onTargetMs": "Time on target",
+    "attempts": "Attempts"
   },
   "pwa": {
     "updateReady": "A new version is available",
@@ -844,6 +873,131 @@
     },
     "n-back": {
       "hits": "Hits"
+    }
+  },
+  "whereWas": {
+    "rule1": "Objects appear on the board for a few seconds.",
+    "rule2": "Remember where each one is.",
+    "rule3": "Then you are asked about each: tap the cell it was in.",
+    "layout": "{{size}}×{{size}} board, {{items}} objects",
+    "remember": "Remember where everything is…",
+    "where": "Where was",
+    "boardOf": "Board {{n}} of {{total}}"
+  },
+  "mirror": {
+    "rule1": "The shape is at the top, a mirror on its right.",
+    "rule2plain": "Find its mirror image below.",
+    "rule2turned": "Find its mirror image. It may also be turned.",
+    "rule3": "The shape simply turned is not a mirror image!",
+    "prompt": "Which option is the shape seen in the mirror?"
+  },
+  "fit": {
+    "rule1": "A piece has been cut out of the square.",
+    "rule2": "Find the piece that fills the hole exactly.",
+    "rule3": "Pieces may be turned but not flipped.",
+    "layout": "{{board}}×{{board}} square, a hole of {{cells}} cells",
+    "prompt": "Which piece fills the hole?",
+    "board": "The square with a hole"
+  },
+  "maze": {
+    "rule1": "Roll the ball to the flag.",
+    "rule2": "Swipe or press the arrows: the ball rolls to the next turn or junction.",
+    "rule3": "Shorter and faster is better. There are three mazes.",
+    "layout": "{{size}}×{{size}} maze",
+    "prompt": "Roll the ball to the flag",
+    "solved": "Way out found!",
+    "up": "Up",
+    "down": "Down",
+    "left": "Left",
+    "right": "Right",
+    "mazeOf": "Maze {{n}} of {{total}}",
+    "economy": "Path economy"
+  },
+  "trackDot": {
+    "rule1": "Put your finger on the green dot.",
+    "rule2": "The dot will move: keep your finger on it.",
+    "rule3": "The game lasts 30 seconds; time on target counts.",
+    "ready": "Get ready: put your finger on the dot",
+    "touch": "Touch the dot and hold",
+    "on": "Keep it up!",
+    "off": "Catch the dot",
+    "onTarget": "On target"
+  },
+  "reaction": {
+    "rule1": "Wait for the screen to turn green.",
+    "rule2": "Then tap as fast as you can.",
+    "ruleDecoy": "Sometimes it flashes yellow — a decoy, do not tap!",
+    "rule3": "10 attempts and 3 lives: tapping too early costs a life. A streak of quick reactions multiplies the points.",
+    "streak": "Streak: {{count}}",
+    "onlyGreen": "Tap on green only",
+    "bestEver": "All-time best",
+    "distribution": "Reaction time distribution"
+  },
+  "workout": {
+    "title": "Daily workout",
+    "streak": "{{count}}-day streak",
+    "streakHint": "Days in a row with the workout done",
+    "done": "Done",
+    "start": "Start the workout",
+    "continue": "Continue ({{done}} of {{total}})",
+    "complete": "Today's workout is done!"
+  },
+  "settings": {
+    "sound": "Sound",
+    "vibration": "Vibration",
+    "vibrationUnsupported": "This device or browser does not support vibration.",
+    "deviceOnly": "Settings are stored on this device only."
+  },
+  "achievements": {
+    "summary": "{{unlocked}} of {{total}} unlocked",
+    "new": "New achievement",
+    "first-game": {
+      "title": "First step",
+      "description": "Play your first game"
+    },
+    "first-workout": {
+      "title": "Warm-up",
+      "description": "Complete a daily workout"
+    },
+    "streak-3": {
+      "title": "Getting going",
+      "description": "Daily workout 3 days in a row"
+    },
+    "streak-7": {
+      "title": "A full week",
+      "description": "Daily workout 7 days in a row"
+    },
+    "streak-30": {
+      "title": "A habit",
+      "description": "Daily workout 30 days in a row"
+    },
+    "level-5": {
+      "title": "Climbing",
+      "description": "Reach level 5 in any game"
+    },
+    "level-10": {
+      "title": "Summit",
+      "description": "Reach level 10 in any game"
+    },
+    "rating-900": {
+      "title": "Diamond",
+      "description": "Score a rating of 900 or more"
+    },
+    "all-categories": {
+      "title": "All-rounder",
+      "description": "Play every category in one day"
+    },
+    "explorer": {
+      "title": "Explorer",
+      "description": "Try every game"
+    },
+    "sessions-50": {
+      "title": "Fifty",
+      "description": "Play 50 games"
+    },
+    "sessions-200": {
+      "title": "Marathon",
+      "description": "Play 200 games"
     }
   }
 }

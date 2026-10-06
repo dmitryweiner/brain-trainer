@@ -15,12 +15,23 @@ import { MemoryFlip } from './games/MemoryFlip';
 import { EmojiHunt } from './games/EmojiHunt';
 import { Flags } from './games/Flags';
 import { NBack } from './games/NBack';
+import { WhereWas } from './games/WhereWas';
+import { Mirror } from './games/Mirror';
+import { Maze } from './games/Maze';
+import { TrackDot } from './games/TrackDot';
+import { FitPiece } from './games/FitPiece';
 
-export type GameScreen = React.FC<{ onBack: () => void }>;
+export interface ScreenProps {
+  onBack: () => void;
+  /** Shown as "next game" on the results screen (the daily workout uses it) */
+  onNextGame?: () => void;
+}
+
+export type GameScreen = React.FC<ScreenProps>;
 
 export const GAME_SCREENS: Partial<Record<GameId, GameScreen>> = {
-  'reaction-click': ({ onBack }) => <ReactionClick onBackToMenu={onBack} />,
-  'odd-one-out': ({ onBack }) => <OddOneOut onBackToMenu={onBack} />,
+  'reaction-click': ({ onBack, onNextGame }) => <ReactionClick onBackToMenu={onBack} onNextGame={onNextGame} />,
+  'odd-one-out': ({ onBack, onNextGame }) => <OddOneOut onBackToMenu={onBack} onNextGame={onNextGame} />,
   'memory-matrix': MemoryMatrix,
   schulte: Schulte,
   'whack-a-mole': WhackAMole,
@@ -33,4 +44,9 @@ export const GAME_SCREENS: Partial<Record<GameId, GameScreen>> = {
   'emoji-hunt': EmojiHunt,
   'flags-game': Flags,
   'n-back': NBack,
+  'where-was': WhereWas,
+  mirror: Mirror,
+  maze: Maze,
+  'track-dot': TrackDot,
+  'fit-piece': FitPiece,
 };

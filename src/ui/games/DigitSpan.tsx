@@ -4,6 +4,7 @@ import { GameShell, type GameViews } from '../GameShell';
 import { getGame } from '../../core/games/registry';
 import { DIGIT_SPAN, digitLayout, expected, shownDigit, type DigitSpanEvent, type DigitSpanState } from '../../core/games/digitSpan/engine';
 import { GameIntro, StatusLine } from './common';
+import type { ScreenProps } from '../gameScreens';
 import './games.scss';
 
 type Views = GameViews<DigitSpanState, DigitSpanEvent>;
@@ -108,7 +109,7 @@ const Details: Views['Details'] = ({ outcome }) => {
 
 const views: Views = { Intro, Board, Footer, Details };
 
-export const DigitSpan: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+export const DigitSpan: React.FC<ScreenProps> = ({ onBack, onNextGame }) => {
   const { t } = useTranslation();
-  return <GameShell game={getGame('phone-recall')} views={views} title={`📞 ${t('games.phone-recall.title')}`} onBack={onBack} />;
+  return <GameShell game={getGame('phone-recall')} views={views} title={`📞 ${t('games.phone-recall.title')}`} onBack={onBack} onNextGame={onNextGame} />;
 };

@@ -4,6 +4,7 @@ import { GameShell, type GameViews } from '../GameShell';
 import { getGame } from '../../core/games/registry';
 import { WHACK, whackLayout, type WhackEvent, type WhackState } from '../../core/games/whackAMole/engine';
 import { GameIntro, Lives, StatusLine, useClock } from './common';
+import type { ScreenProps } from '../gameScreens';
 import './games.scss';
 
 type Views = GameViews<WhackState, WhackEvent>;
@@ -79,7 +80,7 @@ const Details: Views['Details'] = ({ outcome }) => {
 
 const views: Views = { Intro, Board, Footer, Details };
 
-export const WhackAMole: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+export const WhackAMole: React.FC<ScreenProps> = ({ onBack, onNextGame }) => {
   const { t } = useTranslation();
-  return <GameShell game={getGame('whack-a-mole')} views={views} title={`🐹 ${t('games.whack-a-mole.title')}`} onBack={onBack} />;
+  return <GameShell game={getGame('whack-a-mole')} views={views} title={`🐹 ${t('games.whack-a-mole.title')}`} onBack={onBack} onNextGame={onNextGame} />;
 };

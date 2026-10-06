@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GameShell, type GameViews } from '../../../ui/GameShell';
 import { getGame } from '../../../core/games/registry';
 import {
-  REACTION_CLICK, type ReactionClickEvent, type ReactionClickState,
+  decoyChance, REACTION_CLICK, type ReactionClickEvent, type ReactionClickState,
 } from '../../../core/games/reactionClick/engine';
+import { activeSessions, gameStats } from '../../../core/stats';
+import { useEvents, useServices } from '../../../ui/services';
+import { GameIntro, Lives, StatusLine } from '../../../ui/games/common';
+import { HorizontalBars } from '../../../ui/charts/charts';
 import './ReactionClick.scss';
 
 export interface ReactionClickProps {
@@ -12,48 +16,28 @@ export interface ReactionClickProps {
   onNextGame?: () => void;
 }
 
+type Views = GameViews<ReactionClickState, ReactionClickEvent>;
 const TOTAL = REACTION_CLICK.attempts;
 
-const Intro: GameViews<ReactionClickState, ReactionClickEvent>['Intro'] = ({ onStart }) => {
-  const { t } = useTranslation();
-  return (
-    <div className="reaction-intro">
-      <div className="intro-card">
-        <h2>⚡ {t('games.reaction-click.title')}</h2>
-        <div className="intro-instructions">
-          <p className="lead">{t('games.reaction-click.instructions.lead')}</p>
-          <ol className="instructions-list">
-            <li>{t('games.reaction-click.instructions.wait')}</li>
-            <li>{t('games.reaction-click.instructions.clickFast')}</li>
-            <li>{t('games.reaction-click.instructions.dontClickEarly')}</li>
-          </ol>
-          <div className="scoring-info">
-            <p><strong>{t('games.reaction-click.instructions.scoring')}:</strong></p>
-            <ul>
-              <li><strong>{t('games.reaction-click.instructions.score5')}</strong></li>
-              <li><strong>{t('games.reaction-click.instructions.score3')}</strong></li>
-              <li><strong>{t('games.reaction-click.instructions.score2')}</strong></li>
-              <li><strong>{t('games.reaction-click.instructions.score1')}</strong></li>
-            </ul>
-          </div>
-          <p className="text-muted">{t('games.reaction-click.instructions.totalAttempts')}: {TOTAL}</p>
-        </div>
-        <button className="btn btn-primary btn-large" onClick={() => onStart()}>
-          {t('common.startGame')}
-        </button>
-      </div>
-    </div>
-  );
-};
+const Intro: Views['Intro'] = ({ onStart, level }) => (
+  <GameIntro
+    gameId="reaction-click"
+    level={level}
+    onStart={onStart}
+    rules={[
+      'reaction.rule1', 'reaction.rule2', ...(decoyChance(level) > 0 ? ['reaction.ruleDecoy'] : []), 'reaction.rule3',
+    ]}
+  />
+);
 
-const Board: GameViews<ReactionClickState, ReactionClickEvent>['Board'] = ({ state, dispatch }) => {
+const Board: Views['Board'] = ({ state, dispatch }) => {
   const { t } = useTranslation();
   const tap = () => dispatch({ type: 'tap' });
   const tappable = {
-    onClick: tap,
+    onPointerDown: tap,
     role: 'button',
     tabIndex: 0,
-    onKeyDown: (e: React.KeyboardEvent) => e.key === 'Enter' && tap(),
+    onKeyDown: (e: React.KeyboardEvent) => (e.key === 'Enter' || e.key === ' ') && tap(),
   };
 
   switch (state.phase) {
@@ -61,9 +45,18 @@ const Board: GameViews<ReactionClickState, ReactionClickEvent>['Board'] = ({ sta
       return (
         <div className="reaction-area reaction-waiting" {...tappable}>
           <div className="reaction-content">
-            <div className="reaction-emoji">💣</div>
+            <div className="reaction-emoji">⏳</div>
             <h2>{t('games.reaction-click.waiting')}</h2>
             <p className="attempt-counter">{t('games.reaction-click.attempt')} {state.attempt + 1} / {TOTAL}</p>
+          </div>
+        </div>
+      );
+    case 'decoy':
+      // looks like a signal on purpose: only green means "go"
+      return (
+        <div className="reaction-area reaction-decoy" {...tappable}>
+          <div className="reaction-content">
+            <div className="reaction-emoji">🟡</div>
           </div>
         </div>
       );
@@ -71,27 +64,30 @@ const Board: GameViews<ReactionClickState, ReactionClickEvent>['Board'] = ({ sta
       return (
         <div className="reaction-area reaction-ready" {...tappable}>
           <div className="reaction-content">
-            <div className="reaction-emoji">🔘</div>
+            <div className="reaction-emoji">🟢</div>
             <h2>{t('games.reaction-click.clickNow')}</h2>
           </div>
         </div>
       );
-    case 'clicked':
+    case 'clicked': {
+      const ms = state.reactionTimes[state.reactionTimes.length - 1];
       return (
         <div className="reaction-area reaction-clicked">
           <div className="reaction-content">
-            <div className="reaction-emoji celebration">🎉</div>
-            <h2>{t('games.reaction-click.great')}</h2>
+            <div className="reaction-emoji celebration">⚡</div>
+            <h2>{ms} {t('common.ms')}</h2>
+            {state.combo >= 2 && <p>{t('reaction.streak', { count: state.combo })}</p>}
           </div>
         </div>
       );
+    }
     case 'tooEarly':
       return (
         <div className="reaction-area reaction-too-early">
           <div className="reaction-content">
             <div className="reaction-emoji explosion">💥</div>
             <h2>{t('games.reaction-click.tooEarly')}</h2>
-            <p>{t('games.reaction-click.waitForButton')}</p>
+            <p>{t('reaction.onlyGreen')}</p>
           </div>
         </div>
       );
@@ -100,72 +96,52 @@ const Board: GameViews<ReactionClickState, ReactionClickEvent>['Board'] = ({ sta
   }
 };
 
-const Footer: GameViews<ReactionClickState, ReactionClickEvent>['Footer'] = ({ state }) => {
+const Footer: Views['Footer'] = ({ state }) => {
   const { t } = useTranslation();
   return (
-    <div className="game-stats">
-      <span>{t('games.reaction-click.attempt')}: {Math.min(state.attempt + 1, TOTAL)}/{TOTAL}</span>
-      <span>{t('common.score')}: {state.score}</span>
-    </div>
+    <StatusLine items={[
+      `${t('games.reaction-click.attempt')}: ${Math.min(state.attempt + 1, TOTAL)}/${TOTAL}`,
+      <Lives left={state.lives} total={REACTION_CLICK.lives} />,
+      `${t('common.score')}: ${state.score}`,
+    ]} />
   );
 };
 
-const Details: GameViews<ReactionClickState, ReactionClickEvent>['Details'] = ({ state, outcome }) => {
+/** Reaction time bands for the distribution */
+const BANDS: [number, number][] = [[0, 250], [250, 350], [350, 500], [500, 800], [800, Infinity]];
+
+const Details: Views['Details'] = ({ state, outcome }) => {
   const { t } = useTranslation();
+  const { repository } = useServices();
+  const events = useEvents(repository);
+  const bestEver = useMemo(
+    () => gameStats(activeSessions(events), 'reaction-click').bestMetrics.bestReactionMs,
+    [events],
+  );
   const times = state.reactionTimes;
   if (times.length === 0) {
-    return (
-      <div className="results-details">
-        <p className="text-muted">{t('games.reaction-click.noSuccessfulAttempts')}</p>
-      </div>
-    );
+    return <div className="results-details"><p className="text-muted">{t('games.reaction-click.noSuccessfulAttempts')}</p></div>;
   }
-  const best = outcome.metrics.bestReactionMs;
-  const worst = outcome.metrics.worstReactionMs;
+  const rows = BANDS.map(([lo, hi]) => ({
+    key: `${lo}`,
+    label: hi === Infinity ? `≥ ${lo} ${t('common.ms')}` : `${lo}–${hi} ${t('common.ms')}`,
+    value: times.filter(ms => ms >= lo && ms < hi).length,
+  }));
   return (
     <div className="results-details">
-      <div className="results-summary">
-        <p className="summary-text">
-          {t('games.reaction-click.completedAttempts', { completed: times.length, total: TOTAL })}
-          {state.falseStarts > 0 && ` (${t('games.reaction-click.tooEarlyCount', { count: state.falseStarts })})`}
-        </p>
-      </div>
-
-      <div className="stat-item highlight">
-        <span className="stat-label">⚡ {t('games.reaction-click.bestReaction')}:</span>
-        <span className="stat-value stat-best">{best}{t('common.ms')}</span>
-      </div>
-
-      <div className="stat-item">
-        <span className="stat-label">📊 {t('games.reaction-click.averageReaction')}:</span>
-        <span className="stat-value">{outcome.avgTimeMs}{t('common.ms')}</span>
-      </div>
-
-      {times.length > 1 && (
-        <div className="stat-item">
-          <span className="stat-label">🐌 {t('games.reaction-click.worstReaction')}:</span>
-          <span className="stat-value stat-worst">{worst}{t('common.ms')}</span>
-        </div>
+      <div className="stat-item highlight"><span className="stat-label">⚡ {t('games.reaction-click.bestReaction')}</span><span className="stat-value">{outcome.metrics.bestReactionMs} {t('common.ms')}</span></div>
+      <div className="stat-item"><span className="stat-label">📊 {t('games.reaction-click.averageReaction')}</span><span className="stat-value">{outcome.avgTimeMs} {t('common.ms')}</span></div>
+      {bestEver !== undefined && (
+        <div className="stat-item"><span className="stat-label">🏆 {t('reaction.bestEver')}</span><span className="stat-value">{bestEver} {t('common.ms')}</span></div>
       )}
-
-      <div className="all-times">
-        <div className="stat-label">{t('games.reaction-click.allResults')}:</div>
-        <div className="times-list">
-          {times.map((time, index) => (
-            <span
-              key={index}
-              className={`time-chip ${time === best ? 'best' : time === worst && times.length > 1 ? 'worst' : ''}`}
-            >
-              {index + 1}. {time}{t('common.ms')}
-            </span>
-          ))}
-        </div>
-      </div>
+      <div className="stat-item"><span className="stat-label">{t('metrics.falseStarts')}</span><span className="stat-value">{state.falseStarts}</span></div>
+      <h4 className="details-heading">{t('reaction.distribution')}</h4>
+      <HorizontalBars rows={rows} max={Math.max(1, ...rows.map(r => r.value))} />
     </div>
   );
 };
 
-const views: GameViews<ReactionClickState, ReactionClickEvent> = {
+const views: Views = {
   Intro,
   Board,
   Footer,

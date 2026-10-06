@@ -759,3 +759,14 @@
     }
   }
 }
+
+// six tabs: scroll sideways on narrow screens instead of squeezing
+.profile-tabs {
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  .tab {
+    flex: 1 0 auto;
+    white-space: nowrap;
+  }
+}

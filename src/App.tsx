@@ -7,7 +7,9 @@ import GameMenu from './components/GameMenu';
 import { Profile } from './components/Profile';
 import type { GameId } from './types/game.types';
 import type { Route } from './core/platform';
-import { findActiveGame } from './core/games/registry';
+import { findActiveGame, GAMES } from './core/games/registry';
+import { activeSessions, dayKey } from './core/stats';
+import { workoutProgress } from './core/stats/engagement';
 import { textDirection, normalizeLanguage } from './core/i18n/languages';
 import { ServicesProvider, useServices } from './ui/services';
 import { createWebServices, type AppServices } from './ui/webServices';
@@ -46,9 +48,11 @@ function useDocumentLanguage() {
 }
 
 function AppContent() {
-  const { navigation, sync, pwa } = useServices();
+  const { navigation, sync, pwa, repository, clock } = useServices();
   const { t } = useTranslation();
   const [route, setRoute] = useState<Route>(() => normalize(navigation.current(), !!sync));
+  // playing today's workout: "next game" goes to its next open slot
+  const [inWorkout, setInWorkout] = useState(false);
   const { totalScore } = useScoreContext();
   useDocumentLanguage();
 
@@ -59,7 +63,16 @@ function AppContent() {
     navigation.go(next);
     setRoute(next);
   };
-  const backToMenu = () => go({ view: 'menu' });
+  const backToMenu = () => {
+    setInWorkout(false);
+    go({ view: 'menu' });
+  };
+  const nextWorkoutGame = () => {
+    const progress = workoutProgress(activeSessions(repository.events), dayKey(clock.wallNow()), GAMES);
+    const next = progress.games.find(g => !g.done);
+    if (next) go({ view: 'game', gameId: next.id });
+    else backToMenu();
+  };
 
   const game = route.view === 'game' ? findActiveGame(route.gameId) : undefined;
   const Screen = game ? GAME_SCREENS[game.id] : undefined;
@@ -79,9 +92,16 @@ function AppContent() {
         {route.view === 'profile' ? (
           <Profile onBack={backToMenu} />
         ) : Screen ? (
-          <Screen key={game!.id} onBack={backToMenu} />
+          <Screen key={game!.id} onBack={backToMenu} onNextGame={inWorkout ? nextWorkoutGame : undefined} />
         ) : (
-          <GameMenu onGameSelect={(gameId: GameId) => go({ view: 'game', gameId })} />
+          <GameMenu
+            onGameSelect={(gameId: GameId) => go({ view: 'game', gameId })}
+            onWorkout={gameId => {
+              setInWorkout(true);
+              go({ view: 'game', gameId });
+            }}
+            now={clock.wallNow()}
+          />
         )}
       </div>
 

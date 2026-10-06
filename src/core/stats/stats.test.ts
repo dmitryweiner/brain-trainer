@@ -155,8 +155,8 @@ describe('buildSession', () => {
     });
     expect(session).toEqual({
       id: 'x', gameId: 'reaction-click', schemaVersion: 2, startedAt: 5, durationMs: 1235, level: 1,
-      // no 'hits' metric: rated like v1 history, 20/25 of 937.5
-      score: 20, rating: 750, accuracy: 100, avgTimeMs: 0, metrics: { a: 1 },
+      // no 'hits' metric: rated like v1 history, 20/25 of 937.5, at level 1 (×0.865)
+      score: 20, rating: 649, accuracy: 100, avgTimeMs: 0, metrics: { a: 1 },
     });
   });
 });
@@ -164,7 +164,8 @@ describe('buildSession', () => {
 describe('ratings at read time', () => {
   it('activeSessions re-rates with the current formula', () => {
     const stored = s({ gameId: 'reaction-click', rating: 1000, avgTimeMs: 600, metrics: { hits: 5 } });
-    expect(activeSessions([ev(stored)])[0].rating).toBe(500);
+    // 5 of 5 (stage-2 rules) at 600 ms, level 1: 0.5 × 1000 × 0.865
+    expect(activeSessions([ev(stored)])[0].rating).toBe(433);
   });
 });
 

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { createRng } from '../rng';
 import type { EngineContext } from '../types';
-import { reactionClickEngine, reactionClickRating, reactionPoints, REACTION_CLICK } from './reactionClick/engine';
+import { decoyChance, reactionClickEngine, reactionClickRating, reactionPoints, REACTION_CLICK } from './reactionClick/engine';
 import {
   oddOneOutEngine, difficultyFor, gridSizeFor, oddOneOutRating, levelCeiling, ODD_ONE_OUT, V1_EQUIVALENT_LEVEL,
 } from './oddOneOut/engine';
@@ -44,14 +44,47 @@ describe('reactionClickEngine', () => {
 
   it('reports accuracy, average and best/worst times', () => {
     const outcome = reactionClickEngine.result({
-      phase: 'done', attempt: 5, reactionTimes: [200, 400, 600], score: 10, falseStarts: 2, until: 0, readyAt: 0,
+      phase: 'done', level: 1, attempt: 5, lives: 1, reactionTimes: [200, 400, 600], score: 10, falseStarts: 2,
+      combo: 0, maxCombo: 1, until: 0, readyAt: 0, decoyPending: false,
     });
     expect(outcome).toEqual({
       score: 10,
       accuracy: 60,
       avgTimeMs: 400,
-      metrics: { falseStarts: 2, hits: 3, bestReactionMs: 200, worstReactionMs: 600 },
+      metrics: {
+        falseStarts: 2, hits: 3, attempts: 5, maxCombo: 1, livesLeft: 1, rules: REACTION_CLICK.rules,
+        bestReactionMs: 200, worstReactionMs: 600,
+      },
     });
+  });
+
+  it('a false start costs a life; three end the session', () => {
+    let s = reactionClickEngine.init(1, ctxAt(0));
+    for (let i = 0; i < REACTION_CLICK.lives; i++) {
+      s = reactionClickEngine.reduce(s, { type: 'tap' }, ctxAt(i * 2000 + 10));
+      s = reactionClickEngine.reduce(s, { type: 'next' }, ctxAt(i * 2000 + 1100));
+    }
+    expect(s.phase).toBe('done');
+    expect(s.lives).toBe(0);
+  });
+
+  it('shows decoys from level 4, and tapping one is a false start', () => {
+    expect(decoyChance(3)).toBe(0);
+    expect(decoyChance(4)).toBeGreaterThan(0);
+    let s = { ...reactionClickEngine.init(10, ctxAt(0)), decoyPending: true };
+    s = reactionClickEngine.reduce(s, { type: 'go' }, ctxAt(1000));
+    expect(s.phase).toBe('decoy');
+    s = reactionClickEngine.reduce(s, { type: 'tap' }, ctxAt(1100));
+    expect(s).toMatchObject({ phase: 'tooEarly', falseStarts: 1, lives: REACTION_CLICK.lives - 1 });
+  });
+
+  it('a decoy left alone is followed by the real signal', () => {
+    let s = { ...reactionClickEngine.init(10, ctxAt(0)), decoyPending: true };
+    s = reactionClickEngine.reduce(s, { type: 'go' }, ctxAt(1000));
+    s = reactionClickEngine.reduce(s, { type: 'go' }, ctxAt(1700));
+    expect(s.phase).toBe('waiting');
+    s = reactionClickEngine.reduce(s, { type: 'go' }, ctxAt(3000));
+    expect(s.phase).toBe('ready');
   });
 });
 
@@ -138,16 +171,25 @@ describe('oddOneOutEngine', () => {
 });
 
 describe('reactionClickRating', () => {
-  it('multiplies clean-attempt share by speed', () => {
-    const r = (hits: number, avgTimeMs: number) => reactionClickRating({ score: 0, accuracy: 0, avgTimeMs, metrics: { hits } });
-    expect(r(5, 200)).toBe(1000);
-    expect(r(5, 1000)).toBe(0);
-    expect(r(5, 600)).toBe(500);
-    expect(r(3, 200)).toBe(600);
-    expect(r(0, 0)).toBe(0);
+  const r = (metrics: Record<string, number>, avgTimeMs: number, level = 10) =>
+    reactionClickRating({ score: 0, accuracy: 0, avgTimeMs, metrics }, level);
+
+  it('multiplies clean-attempt share by speed and a small level factor', () => {
+    const full = { hits: 10, attempts: 10, rules: REACTION_CLICK.rules };
+    expect(r(full, 200)).toBeCloseTo(1000);
+    expect(r(full, 1000)).toBe(0);
+    expect(r(full, 600)).toBeCloseTo(500);
+    expect(r({ ...full, hits: 6 }, 200)).toBeCloseTo(600);
+    expect(r(full, 200, 1)).toBeCloseTo(865);
   });
 
-  it('maps v1 points onto the same scale', () => {
-    expect(reactionClickRating({ score: 25, accuracy: 100, avgTimeMs: 0, metrics: {} })).toBeCloseTo(937.5);
+  it('counts attempts lost to running out of lives as misses', () => {
+    expect(r({ hits: 4, attempts: 7, rules: REACTION_CLICK.rules }, 200)).toBeCloseTo(400);
+  });
+
+  it('rates stage-2 sessions (5 attempts) and v1 points on the same scale', () => {
+    expect(r({ hits: 5 }, 200, 1)).toBeCloseTo(865);
+    expect(r({}, 0, 1)).toBeCloseTo(0);
+    expect(reactionClickRating({ score: 25, accuracy: 100, avgTimeMs: 0, metrics: {} }, 1)).toBeCloseTo(937.5 * 0.865);
   });
 });

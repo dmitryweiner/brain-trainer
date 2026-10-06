@@ -8,17 +8,20 @@ import { SyncPanel } from '../../ui/SyncPanel';
 import { useOptionalServices } from '../../ui/services';
 import { ActivityCalendar, HorizontalBars } from '../../ui/charts/charts';
 import { GAMES } from '../../core/games/registry';
-import { activityCalendar, categoryIndex, dayStart, streakDays, trainingTimeMs } from '../../core/stats';
+import { activityCalendar, categoryIndex, dayStart, trainingTimeMs } from '../../core/stats';
 import type { GameCategory } from '../../core/types';
 import type { GameId } from '../../types/game.types';
 import { GamePage } from './GamePage';
+import { AchievementsPanel } from '../../ui/AchievementsPanel';
+import { SettingsPanel } from '../../ui/SettingsPanel';
+import { workoutStreak } from '../../core/stats/engagement';
 import './Profile.scss';
 
 export interface ProfileProps {
   onBack: () => void;
 }
 
-type TabType = 'overview' | 'daily' | 'games' | 'sync';
+type TabType = 'overview' | 'daily' | 'games' | 'achievements' | 'settings' | 'sync';
 
 const CATEGORIES: readonly GameCategory[] = ['memory', 'attention', 'reaction', 'spatial', 'knowledge'];
 
@@ -61,7 +64,7 @@ export const Profile: React.FC<ProfileProps> = ({ onBack }) => {
         <div className="stats-grid">
           <div className="stat-card">
             <div className="stat-icon">🔥</div>
-            <div className="stat-value">{streakDays(sessions, now)}</div>
+            <div className="stat-value">{workoutStreak(sessions, GAMES, now)}</div>
             <div className="stat-label">{t('profile.streak')}</div>
           </div>
           <div className="stat-card">
@@ -225,6 +228,8 @@ export const Profile: React.FC<ProfileProps> = ({ onBack }) => {
         {tab('overview', t('profile.tabs.overview'))}
         {tab('daily', t('profile.tabs.daily'))}
         {tab('games', t('profile.tabs.games'))}
+        {tab('achievements', t('profile.tabs.achievements'))}
+        {services && tab('settings', t('profile.tabs.settings'))}
         {sync && tab('sync', t('profile.tabs.sync'))}
       </div>
 
@@ -232,6 +237,8 @@ export const Profile: React.FC<ProfileProps> = ({ onBack }) => {
         {activeTab === 'overview' && renderOverview()}
         {activeTab === 'daily' && renderDailyStats()}
         {activeTab === 'games' && renderGamesStats()}
+        {activeTab === 'achievements' && <AchievementsPanel sessions={sessions} />}
+        {activeTab === 'settings' && services && <SettingsPanel prefs={services.prefs} />}
         {activeTab === 'sync' && sync && <SyncPanel sync={sync} />}
       </div>
 

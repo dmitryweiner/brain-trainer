@@ -5,6 +5,7 @@ import { getGame } from '../../core/games/registry';
 import { litPanel, SEQUENCE, sequenceLayout, type SequenceEvent, type SequenceState } from '../../core/games/sequenceRecall/engine';
 import { useServices } from '../services';
 import { GameIntro, Lives, StatusLine } from './common';
+import type { ScreenProps } from '../gameScreens';
 import './games.scss';
 
 type Views = GameViews<SequenceState, SequenceEvent>;
@@ -28,7 +29,8 @@ const Intro: Views['Intro'] = ({ onStart, level }) => {
 
 const Board: Views['Board'] = ({ state, dispatch }) => {
   const { t } = useTranslation();
-  const { audio } = useServices();
+  const { audio, prefs } = useServices();
+  const tone = (freq: number, ms: number) => prefs.get().sound && audio?.tone(freq, ms);
   const lit = litPanel(state);
   const { panels, showMs } = state.layout;
   const cols = panels === 4 ? 2 : 3;
@@ -36,9 +38,9 @@ const Board: Views['Board'] = ({ state, dispatch }) => {
   // the panel being shown sounds once per flash
   const lastStep = useRef(-1);
   useEffect(() => {
-    if (lit !== null && lastStep.current !== state.step) audio?.tone(PANELS[lit].freq, showMs * 0.9);
+    if (lit !== null && lastStep.current !== state.step && prefs.get().sound) audio?.tone(PANELS[lit].freq, showMs * 0.9);
     lastStep.current = state.step;
-  }, [lit, state.step, showMs, audio]);
+  }, [lit, state.step, showMs, audio, prefs]);
 
   const prompt = state.phase === 'showing'
     ? t('repeat.watch')
@@ -60,7 +62,7 @@ const Board: Views['Board'] = ({ state, dispatch }) => {
               aria-label={t('repeat.panel', { n: i + 1 })}
               onPointerDown={() => {
                 if (state.phase !== 'input') return;
-                audio?.tone(p.freq, 220);
+                tone(p.freq, 220);
                 dispatch({ type: 'tap', panel: i });
               }}
             />
@@ -94,7 +96,7 @@ const Details: Views['Details'] = ({ outcome }) => {
 
 const views: Views = { Intro, Board, Footer, Details };
 
-export const SequenceRecall: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+export const SequenceRecall: React.FC<ScreenProps> = ({ onBack, onNextGame }) => {
   const { t } = useTranslation();
-  return <GameShell game={getGame('sequence-recall')} views={views} title={`🎹 ${t('games.sequence-recall.title')}`} onBack={onBack} />;
+  return <GameShell game={getGame('sequence-recall')} views={views} title={`🎹 ${t('games.sequence-recall.title')}`} onBack={onBack} onNextGame={onNextGame} />;
 };

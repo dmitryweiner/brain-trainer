@@ -58,17 +58,22 @@ function connected(shape: Shape): boolean {
   return seen.size === shape.length;
 }
 
-/** A random chiral polyomino of n cells */
+/** A random polyomino of n cells, grown cell by cell */
+export function randomPolyomino(n: number, rng: Rng): Shape {
+  const cells: Cell[] = [[0, 0]];
+  while (cells.length < n) {
+    const [x, y] = rng.pick(cells);
+    const [dx, dy] = rng.pick(NEIGHBORS);
+    const c: Cell = [x + dx, y + dy];
+    if (!cells.some(d => d[0] === c[0] && d[1] === c[1])) cells.push(c);
+  }
+  return normalize(cells);
+}
+
+/** A random chiral polyomino of n cells (n ≥ 4: no chiral shapes are smaller) */
 export function randomChiral(n: number, rng: Rng): Shape {
   for (;;) {
-    const cells: Cell[] = [[0, 0]];
-    while (cells.length < n) {
-      const [x, y] = rng.pick(cells);
-      const [dx, dy] = rng.pick(NEIGHBORS);
-      const c: Cell = [x + dx, y + dy];
-      if (!cells.some(d => d[0] === c[0] && d[1] === c[1])) cells.push(c);
-    }
-    const shape = normalize(cells);
+    const shape = randomPolyomino(n, rng);
     if (isChiral(shape)) return shape;
   }
 }

@@ -1,8 +1,10 @@
-import React, { useMemo, useSyncExternalStore } from 'react';
+import React, { useEffect, useMemo, useRef, useSyncExternalStore } from 'react';
 import { useTranslation } from 'react-i18next';
 import Button from './Button';
 import type { GameSession } from '../../core/types';
-import { getGame } from '../../core/games/registry';
+import { GAMES, getGame } from '../../core/games/registry';
+import { achievements, type Achievement } from '../../core/stats/engagement';
+import { Confetti } from '../../ui/Confetti';
 import { activeSessions, reviewSession, type SessionReview } from '../../core/stats';
 import { useOptionalServices } from '../../ui/services';
 import { RatingBars, RatingRing } from '../../ui/charts/charts';
@@ -23,19 +25,36 @@ export interface ResultsModalProps {
 
 const noEvents = () => () => undefined;
 
-/** Rating, record and level of the session, recomputed from the event log. */
-function useReview(session: GameSession | null | undefined): SessionReview | null {
+interface Review extends SessionReview {
+  /** Achievements this very session unlocked */
+  unlocked: Achievement[];
+}
+
+/** Rating, record, level and new achievements of the session, recomputed from the event log. */
+function useReview(session: GameSession | null | undefined): Review | null {
   const services = useOptionalServices();
   const repo = services?.repository;
   const events = useSyncExternalStore(repo ? l => repo.subscribe(l) : noEvents, () => repo?.events ?? null);
   return useMemo(() => {
     if (!session || !events) return null;
-    return reviewSession(activeSessions(events), session.id, getGame(session.gameId));
+    const sessions = activeSessions(events);
+    const review = reviewSession(sessions, session.id, getGame(session.gameId));
+    if (!review) return null;
+    return { ...review, unlocked: achievements(sessions, GAMES).filter(a => a.sessionId === session.id) };
   }, [session, events]);
 }
 
-const SessionSummary: React.FC<{ review: SessionReview }> = ({ review }) => {
+const SessionSummary: React.FC<{ review: Review }> = ({ review }) => {
   const { t } = useTranslation();
+  const feedback = useOptionalServices()?.feedback;
+  // the record fanfare plays once per session, not on every re-render
+  const celebrated = useRef<string | null>(null);
+  useEffect(() => {
+    if (review.isRecord && celebrated.current !== review.session.id) {
+      celebrated.current = review.session.id;
+      feedback?.play('record');
+    }
+  }, [review.isRecord, review.session.id, feedback]);
   const { session } = review;
   const game = getGame(session.gameId);
   const leveled = game.maxLevel > game.minLevel;
@@ -56,6 +75,7 @@ const SessionSummary: React.FC<{ review: SessionReview }> = ({ review }) => {
 
   return (
     <div className="session-summary">
+      {review.isRecord && <Confetti />}
       <RatingRing
         value={session.rating}
         label={t('results.rating')}
@@ -74,6 +94,15 @@ const SessionSummary: React.FC<{ review: SessionReview }> = ({ review }) => {
             i === review.recent.length - 1 ? t('results.barCurrent', { value }) : t('results.barPast', { n: i + 1, value })
           }
         />
+      )}
+      {review.unlocked.length > 0 && (
+        <ul className="new-achievements">
+          {review.unlocked.map(a => (
+            <li key={a.id}>
+              <span aria-hidden="true">{a.icon}</span> {t('achievements.new')}: <strong>{t(`achievements.${a.id}.title`)}</strong>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );

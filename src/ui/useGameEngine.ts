@@ -29,7 +29,7 @@ const noopSubscribe = () => () => undefined;
  * logic every v1 game copied into its component.
  */
 export function useGameEngine<S, E>(game: GameDefinition): UseGameEngineReturn<S, E> {
-  const { repository, scheduler, clock } = useServices();
+  const { repository, scheduler, clock, feedback } = useServices();
   const engine = game.engine as GameEngine<S, E> | undefined;
   if (!engine) throw new Error(`${game.id} has no engine`);
 
@@ -59,9 +59,17 @@ export function useGameEngine<S, E>(game: GameDefinition): UseGameEngineReturn<S
         setFinished({ session, outcome });
       },
     });
+    // sound and vibration for hits and mistakes (engine.cues)
+    if (engine.cues && feedback) {
+      let prev = next.state;
+      next.subscribe(state => {
+        for (const cue of engine.cues!(prev, state)) feedback.play(cue);
+        prev = state;
+      });
+    }
     runnerRef.current = next;
     setRunner(next);
-  }, [engine, scheduler, clock, repository, game]);
+  }, [engine, scheduler, clock, repository, game, feedback]);
 
   useEffect(() => () => runnerRef.current?.dispose(), []);
 

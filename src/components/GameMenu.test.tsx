@@ -133,9 +133,9 @@ describe('GameMenu', () => {
 
     const { container } = render(<GameMenu onGameSelect={vi.fn()} />, { wrapper });
 
-    // Best single session (20 v1 points → 750 on the Reaction Click scale), not the sum
+    // Best single session (20 v1 points → 750 on the speed scale × 0.865 at level 1), not the sum
     const values = Array.from(container.querySelectorAll('.best-score .stat-value')).map(e => e.textContent);
-    expect(values).toEqual(['750']);
+    expect(values).toEqual(['649']);
     localStorage.clear();
   });
 });
