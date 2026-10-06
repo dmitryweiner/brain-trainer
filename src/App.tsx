@@ -13,6 +13,7 @@ import { ServicesProvider, useServices } from './ui/services';
 import { createWebServices, type AppServices } from './ui/webServices';
 import { GAME_SCREENS } from './ui/gameScreens';
 import { ConfirmDialog } from './ui/ConfirmDialog';
+import { AppBanner } from './ui/AppBanner';
 import { formatKey, parseKey } from './core/sync/key';
 
 /** Unknown or retired game ids and unusable sync links fall back to the menu */
@@ -45,7 +46,7 @@ function useDocumentLanguage() {
 }
 
 function AppContent() {
-  const { navigation, sync } = useServices();
+  const { navigation, sync, pwa } = useServices();
   const { t } = useTranslation();
   const [route, setRoute] = useState<Route>(() => normalize(navigation.current(), !!sync));
   const { totalScore } = useScoreContext();
@@ -83,6 +84,8 @@ function AppContent() {
           <GameMenu onGameSelect={(gameId: GameId) => go({ view: 'game', gameId })} />
         )}
       </div>
+
+      {pwa && <AppBanner pwa={pwa} />}
 
       {/* Opened from another device's link: #sync=<key> */}
       <ConfirmDialog

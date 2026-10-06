@@ -1,0 +1,45 @@
+@use '../styles/variables.scss' as *;
+
+.app-banner {
+  position: fixed;
+  inset-inline: $spacing-sm;
+  bottom: calc(#{$spacing-sm} + env(safe-area-inset-bottom));
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: $spacing-sm $spacing-md;
+  background: #263238;
+  color: #fff;
+  border-radius: 14px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+  font-size: 17px;
+
+  span {
+    flex: 1;
+  }
+
+  .banner-action {
+    border: none;
+    background: #66bb6a;
+    color: #0d260f;
+    font: inherit;
+    font-weight: 700;
+    border-radius: 10px;
+    padding: 0 $spacing-md;
+    min-height: 48px;
+    cursor: pointer;
+  }
+
+  .banner-close {
+    border: none;
+    background: transparent;
+    color: #cfd8dc;
+    font-size: 28px;
+    min-width: 48px;
+    min-height: 48px;
+    cursor: pointer;
+  }
+}

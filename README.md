@@ -112,6 +112,14 @@ npm run build
 
 Проект будет собран в папку `dist/`. На GitHub Pages его публикует CI при каждом push в `main`; собранные файлы в репозиторий не коммитятся.
 
+### Офлайн и установка (PWA)
+
+Сборка включает service worker (`vite-plugin-pwa`): приложение работает без сети после первого открытия и устанавливается на главный экран. Иконки генерируются из `public/logo.svg`:
+
+```bash
+npm run icons
+```
+
 ### Облачная синхронизация
 
 Воркер Cloudflare + D1 в `cloud/` (адрес `https://brain-trainer-sync.dmitry-weiner.workers.dev`, описание — `PLAN-IMPROVEMENTS.md`, раздел 6.3). Требуется Node 22.

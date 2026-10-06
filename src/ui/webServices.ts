@@ -4,6 +4,7 @@ import { STORAGE_KEYS } from '../core/storage/migrate';
 import { getGame, legacyRating } from '../core/games/registry';
 import { hashNavigation, LocalStorageStore, webClock, webLocale, webScheduler } from '../platform/web';
 import { createWebSync, type WebSync } from '../platform/web/sync';
+import type { PwaControl } from '../platform/web/pwa';
 
 export interface AppServices {
   repository: Repository;
@@ -13,6 +14,8 @@ export interface AppServices {
   locale: LocaleProvider;
   /** Cloud sync; absent in tests and wherever the app runs without it */
   sync?: WebSync;
+  /** Service worker state; started by main.tsx only */
+  pwa?: PwaControl;
 }
 
 const reportError = (error: unknown) => console.warn('[brain-trainer] storage error:', error);

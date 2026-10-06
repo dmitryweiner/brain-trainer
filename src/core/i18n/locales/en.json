@@ -622,5 +622,14 @@
     "correct": "Correct answers",
     "rounds": "Rounds",
     "maxGridSize": "Largest grid"
+  },
+  "pwa": {
+    "updateReady": "A new version is available",
+    "update": "Update",
+    "installText": "Install the app: it opens from your home screen and works offline",
+    "install": "Install",
+    "offlineReady": "Ready: the app now works offline",
+    "ok": "OK",
+    "dismiss": "Not now"
   }
 }
