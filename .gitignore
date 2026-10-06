@@ -34,3 +34,6 @@ Thumbs.db
 # Vite
 dist/
 *.local
+
+# npm run snap output
+shots/
