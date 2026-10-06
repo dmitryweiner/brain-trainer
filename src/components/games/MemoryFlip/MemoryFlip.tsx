@@ -1,8 +1,6 @@
-import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecordResult } from '../../../hooks/useRecordResult';
 import { useMemoryFlip } from './useMemoryFlip';
-import { useScoreContext } from '../../../context/ScoreContext';
-import { useGameHistoryContext } from '../../../context/GameHistoryContext';
 import GameLayout from '../../common/GameLayout';
 import Button from '../../common/Button';
 import ResultsModal from '../../common/ResultsModal';
@@ -41,24 +39,12 @@ export default function MemoryFlip({ onBack }: MemoryFlipProps) {
     handleCardClick,
     proceedToNextLevel,
   } = useMemoryFlip();
-
-  const { addScore } = useScoreContext();
-  const { addGameResult } = useGameHistoryContext();
-  const scoreAddedRef = useRef(false);
-
-  // Добавляем очки в контекст при завершении игры
-  useEffect(() => {
-    if (status === 'results' && !scoreAddedRef.current) {
-      addScore('memory-flip', totalScore);
-      addGameResult({
-        gameId: 'memory-flip',
-        score: totalScore,
-        accuracy: 100, // Completed all levels
-        averageTime: 0, // per-level time is not tracked yet
-      });
-      scoreAddedRef.current = true;
-    }
-  }, [status, totalScore, addScore, addGameResult]);
+  const session = useRecordResult(status === 'results', () => ({
+    gameId: 'memory-flip',
+    score: totalScore,
+    accuracy: 100, // Completed all levels
+    averageTime: 0, // per-level time is not tracked yet
+  }));
 
   // Форматирование времени
   const formatTime = (seconds: number): string => {
@@ -181,6 +167,7 @@ export default function MemoryFlip({ onBack }: MemoryFlipProps) {
         {/* Results Screen */}
         {status === 'results' && (
           <ResultsModal
+            session={session}
             show={true}
             title={`🎮 ${t('games.memory-flip.gameComplete')}`}
             score={totalScore}

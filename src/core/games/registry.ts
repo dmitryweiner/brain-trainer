@@ -1,8 +1,8 @@
 // The one place a game is registered (PLAN-IMPROVEMENTS.md, 5.2). Menu,
 // routing, profile and stats read this list; the UI layer adds the views.
-import type { GameCategory, GameDefinition, GameId, SessionOutcome } from '../types';
-import { reactionClickEngine } from './reactionClick/engine';
-import { oddOneOutEngine } from './oddOneOut/engine';
+import type { GameCategory, GameDefinition, GameId, GameSession, SessionOutcome } from '../types';
+import { reactionClickEngine, reactionClickRating } from './reactionClick/engine';
+import { oddOneOutEngine, oddOneOutRating, oddOneOutSessionLevel, ODD_ONE_OUT } from './oddOneOut/engine';
 
 export function clampRating(value: number): number {
   if (!Number.isFinite(value)) return 0;
@@ -21,10 +21,14 @@ interface Base {
   difficulty: number;
   legacyMaxScore: number;
   engine?: GameDefinition['engine'];
+  rating?: GameDefinition['rating'];
+  sessionLevel?: GameDefinition['sessionLevel'];
+  minLevel?: number;
+  maxLevel?: number;
 }
 
-// Until stage 2 gives each game its own rating, every game is rated like v1
-// history, so old and new sessions sit on one scale.
+// Games still on their v1 component keep the v1 rating (raw score against the
+// known maximum) and a single level until they are ported to the engine.
 function define(base: Base): GameDefinition {
   return {
     minLevel: 1,
@@ -35,16 +39,22 @@ function define(base: Base): GameDefinition {
   };
 }
 
-/** Games in the menu, in menu order. */
+/** Games in the menu, grouped by category in menu order (memory, attention, reaction, spatial, knowledge). */
 export const GAMES: readonly GameDefinition[] = [
-  define({ id: 'reaction-click', category: 'reaction', icon: '⚡', difficulty: 1, legacyMaxScore: 25, engine: reactionClickEngine }),
-  define({ id: 'odd-one-out', category: 'attention', icon: '🔍', difficulty: 2, legacyMaxScore: 40, engine: oddOneOutEngine }),
   define({ id: 'memory-flip', category: 'memory', icon: '🃏', difficulty: 2, legacyMaxScore: 100 }),
   define({ id: 'sequence-recall', category: 'memory', icon: '🧠', difficulty: 3, legacyMaxScore: 18 }),
-  define({ id: 'dual-rule-reaction', category: 'attention', icon: '🔄', difficulty: 3, legacyMaxScore: 30 }),
   define({ id: 'n-back', category: 'memory', icon: '⏮️', difficulty: 4, legacyMaxScore: 45 }),
   define({ id: 'phone-recall', category: 'memory', icon: '📞', difficulty: 3, legacyMaxScore: 22 }),
+  define({
+    id: 'odd-one-out', category: 'attention', icon: '🔍', difficulty: 2, legacyMaxScore: 40,
+    engine: oddOneOutEngine, rating: oddOneOutRating, sessionLevel: oddOneOutSessionLevel, minLevel: ODD_ONE_OUT.minLevel, maxLevel: ODD_ONE_OUT.maxLevel,
+  }),
+  define({ id: 'dual-rule-reaction', category: 'attention', icon: '🔄', difficulty: 3, legacyMaxScore: 30 }),
   define({ id: 'emoji-hunt', category: 'attention', icon: '🔎', difficulty: 2, legacyMaxScore: 125 }),
+  define({
+    id: 'reaction-click', category: 'reaction', icon: '⚡', difficulty: 1, legacyMaxScore: 25,
+    engine: reactionClickEngine, rating: reactionClickRating,
+  }),
   define({ id: 'flags-game', category: 'knowledge', icon: '🏳️', difficulty: 2, legacyMaxScore: 100 }),
 ];
 
@@ -65,6 +75,19 @@ export function getGame(id: GameId): GameDefinition {
   const game = ALL.get(id);
   if (!game) throw new Error(`unknown game: ${id}`);
   return game;
+}
+
+/**
+ * A stored session as stats see it: at its effective level and rated with
+ * the game's current formula, so formulas can be tuned without migrating
+ * history. (The stored rating is what was shown when it was recorded.)
+ */
+export function normalizeSession(session: GameSession): GameSession {
+  const game = ALL.get(session.gameId);
+  if (!game) return session;
+  const level = game.sessionLevel?.(session) ?? session.level;
+  const { score, accuracy, avgTimeMs, metrics } = session;
+  return { ...session, level, rating: clampRating(game.rating({ score, accuracy, avgTimeMs, metrics }, level)) };
 }
 
 export function findActiveGame(id: string): GameDefinition | undefined {

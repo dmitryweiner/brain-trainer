@@ -39,8 +39,8 @@ describe('useGameHistory', () => {
     await services.repository.flush();
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.v2)!);
     expect(stored.schemaVersion).toBe(2);
-    // Reaction Click v1 maximum is 25 points
-    expect(stored.events[0].session).toMatchObject({ gameId: 'reaction-click', level: 1, rating: 800 });
+    // v1-style result (no metrics): 20 of 25 v1 points on the Reaction Click scale
+    expect(stored.events[0].session).toMatchObject({ gameId: 'reaction-click', level: 1, rating: 750 });
   });
 
   it('filters by game and computes stats', () => {

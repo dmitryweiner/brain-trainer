@@ -5,7 +5,7 @@ import { getGame, GAMES } from '../games/registry';
 import { buildSession } from '../engine/session';
 import {
   activeSessions, categoryIndex, currentLevel, dailyStats, dayKey, gameDailyStats, gameStats, nextLevel,
-  totalXp, trendOf, trendSlope,
+  totalXp, trendOf, trendSlope, reviewSession, streakDays, activityCalendar, trainingTimeMs,
 } from './index';
 
 let n = 0;
@@ -155,7 +155,62 @@ describe('buildSession', () => {
     });
     expect(session).toEqual({
       id: 'x', gameId: 'reaction-click', schemaVersion: 2, startedAt: 5, durationMs: 1235, level: 1,
-      score: 20, rating: 800, accuracy: 100, avgTimeMs: 0, metrics: { a: 1 },
+      // no 'hits' metric: rated like v1 history, 20/25 of 937.5
+      score: 20, rating: 750, accuracy: 100, avgTimeMs: 0, metrics: { a: 1 },
     });
+  });
+});
+
+describe('ratings at read time', () => {
+  it('activeSessions re-rates with the current formula', () => {
+    const stored = s({ gameId: 'reaction-click', rating: 1000, avgTimeMs: 600, metrics: { hits: 5 } });
+    expect(activeSessions([ev(stored)])[0].rating).toBe(500);
+  });
+});
+
+describe('reviewSession', () => {
+  const game = { id: 'odd-one-out' as const, minLevel: 1, maxLevel: 10 };
+
+  it('compares with the previous session and the record', () => {
+    const a = s({ gameId: 'odd-one-out', rating: 400, level: 2 });
+    const b = s({ gameId: 'odd-one-out', rating: 600, level: 2 });
+    const c = s({ gameId: 'odd-one-out', rating: 500, level: 3, accuracy: 90 });
+    const list = [a, b, s({ gameId: 'n-back' }), c];
+    expect(reviewSession(list, b.id, game)).toMatchObject({ isRecord: true, previousBest: 400, deltaPct: 50, recent: [400, 600] });
+    expect(reviewSession(list, c.id, game)).toMatchObject({
+      isRecord: false, previousBest: 600, deltaPct: -17, levelBefore: 3, levelAfter: 4, recent: [400, 600, 500],
+    });
+  });
+
+  it('treats the first session as neither record nor change', () => {
+    const a = s({ gameId: 'odd-one-out', accuracy: 50, level: 1 });
+    expect(reviewSession([a], a.id, game)).toMatchObject({ previous: null, previousBest: null, isRecord: false, deltaPct: null, levelAfter: 1 });
+    expect(reviewSession([a], 'missing', game)).toBeNull();
+  });
+});
+
+describe('streak and calendar', () => {
+  const at = (d: number, h = 12) => new Date(2026, 9, d, h).getTime();
+
+  it('counts consecutive days ending today or yesterday', () => {
+    const list = [s({ startedAt: at(3) }), s({ startedAt: at(4) }), s({ startedAt: at(5, 8) })];
+    expect(streakDays(list, at(5, 20))).toBe(3);
+    expect(streakDays(list, at(6, 9))).toBe(3); // not played yet today: still alive
+    expect(streakDays(list, at(7))).toBe(0);
+    expect(streakDays([], at(5))).toBe(0);
+  });
+
+  it('lays out four Monday-first weeks ending with this week', () => {
+    // 2026-10-05 is a Monday
+    const days = activityCalendar([s({ startedAt: at(5) }), s({ startedAt: at(5) }), s({ startedAt: at(1) })], at(7), 4);
+    expect(days).toHaveLength(28);
+    expect(days[0].date).toBe('2026-09-14');
+    expect(days[27].date).toBe('2026-10-11');
+    expect(days.find(d => d.date === '2026-10-05')).toMatchObject({ sessions: 2 });
+    expect(days.find(d => d.isToday)?.date).toBe('2026-10-07');
+  });
+
+  it('sums training time', () => {
+    expect(trainingTimeMs([s({ durationMs: 1500 }), s({ durationMs: 500 })])).toBe(2000);
   });
 });

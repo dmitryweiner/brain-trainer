@@ -142,3 +142,18 @@
   }
 }
 
+
+.games-category {
+  margin-bottom: $spacing-xl;
+}
+
+.category-title {
+  font-size: $font-size-large;
+  font-weight: 700;
+  color: $dark;
+  margin: 0 0 $spacing-md;
+}
+
+.games-category .games-grid {
+  margin-bottom: 0;
+}

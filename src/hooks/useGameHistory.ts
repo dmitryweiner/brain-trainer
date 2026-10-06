@@ -1,11 +1,12 @@
 import { useCallback, useMemo } from 'react';
 import type { GameId } from '../types/game.types';
+import type { GameSession } from '../core/types';
 import type { Clock } from '../core/platform';
 import type { Repository } from '../core/storage/repository';
 import { getGame } from '../core/games/registry';
 import { buildSession } from '../core/engine/session';
 import {
-  activeSessions, dailyStats, gameDailyStats, gameStats, type DailyStats, type GameDailyStats, type GameStats,
+  activeSessions, currentLevel, dailyStats, gameDailyStats, gameStats, type DailyStats, type GameDailyStats, type GameStats,
 } from '../core/stats';
 import { useEvents } from '../ui/services';
 
@@ -26,14 +27,20 @@ export interface GameResult {
 export interface UseGameHistoryReturn {
   /** Counted sessions in v1 shape, oldest first */
   history: GameResult[];
-  /** Records a v1-style result as a level-1 session */
-  addGameResult: (result: Omit<GameResult, 'timestamp'>) => void;
+  /** Records a v1-style result as a level-1 session and returns it */
+  addGameResult: (result: Omit<GameResult, 'timestamp'>) => GameSession;
   getGameHistory: (gameId: GameId) => GameResult[];
   getDailyStats: (days?: number) => DailyStats[];
   getGameDailyStats: (gameId: GameId, days?: number) => GameDailyStats[];
   getGameStats: (gameId: GameId) => GameStats;
+  /** Level the next session of the game is played at */
+  getGameLevel: (gameId: GameId) => number;
+  /** Counted sessions in v2 shape (rated with the current formulas), oldest first */
+  sessions: GameSession[];
   /** Stops counting every session so far (a reset event; nothing is deleted) */
   clearHistory: () => void;
+  /** Same, for one game */
+  resetGame: (gameId: GameId) => void;
 }
 
 /**
@@ -59,6 +66,7 @@ export function useGameHistory(repository: Repository, clock: Clock): UseGameHis
         { id: clock.newId(), startedAt: clock.wallNow(), durationMs: 0, level: 1 },
       );
       repository.addSession(session);
+      return session;
     },
     [repository, clock],
   );
@@ -77,9 +85,14 @@ export function useGameHistory(repository: Repository, clock: Clock): UseGameHis
 
   const getGameStats = useCallback((gameId: GameId) => gameStats(sessions, gameId), [sessions]);
 
-  const clearHistory = useCallback(() => repository.reset(null), [repository]);
+  const getGameLevel = useCallback((gameId: GameId) => currentLevel(sessions, getGame(gameId)), [sessions]);
 
-  return { history, addGameResult, getGameHistory, getDailyStats, getGameDailyStats, getGameStats, clearHistory };
+  const clearHistory = useCallback(() => repository.reset(null), [repository]);
+  const resetGame = useCallback((gameId: GameId) => repository.reset(gameId), [repository]);
+
+  return {
+    history, sessions, addGameResult, getGameHistory, getDailyStats, getGameDailyStats, getGameStats, getGameLevel, clearHistory, resetGame,
+  };
 }
 
 export default useGameHistory;

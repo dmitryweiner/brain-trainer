@@ -1,8 +1,6 @@
-import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecordResult } from '../../../hooks/useRecordResult';
 import { useNBack } from './useNBack';
-import { useScoreContext } from '../../../context/ScoreContext';
-import { useGameHistoryContext } from '../../../context/GameHistoryContext';
 import GameLayout from '../../common/GameLayout';
 import Button from '../../common/Button';
 import ResultsModal from '../../common/ResultsModal';
@@ -33,29 +31,15 @@ export default function NBack({ onBack }: NBackProps) {
     startGame,
     handleMatch,
   } = useNBack();
-
-  const { addScore } = useScoreContext();
-  const { addGameResult } = useGameHistoryContext();
-  const scoreAddedRef = useRef(false);
-
-  // Добавляем очки в контекст при завершении игры
-  useEffect(() => {
-    if (status === 'results' && !scoreAddedRef.current) {
-      addScore('n-back', Math.round(score));
-      // Calculate accuracy
-      const totalResponses = hits + misses + falseAlarms + correctRejections;
-      const accuracy = totalResponses > 0 
-        ? Math.round(((hits + correctRejections) / totalResponses) * 100)
-        : 0;
-      addGameResult({
-        gameId: 'n-back',
-        score: Math.round(score),
-        accuracy,
-        averageTime: 0, // N-back doesn't track reaction time per item
-      });
-      scoreAddedRef.current = true;
-    }
-  }, [status, score, addScore, addGameResult, hits, misses, falseAlarms, correctRejections]);
+  const session = useRecordResult(status === 'results', () => {
+    const totalResponses = hits + misses + falseAlarms + correctRejections;
+    return {
+      gameId: 'n-back',
+      score: Math.round(score),
+      accuracy: totalResponses > 0 ? Math.round(((hits + correctRejections) / totalResponses) * 100) : 0,
+      averageTime: 0, // N-back doesn't track reaction time per item
+    };
+  });
 
   const totalItems = ITEMS_PER_BLOCK * TOTAL_BLOCKS;
   const totalAttempts = currentIndex + 1 + (currentBlock - 1) * ITEMS_PER_BLOCK;
@@ -195,6 +179,7 @@ export default function NBack({ onBack }: NBackProps) {
         {/* Results Screen */}
         {status === 'results' && (
           <ResultsModal
+            session={session}
             show={true}
             title={t('common.gameOver')}
             score={Math.round(score)}

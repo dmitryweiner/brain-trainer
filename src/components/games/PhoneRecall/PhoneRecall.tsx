@@ -1,8 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecordResult } from '../../../hooks/useRecordResult';
 import { usePhoneRecall } from './usePhoneRecall';
-import { useScoreContext } from '../../../context/ScoreContext';
-import { useGameHistoryContext } from '../../../context/GameHistoryContext';
 import GameLayout from '../../common/GameLayout';
 import Button from '../../common/Button';
 import ResultsModal from '../../common/ResultsModal';
@@ -30,27 +29,16 @@ export default function PhoneRecall({ onBack }: PhoneRecallProps) {
     handleBackspace,
     handleSubmit,
   } = usePhoneRecall();
-
-  const { addScore } = useScoreContext();
-  const { addGameResult } = useGameHistoryContext();
-  const scoreAddedRef = useRef(false);
-
-  // Добавляем очки в контекст при завершении игры
-  useEffect(() => {
-    if (status === 'results' && !scoreAddedRef.current) {
-      addScore('phone-recall', totalScore);
-      // Accuracy based on how many numbers correctly recalled
-      const maxPossible = MAX_LENGTH - INITIAL_LENGTH + 1;
-      const accuracy = Math.round((correctNumbers / maxPossible) * 100);
-      addGameResult({
-        gameId: 'phone-recall',
-        score: totalScore,
-        accuracy: Math.min(accuracy, 100),
-        averageTime: 0, // No reaction time tracking
-      });
-      scoreAddedRef.current = true;
-    }
-  }, [status, totalScore, addScore, addGameResult, correctNumbers]);
+  const session = useRecordResult(status === 'results', () => {
+    // Accuracy based on how many numbers correctly recalled
+    const maxPossible = MAX_LENGTH - INITIAL_LENGTH + 1;
+    return {
+      gameId: 'phone-recall',
+      score: totalScore,
+      accuracy: Math.min(Math.round((correctNumbers / maxPossible) * 100), 100),
+      averageTime: 0, // No reaction time tracking
+    };
+  });
 
   // Обработка клавиатуры
   useEffect(() => {
@@ -221,6 +209,7 @@ export default function PhoneRecall({ onBack }: PhoneRecallProps) {
         {/* Results Screen */}
         {status === 'results' && (
           <ResultsModal
+            session={session}
             show={true}
             title={lastAnswerCorrect ? t('results.maxReached') : t('common.gameOver')}
             score={totalScore}

@@ -1,8 +1,6 @@
-import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecordResult } from '../../../hooks/useRecordResult';
 import { useFlagsGame, type GameMode } from './useFlagsGame';
-import { useScoreContext } from '../../../context/ScoreContext';
-import { useGameHistoryContext } from '../../../context/GameHistoryContext';
 import GameLayout from '../../common/GameLayout';
 import Button from '../../common/Button';
 import ResultsModal from '../../common/ResultsModal';
@@ -32,32 +30,12 @@ export default function FlagsGame({ onBack }: FlagsGameProps) {
     startGame,
     resetGame,
   } = useFlagsGame();
-
-  const { addScore } = useScoreContext();
-  const { addGameResult } = useGameHistoryContext();
-  const scoreAddedRef = useRef(false);
-
-  // Reset score tracking when game resets
-  useEffect(() => {
-    if (status === 'intro' || status === 'mode-select') {
-      scoreAddedRef.current = false;
-    }
-  }, [status]);
-
-  // Add score when game ends
-  useEffect(() => {
-    if (status === 'results' && !scoreAddedRef.current) {
-      addScore('flags-game', totalScore);
-      const accuracy = Math.round((correctAnswers / totalRounds) * 100);
-      addGameResult({
-        gameId: 'flags-game',
-        score: totalScore,
-        accuracy,
-        averageTime,
-      });
-      scoreAddedRef.current = true;
-    }
-  }, [status, totalScore, correctAnswers, totalRounds, averageTime, addScore, addGameResult]);
+  const session = useRecordResult(status === 'results', () => ({
+    gameId: 'flags-game',
+    score: totalScore,
+    accuracy: Math.round((correctAnswers / totalRounds) * 100),
+    averageTime,
+  }));
 
   const getCountryName = (code: string) => {
     return t(`countries.${code}`, { defaultValue: code });
@@ -204,6 +182,7 @@ export default function FlagsGame({ onBack }: FlagsGameProps) {
         {/* Results Screen */}
         {status === 'results' && (
           <ResultsModal
+            session={session}
             show={true}
             title={t('common.gameOver')}
             score={totalScore}

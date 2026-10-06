@@ -1,8 +1,6 @@
-import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecordResult } from '../../../hooks/useRecordResult';
 import { useSequenceRecall } from './useSequenceRecall';
-import { useScoreContext } from '../../../context/ScoreContext';
-import { useGameHistoryContext } from '../../../context/GameHistoryContext';
 import GameLayout from '../../common/GameLayout';
 import Button from '../../common/Button';
 import ResultsModal from '../../common/ResultsModal';
@@ -31,27 +29,16 @@ export default function SequenceRecall({ onBack }: SequenceRecallProps) {
     startGame,
     handleOptionClick,
   } = useSequenceRecall();
-
-  const { addScore } = useScoreContext();
-  const { addGameResult } = useGameHistoryContext();
-  const scoreAddedRef = useRef(false);
-
-  // Добавляем очки в контекст при завершении игры
-  useEffect(() => {
-    if (status === 'results' && !scoreAddedRef.current) {
-      addScore('sequence-recall', totalScore);
-      // Accuracy based on correct sequences vs possible sequences
-      const maxPossible = MAX_LENGTH - INITIAL_LENGTH + 1;
-      const accuracy = Math.round((correctSequences / maxPossible) * 100);
-      addGameResult({
-        gameId: 'sequence-recall',
-        score: totalScore,
-        accuracy: Math.min(accuracy, 100),
-        averageTime: 0, // No time tracking in this game
-      });
-      scoreAddedRef.current = true;
-    }
-  }, [status, totalScore, addScore, addGameResult, correctSequences]);
+  const session = useRecordResult(status === 'results', () => {
+    // Accuracy based on correct sequences vs possible sequences
+    const maxPossible = MAX_LENGTH - INITIAL_LENGTH + 1;
+    return {
+      gameId: 'sequence-recall',
+      score: totalScore,
+      accuracy: Math.min(Math.round((correctSequences / maxPossible) * 100), 100),
+      averageTime: 0, // No time tracking in this game
+    };
+  });
 
   return (
     <GameLayout
@@ -181,6 +168,7 @@ export default function SequenceRecall({ onBack }: SequenceRecallProps) {
         {/* Results Screen */}
         {status === 'results' && (
           <ResultsModal
+            session={session}
             show={true}
             title={lastAnswerCorrect ? t('results.maxReached') : t('common.gameOver')}
             score={totalScore}

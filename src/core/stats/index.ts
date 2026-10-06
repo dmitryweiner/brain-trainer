@@ -3,8 +3,13 @@
 // log stays the only source of truth.
 import type { GameCategory, GameDefinition, GameId, GameSession } from '../types';
 import type { StoredEvent } from '../storage/schema';
+import { normalizeSession } from '../games/registry';
 
-/** Sessions still counted: a reset hides the sessions of its game(s) that started at or before it. */
+/**
+ * Sessions still counted, at their effective level and rated with the current
+ * formulas (normalizeSession). A reset hides the sessions of its game(s) that
+ * started at or before it.
+ */
 export function activeSessions(events: readonly StoredEvent[]): GameSession[] {
   const resets = events.filter(e => e.kind === 'reset');
   const out: GameSession[] = [];
@@ -12,7 +17,7 @@ export function activeSessions(events: readonly StoredEvent[]): GameSession[] {
     if (e.kind !== 'session') continue;
     const s = e.session;
     const hidden = resets.some(r => (r.gameId === null || r.gameId === s.gameId) && s.startedAt <= r.at);
-    if (!hidden) out.push(s);
+    if (!hidden) out.push(normalizeSession(s));
   }
   return out.sort((a, b) => a.startedAt - b.startedAt);
 }
@@ -211,4 +216,85 @@ export function categoryIndex(
     result[category] = played.length > 0 ? Math.round(played.reduce((a, b) => a + b, 0) / played.length) : 0;
   }
   return result;
+}
+
+/** What the results screen says about one session (PLAN-IMPROVEMENTS.md, 4.2). */
+export interface SessionReview {
+  session: GameSession;
+  previous: GameSession | null;
+  /** Best rating before this session; null if it is the first one */
+  previousBest: number | null;
+  isRecord: boolean;
+  /** Rating change against the previous session, in % (null without one or from 0) */
+  deltaPct: number | null;
+  levelBefore: number;
+  levelAfter: number;
+  /** Ratings of the last 10 sessions up to and including this one, oldest first */
+  recent: number[];
+}
+
+export function reviewSession(
+  sessions: readonly GameSession[], sessionId: string, game: Pick<GameDefinition, 'id' | 'minLevel' | 'maxLevel'>,
+): SessionReview | null {
+  const list = sessions.filter(s => s.gameId === game.id);
+  const index = list.findIndex(s => s.id === sessionId);
+  if (index < 0) return null;
+  const session = list[index];
+  const before = list.slice(0, index);
+  const previous = before[before.length - 1] ?? null;
+  const previousBest = before.length > 0 ? Math.max(...before.map(s => s.rating)) : null;
+  return {
+    session,
+    previous,
+    previousBest,
+    isRecord: previousBest !== null && session.rating > previousBest,
+    deltaPct: previous && previous.rating > 0 ? Math.round(((session.rating - previous.rating) / previous.rating) * 100) : null,
+    levelBefore: session.level,
+    levelAfter: nextLevel(session.level, session.accuracy, game),
+    recent: list.slice(Math.max(0, index - 9), index + 1).map(s => s.rating),
+  };
+}
+
+/** Days in a row with at least one session, ending today (or yesterday, so the streak survives until tonight). */
+export function streakDays(sessions: readonly GameSession[], now: number): number {
+  const days = new Set(sessions.map(s => dayKey(s.startedAt)));
+  const d = new Date(now);
+  if (!days.has(dayKey(d.getTime()))) d.setDate(d.getDate() - 1);
+  let streak = 0;
+  while (days.has(dayKey(d.getTime()))) {
+    streak++;
+    d.setDate(d.getDate() - 1);
+  }
+  return streak;
+}
+
+export interface CalendarDay {
+  date: string;
+  sessions: number;
+  isToday: boolean;
+}
+
+/** The last `weeks` full weeks (Monday first) ending with the current week, oldest first. */
+export function activityCalendar(sessions: readonly GameSession[], now: number, weeks = 4): CalendarDay[] {
+  const counts = new Map<string, number>();
+  for (const s of sessions) counts.set(dayKey(s.startedAt), (counts.get(dayKey(s.startedAt)) ?? 0) + 1);
+  const today = new Date(now);
+  const mondayOffset = (today.getDay() + 6) % 7;
+  const start = new Date(today.getFullYear(), today.getMonth(), today.getDate() - mondayOffset - 7 * (weeks - 1));
+  const todayKey = dayKey(now);
+  return Array.from({ length: weeks * 7 }, (_, i) => {
+    const date = dayKey(new Date(start.getFullYear(), start.getMonth(), start.getDate() + i).getTime());
+    return { date, sessions: counts.get(date) ?? 0, isToday: date === todayKey };
+  });
+}
+
+/** Total time spent playing (v1 history did not record it) */
+export function trainingTimeMs(sessions: readonly GameSession[]): number {
+  return sessions.reduce((a, s) => a + s.durationMs, 0);
+}
+
+/** Local midnight of a dayKey (new Date('YYYY-MM-DD') would be UTC midnight) */
+export function dayStart(key: string): number {
+  const [y, m, d] = key.split('-').map(Number);
+  return new Date(y, m - 1, d).getTime();
 }

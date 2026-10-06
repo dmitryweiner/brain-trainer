@@ -276,21 +276,29 @@
   },
   "gameCard": {
     "bestScore": "Best",
-    "play": "Play"
+    "play": "Play",
+    "level": "Lv. {{level}}",
+    "bestRating": "Record",
+    "last": "Last",
+    "notPlayed": "Not played yet: give it a try!",
+    "trend": "Rating of recent games",
+    "changeUp": "above the previous",
+    "changeDown": "below the previous"
   },
   "results": {
-    "title": "Game Over!",
-    "maxReached": "Maximum reached!",
-    "perfectScore": "Perfect! You are a master of visual analysis!",
-    "excellent": "Excellent! You have a very sharp eye!",
-    "good": "Good! Keep practicing!",
-    "notBad": "Not bad! Be more careful!",
-    "keepPracticing": "Train your attention to details!",
-    "correctSequences": "Correct sequences",
-    "maxLength": "Max length",
-    "totalPoints": "Total points",
-    "correctNumbers": "Correct numbers",
-    "byDifficulty": "By difficulty level"
+    "rating": "Rating",
+    "level": "Level {{level}}",
+    "newRecord": "New record!",
+    "firstTime": "First result: next time there will be something to compare with",
+    "sameAsLast": "Same as last time",
+    "vsLast": "{{delta}}% vs last time",
+    "record": "Record: {{value}}",
+    "levelUp": "Level {{from}} → {{to}}",
+    "levelDown": "Level {{from}} → {{to}}",
+    "levelSame": "Staying at level {{level}}",
+    "recent": "Recent games",
+    "barCurrent": "Now: {{value}}",
+    "barPast": "Game {{n}}: {{value}}"
   },
   "phoneRecall": {
     "title": "Phone Recall",
@@ -342,13 +350,12 @@
       "notBad": "💪 Not bad! Be more attentive!",
       "keepPracticing": "🎯 Train your attention to details!"
     },
-    "difficultyLevels": "Difficulty levels",
-    "rounds1to3": "Rounds 1-3",
-    "rounds4to7": "Rounds 4-7",
-    "rounds8to10": "Rounds 8-10",
     "selectSymbol": "Select symbol {{number}}",
-    "pointsPerCorrect": "+1 for correct answer",
-    "byDifficulty": "By difficulty"
+    "pointsPerCorrect": "each correct answer earns as many points as the grid has cells per side",
+    "levelHeading": "Your level: {{level}} of 10",
+    "levelGrid": "{{from}}×{{from}} grid, {{to}}×{{to}} in the second half; the symbols get more alike towards the end.",
+    "levelRule": "85% accuracy or more moves you up a level, below 60% moves you down.",
+    "byGrid": "By grid size"
   },
   "nBack": {
     "title": "N-Back (2-back)",
@@ -445,7 +452,42 @@
       "games": "Games",
       "sync": "Sync"
     },
-    "clearTitle": "Delete history?"
+    "clearTitle": "Delete history?",
+    "categoryIndex": "Category index",
+    "categoryHint": "Average record of the played games in a category, out of 1000",
+    "streak": "Days in a row",
+    "calendar": "Activity over 4 weeks",
+    "calendarDay": "{{date}}: {{count}} games",
+    "trainingTime": "Training time",
+    "minutes": "{{count}} min",
+    "weekdays": "Mo,Tu,We,Th,Fr,Sa,Su",
+    "sessionsTotal": "Games played",
+    "open": "Details",
+    "gamePage": {
+      "back": "← All games",
+      "chart": "Rating",
+      "legendSessions": "Game",
+      "legendDaily": "Daily average",
+      "week": "Week",
+      "month": "Month",
+      "all": "All time",
+      "noSessionsInPeriod": "No games in this period",
+      "bestMetrics": "Personal bests",
+      "recentSessions": "Recent games",
+      "date": "Date",
+      "rating": "Rating",
+      "accuracy": "Accuracy",
+      "level": "Lv.",
+      "currentLevel": "Current level: {{level}} of {{max}}",
+      "levelRule": "85% accuracy or more moves you up a level, below 60% moves you down.",
+      "bestRating": "Record",
+      "lastRating": "Last",
+      "played": "Played",
+      "sessionTooltip": "{{date}}: {{value}}",
+      "reset": "Reset this game's statistics",
+      "resetTitle": "Reset game statistics?",
+      "resetText": "Results of “{{game}}” will no longer count towards records and charts. Your XP stays."
+    }
   },
   "countries": {
     "AD": "Andorra",
@@ -564,5 +606,21 @@
     "deleteTitle": "Delete the cloud copy?",
     "deleteText": "Data on this device stays, and sync is turned off.",
     "deleted": "Cloud data deleted"
+  },
+  "categories": {
+    "memory": "Memory",
+    "attention": "Attention",
+    "reaction": "Reaction",
+    "spatial": "Spatial",
+    "knowledge": "Knowledge"
+  },
+  "metrics": {
+    "bestReactionMs": "Best reaction",
+    "worstReactionMs": "Slowest reaction",
+    "falseStarts": "False starts",
+    "hits": "Clean attempts",
+    "correct": "Correct answers",
+    "rounds": "Rounds",
+    "maxGridSize": "Largest grid"
   }
 }

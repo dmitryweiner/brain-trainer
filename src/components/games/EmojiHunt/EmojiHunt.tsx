@@ -1,8 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecordResult } from '../../../hooks/useRecordResult';
 import { GameLayout, ResultsModal, ProgressBar } from '../../common';
-import { useScoreContext } from '../../../context/ScoreContext';
-import { useGameHistoryContext } from '../../../context/GameHistoryContext';
 import { GAME_IDS, ROUNDS } from '../../../utils/constants';
 import useEmojiHunt from './useEmojiHunt';
 import './EmojiHunt.scss';
@@ -13,9 +12,6 @@ export interface EmojiHuntProps {
 
 export const EmojiHunt: React.FC<EmojiHuntProps> = ({ onBack }) => {
   const { t } = useTranslation();
-  const { addScore } = useScoreContext();
-  const { addGameResult } = useGameHistoryContext();
-  const scoreAddedRef = useRef(false);
   const {
     status,
     currentRound,
@@ -34,23 +30,12 @@ export const EmojiHunt: React.FC<EmojiHuntProps> = ({ onBack }) => {
     getAverageTime,
   } = useEmojiHunt();
 
-  useEffect(() => {
-    if (status === 'results' && !scoreAddedRef.current) {
-      if (currentScore > 0) {
-        addScore(GAME_IDS.EMOJI_HUNT, currentScore);
-      }
-      addGameResult({
-        gameId: GAME_IDS.EMOJI_HUNT,
-        score: currentScore,
-        accuracy: getAccuracy(),
-        averageTime: getAverageTime() || 0,
-      });
-      scoreAddedRef.current = true;
-    }
-    if (status === 'intro' || status === 'playing' || status === 'feedback') {
-      scoreAddedRef.current = false;
-    }
-  }, [status, currentScore, addScore, addGameResult, getAccuracy, getAverageTime]);
+  const session = useRecordResult(status === 'results', () => ({
+    gameId: GAME_IDS.EMOJI_HUNT,
+    score: currentScore,
+    accuracy: getAccuracy(),
+    averageTime: getAverageTime() || 0,
+  }));
 
   const getDifficultyLabel = (difficulty: string) => {
     switch (difficulty) {
@@ -243,6 +228,7 @@ export const EmojiHunt: React.FC<EmojiHuntProps> = ({ onBack }) => {
       {renderContent()}
 
       <ResultsModal
+            session={session}
         show={status === 'results'}
         title={`🎮 ${t('common.gameOver')}`}
         score={currentScore}

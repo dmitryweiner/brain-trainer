@@ -90,6 +90,11 @@ export interface GameDefinition {
   legacyMaxScore: number;
   /** Pure: outcome at a level → 0..1000 */
   rating(outcome: SessionOutcome, level: number): number;
+  /**
+   * The level a stored session effectively counts as. Sessions from before
+   * the game had levels record level 1 but were played at a fixed difficulty.
+   */
+  sessionLevel?(session: GameSession): number;
   /** Present once the game runs on the engine; otherwise its v1 component owns the loop */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- engines are heterogeneous; the shell treats state as opaque
   engine?: GameEngine<any, any>;

@@ -33,15 +33,15 @@ describe('OddOneOut', () => {
     expect(screen.getByText(/Найдіть|Найдите|Find/i)).toBeInTheDocument();
   });
 
-  it('should display difficulty information', () => {
+  it('should display the level and its grid', () => {
+    localStorage.clear();
     const handleBackToMenu = vi.fn();
-    
+
     render(<OddOneOut onBackToMenu={handleBackToMenu} />, { wrapper });
-    
-    expect(screen.getByText(/Уровни сложности|Difficulty levels/i)).toBeInTheDocument();
-    expect(screen.getByText(/1-3/)).toBeInTheDocument();
-    expect(screen.getByText(/4-7/)).toBeInTheDocument();
-    expect(screen.getByText(/8-10/)).toBeInTheDocument();
+
+    expect(screen.getByText('Ваш уровень: 1 из 10')).toBeInTheDocument();
+    expect(screen.getByText(/Сетка 3×3, во второй половине 4×4/)).toBeInTheDocument();
+    expect(screen.getByText(/от 85% поднимает уровень/)).toBeInTheDocument();
   });
 
   it('should display scoring information', () => {
@@ -50,7 +50,7 @@ describe('OddOneOut', () => {
     render(<OddOneOut onBackToMenu={handleBackToMenu} />, { wrapper });
     
     expect(screen.getByText(/Очки|Score/i)).toBeInTheDocument();
-    expect(screen.getByText(/\+1/i)).toBeInTheDocument();
+    expect(screen.getByText(/столько очков, сколько клеток/)).toBeInTheDocument();
   });
 
   it('should start game when button is clicked', async () => {

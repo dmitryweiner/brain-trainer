@@ -44,12 +44,17 @@ describe('GameShell', () => {
     expect(screen.getByText(/Игра завершена|Game Over/i)).toBeInTheDocument();
     const sessions = activeSessions(services.repository.events);
     expect(sessions).toHaveLength(1);
+    // level 1: five rounds on 3×3, five on 4×4
     expect(sessions[0]).toMatchObject({
-      gameId: 'odd-one-out', level: 1, accuracy: 100, avgTimeMs: 400, score: 3 * 3 + 4 * 4 + 3 * 5,
-      metrics: { correct: 10, rounds: 10, maxGridSize: 5 },
+      gameId: 'odd-one-out', level: 1, accuracy: 100, avgTimeMs: 400, score: 5 * 3 + 5 * 4,
+      metrics: { correct: 10, rounds: 10, maxGridSize: 4 },
     });
-    // Odd One Out v1 maximum is 40 points
-    expect(sessions[0].rating).toBe(1000);
+    // perfect and quick at level 1: the level's ceiling
+    expect(sessions[0].rating).toBe(460);
+    // the results screen compares from the log; first session, so nothing yet
+    expect(screen.getByText('460')).toBeInTheDocument();
+    expect(screen.getByText(/Первый результат/)).toBeInTheDocument();
+    expect(screen.getByText(/Уровень 1 → 2/)).toBeInTheDocument();
   });
 
   it('starts a fresh session on "play again"', () => {

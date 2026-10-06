@@ -105,3 +105,24 @@ export const reactionClickEngine: GameEngine<ReactionClickState, ReactionClickEv
     };
   },
 };
+
+/** Raw-score maximum of the v1 game (5 attempts × 5 points) */
+const V1_MAX_SCORE = 25;
+const FASTEST_MS = 200;
+const SLOWEST_MS = 1000;
+
+function speed(avgMs: number): number {
+  return Math.min(1, Math.max(0, (SLOWEST_MS - avgMs) / (SLOWEST_MS - FASTEST_MS)));
+}
+
+/**
+ * Share of clean attempts × speed of the average reaction: 200 ms or faster
+ * is 1000, 1 s or slower is 0. v1 history (no metrics) maps its points onto
+ * the same scale: 25 points ≈ all attempts at about 250 ms.
+ */
+export function reactionClickRating(outcome: SessionOutcome): number {
+  if (outcome.metrics.hits === undefined) {
+    return (outcome.score / V1_MAX_SCORE) * speed(250) * 1000;
+  }
+  return (outcome.metrics.hits / REACTION_CLICK.attempts) * speed(outcome.avgTimeMs) * 1000;
+}

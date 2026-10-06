@@ -1,6 +1,7 @@
 @use '../../styles/variables.scss' as *;
 
 .game-card {
+  position: relative;
   background: white;
   border-radius: $btn-border-radius;
   padding: $spacing-md;
@@ -156,3 +157,45 @@
   }
 }
 
+
+.game-card-level {
+  position: absolute;
+  top: $spacing-sm;
+  inset-inline-end: $spacing-sm;
+  background: rgba($primary, 0.12);
+  color: #2e6b31;
+  font-weight: 700;
+  font-size: 15px;
+  padding: 2px 10px;
+  border-radius: 999px;
+}
+
+.last-score {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-xs;
+}
+
+.stat-value-secondary {
+  font-size: 18px;
+  color: $dark;
+  font-weight: 600;
+
+  .change {
+    font-size: 14px;
+    color: $gray;
+  }
+}
+
+.game-card-stats .sparkline {
+  display: block;
+  margin-top: $spacing-xs;
+}
+
+.not-played {
+  margin: $spacing-xs 0 0;
+  font-size: 16px;
+  color: $gray;
+  text-align: center;
+}

@@ -276,21 +276,29 @@
   },
   "gameCard": {
     "bestScore": "הטוב ביותר",
-    "play": "שחק"
+    "play": "שחק",
+    "level": "שלב {{level}}",
+    "bestRating": "שיא",
+    "last": "אחרון",
+    "notPlayed": "עוד לא שיחקתם: נסו!",
+    "trend": "דירוג המשחקים האחרונים",
+    "changeUp": "מעל הקודם",
+    "changeDown": "מתחת לקודם"
   },
   "results": {
-    "title": "המשחק נגמר!",
-    "maxReached": "הגעת למקסימום!",
-    "perfectScore": "מושלם! אתה מאסטר של ניתוח חזותי!",
-    "excellent": "מעולה! יש לך עין חדה מאוד!",
-    "good": "טוב! המשך להתאמן!",
-    "notBad": "לא רע! היה יותר קשוב!",
-    "keepPracticing": "תאמן את תשומת הלב לפרטים!",
-    "correctSequences": "רצפים נכונים",
-    "maxLength": "אורך מקסימלי",
-    "totalPoints": "סה״כ נקודות",
-    "correctNumbers": "מספרים נכונים",
-    "byDifficulty": "לפי רמת קושי"
+    "rating": "דירוג",
+    "level": "שלב {{level}}",
+    "newRecord": "שיא חדש!",
+    "firstTime": "תוצאה ראשונה: בפעם הבאה יהיה למה להשוות",
+    "sameAsLast": "כמו בפעם הקודמת",
+    "vsLast": "{{delta}}% לעומת הפעם הקודמת",
+    "record": "שיא: {{value}}",
+    "levelUp": "שלב {{from}} ← {{to}}",
+    "levelDown": "שלב {{from}} ← {{to}}",
+    "levelSame": "נשארים בשלב {{level}}",
+    "recent": "משחקים אחרונים",
+    "barCurrent": "עכשיו: {{value}}",
+    "barPast": "משחק {{n}}: {{value}}"
   },
   "phoneRecall": {
     "title": "זכירת מספר",
@@ -342,13 +350,12 @@
       "notBad": "💪 לא רע! היה קשוב יותר!",
       "keepPracticing": "🎯 אמן את הקשב לפרטים!"
     },
-    "difficultyLevels": "רמות קושי",
-    "rounds1to3": "סיבובים 1-3",
-    "rounds4to7": "סיבובים 4-7",
-    "rounds8to10": "סיבובים 8-10",
     "selectSymbol": "בחר סמל {{number}}",
-    "pointsPerCorrect": "+1 לתשובה נכונה",
-    "byDifficulty": "לפי רמת קושי"
+    "pointsPerCorrect": "על כל תשובה נכונה מקבלים נקודות כמספר המשבצות בצלע הרשת",
+    "levelHeading": "השלב שלכם: {{level}} מתוך 10",
+    "levelGrid": "רשת {{from}}×{{from}}, ובחצי השני {{to}}×{{to}}; לקראת הסוף הסמלים דומים יותר.",
+    "levelRule": "דיוק של 85% ומעלה מעלה שלב, מתחת ל-60% מוריד שלב.",
+    "byGrid": "לפי גודל הרשת"
   },
   "nBack": {
     "title": "N-אחורה (2-אחורה)",
@@ -445,7 +452,42 @@
       "games": "משחקים",
       "sync": "סנכרון"
     },
-    "clearTitle": "למחוק את ההיסטוריה?"
+    "clearTitle": "למחוק את ההיסטוריה?",
+    "categoryIndex": "מדד לפי קטגוריות",
+    "categoryHint": "ממוצע השיאים של המשחקים ששוחקו בקטגוריה, מתוך 1000",
+    "streak": "ימים ברצף",
+    "calendar": "פעילות ב-4 שבועות",
+    "calendarDay": "{{date}}: {{count}} משחקים",
+    "trainingTime": "זמן אימון",
+    "minutes": "{{count}} דק׳",
+    "weekdays": "ב׳,ג׳,ד׳,ה׳,ו׳,ש׳,א׳",
+    "sessionsTotal": "משחקים בסך הכול",
+    "open": "פרטים",
+    "gamePage": {
+      "back": "כל המשחקים →",
+      "chart": "דירוג",
+      "legendSessions": "משחק",
+      "legendDaily": "ממוצע יומי",
+      "week": "שבוע",
+      "month": "חודש",
+      "all": "כל הזמן",
+      "noSessionsInPeriod": "אין משחקים בתקופה הזאת",
+      "bestMetrics": "הישגים אישיים",
+      "recentSessions": "משחקים אחרונים",
+      "date": "תאריך",
+      "rating": "דירוג",
+      "accuracy": "דיוק",
+      "level": "שלב",
+      "currentLevel": "שלב נוכחי: {{level}} מתוך {{max}}",
+      "levelRule": "דיוק של 85% ומעלה מעלה שלב, מתחת ל-60% מוריד שלב.",
+      "bestRating": "שיא",
+      "lastRating": "אחרון",
+      "played": "שוחקו",
+      "sessionTooltip": "{{date}}: {{value}}",
+      "reset": "איפוס הסטטיסטיקה של המשחק",
+      "resetTitle": "לאפס את הסטטיסטיקה של המשחק?",
+      "resetText": "התוצאות של „{{game}}” לא ייספרו יותר בשיאים ובגרפים. נקודות הניסיון יישמרו."
+    }
   },
   "countries": {
     "AD": "אנדורה",
@@ -564,5 +606,21 @@
     "deleteTitle": "למחוק את העותק בענן?",
     "deleteText": "הנתונים במכשיר הזה יישארו, והסנכרון ייכבה.",
     "deleted": "הנתונים בענן נמחקו"
+  },
+  "categories": {
+    "memory": "זיכרון",
+    "attention": "קשב",
+    "reaction": "תגובה",
+    "spatial": "מרחב",
+    "knowledge": "ידע"
+  },
+  "metrics": {
+    "bestReactionMs": "התגובה הטובה ביותר",
+    "worstReactionMs": "התגובה האיטית ביותר",
+    "falseStarts": "זינוקים מוקדמים",
+    "hits": "ניסיונות נקיים",
+    "correct": "תשובות נכונות",
+    "rounds": "סבבים",
+    "maxGridSize": "הרשת הגדולה ביותר"
   }
 }

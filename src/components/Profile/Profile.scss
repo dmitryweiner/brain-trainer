@@ -576,3 +576,186 @@
   }
 }
 
+
+// Stage 2: overview charts, game rows as buttons, game page
+.profile-games .game-stat-card {
+  width: 100%;
+  border: none;
+  text-align: start;
+  font: inherit;
+  min-height: 56px;
+
+  .game-quick-stats .best {
+    font-size: 14px;
+    font-weight: 600;
+    color: $dark;
+  }
+}
+
+.chart-section {
+  background: white;
+  border-radius: 12px;
+  padding: $spacing-md;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: $spacing-md;
+
+  h3 {
+    font-size: 18px;
+    margin: 0 0 $spacing-sm;
+    color: $dark;
+  }
+
+  .chart-hint {
+    font-size: 14px;
+    color: $gray;
+    margin: -4px 0 $spacing-sm;
+  }
+
+  .chart-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-sm;
+
+    h3 {
+      margin: 0;
+    }
+  }
+}
+
+.period-switch {
+  display: inline-flex;
+  background: $light;
+  border-radius: 10px;
+  padding: 3px;
+
+  button {
+    border: none;
+    background: transparent;
+    font: inherit;
+    font-size: 15px;
+    padding: 8px 12px;
+    min-height: 40px;
+    border-radius: 8px;
+    color: $gray;
+    cursor: pointer;
+
+    &.active {
+      background: white;
+      color: $dark;
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    }
+  }
+}
+
+.game-page {
+  .back-link {
+    border: none;
+    background: none;
+    color: $primary;
+    font: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    padding: $spacing-xs 0;
+    min-height: 44px;
+    cursor: pointer;
+  }
+
+  .game-page-title {
+    font-size: $font-size-large;
+    margin: 0 0 $spacing-md;
+    color: $dark;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $spacing-sm;
+    margin-bottom: $spacing-md;
+  }
+
+  .stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: $spacing-sm;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+    .stat-value {
+      font-size: 26px;
+      font-weight: 700;
+      color: $dark;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: $gray;
+    }
+  }
+
+  .game-page-level {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: rgba($primary, 0.08);
+    border-radius: 12px;
+    padding: $spacing-sm $spacing-md;
+    margin-bottom: $spacing-md;
+    color: $dark;
+
+    span {
+      font-size: 15px;
+      color: $gray;
+    }
+  }
+
+  .best-metrics {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: $spacing-sm;
+
+    div {
+      background: $light;
+      border-radius: 10px;
+      padding: $spacing-sm;
+    }
+
+    dt {
+      font-size: 14px;
+      color: $gray;
+      font-weight: 400;
+    }
+
+    dd {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      color: $dark;
+    }
+  }
+
+  .sessions-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+
+    th {
+      text-align: start;
+      color: $gray;
+      font-weight: 500;
+      padding: 6px 4px;
+      border-bottom: 1px solid #e6e9e7;
+    }
+
+    td {
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f2f1;
+      color: $dark;
+    }
+  }
+}

@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGameHistoryContext } from '../../context/GameHistoryContext';
+import { useScoreContext } from '../../context/ScoreContext';
 import { GAMES_META } from '../../utils/constants';
 import { ConfirmDialog } from '../../ui/ConfirmDialog';
 import { SyncPanel } from '../../ui/SyncPanel';
 import { useOptionalServices } from '../../ui/services';
+import { ActivityCalendar, HorizontalBars } from '../../ui/charts/charts';
+import { GAMES } from '../../core/games/registry';
+import { activityCalendar, categoryIndex, dayStart, streakDays, trainingTimeMs } from '../../core/stats';
+import type { GameCategory } from '../../core/types';
 import type { GameId } from '../../types/game.types';
+import { GamePage } from './GamePage';
 import './Profile.scss';
 
 export interface ProfileProps {
@@ -14,92 +20,85 @@ export interface ProfileProps {
 
 type TabType = 'overview' | 'daily' | 'games' | 'sync';
 
+const CATEGORIES: readonly GameCategory[] = ['memory', 'attention', 'reaction', 'spatial', 'knowledge'];
+
 export const Profile: React.FC<ProfileProps> = ({ onBack }) => {
-  const { t } = useTranslation();
-  const { history, getDailyStats, getGameStats, getGameDailyStats, clearHistory } = useGameHistoryContext();
+  const { t, i18n } = useTranslation();
+  const { sessions, getDailyStats, getGameStats, getGameLevel, clearHistory, resetGame } = useGameHistoryContext();
+  const { totalScore } = useScoreContext();
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [selectedGame, setSelectedGame] = useState<GameId | null>(null);
   const [confirmClear, setConfirmClear] = useState(false);
-  const sync = useOptionalServices()?.sync;
+  const services = useOptionalServices();
+  const sync = services?.sync;
+  const now = services?.clock.wallNow() ?? Date.now();
 
   const dailyStats = getDailyStats(14); // Last 14 days
-  const totalGames = history.length;
-  const totalScore = history.reduce((sum, r) => sum + r.score, 0);
-  const avgAccuracy = totalGames > 0 
-    ? Math.round(history.reduce((sum, r) => sum + r.accuracy, 0) / totalGames) 
-    : 0;
-
-  // Get max score for bar chart scaling
-  const maxDailyScore = Math.max(...dailyStats.map(d => d.totalScore), 1);
+  const totalGames = sessions.length;
   const maxDailyGames = Math.max(...dailyStats.map(d => d.gamesPlayed), 1);
+  const fmtDay = (key: string, opts: Intl.DateTimeFormatOptions) => new Date(dayStart(key)).toLocaleDateString(i18n.language, opts);
 
-  const handleClearHistory = () => setConfirmClear(true);
-
-  const renderOverview = () => (
-    <div className="profile-overview">
-      <div className="stats-grid">
-        <div className="stat-card">
-          <div className="stat-icon">🎮</div>
-          <div className="stat-value">{totalGames}</div>
-          <div className="stat-label">{t('profile.totalGames')}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-icon">⭐</div>
-          <div className="stat-value">{totalScore}</div>
-          <div className="stat-label">{t('profile.totalScore')}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-icon">🎯</div>
-          <div className="stat-value">{avgAccuracy}%</div>
-          <div className="stat-label">{t('profile.avgAccuracy')}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-icon">📅</div>
-          <div className="stat-value">{dailyStats.length}</div>
-          <div className="stat-label">{t('profile.activeDays')}</div>
-        </div>
-      </div>
-
-      {dailyStats.length > 0 && (
-        <div className="chart-section">
-          <h3>{t('profile.recentActivity')}</h3>
-          <div className="bar-chart">
-            {dailyStats.slice(0, 7).reverse().map((day) => (
-              <div key={day.date} className="bar-item">
-                <div className="bar-container">
-                  <div 
-                    className="bar score-bar"
-                    style={{ height: `${(day.totalScore / maxDailyScore) * 100}%` }}
-                    title={`${t('profile.score')}: ${day.totalScore}`}
-                  />
-                </div>
-                <div className="bar-label">
-                  {new Date(day.date).toLocaleDateString(undefined, { 
-                    weekday: 'short' 
-                  })}
-                </div>
-              </div>
-            ))}
+  const renderOverview = () => {
+    if (totalGames === 0) {
+      return (
+        <div className="profile-overview">
+          <div className="empty-state">
+            <div className="empty-icon">📊</div>
+            <p>{t('profile.noData')}</p>
           </div>
         </div>
-      )}
-
-      {totalGames === 0 && (
-        <div className="empty-state">
-          <div className="empty-icon">📊</div>
-          <p>{t('profile.noData')}</p>
+      );
+    }
+    const index = categoryIndex(sessions, GAMES);
+    const categories = CATEGORIES.filter(c => GAMES.some(g => g.category === c));
+    const minutes = Math.round(trainingTimeMs(sessions) / 60_000);
+    const calendar = activityCalendar(sessions, now, 4).map(day => ({
+      ...day,
+      label: t('profile.calendarDay', { date: fmtDay(day.date, { day: 'numeric', month: 'long' }), count: day.sessions }),
+    }));
+    return (
+      <div className="profile-overview">
+        <div className="stats-grid">
+          <div className="stat-card">
+            <div className="stat-icon">🔥</div>
+            <div className="stat-value">{streakDays(sessions, now)}</div>
+            <div className="stat-label">{t('profile.streak')}</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-icon">🎮</div>
+            <div className="stat-value">{totalGames}</div>
+            <div className="stat-label">{t('profile.sessionsTotal')}</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-icon">⏱️</div>
+            <div className="stat-value">{t('profile.minutes', { count: minutes })}</div>
+            <div className="stat-label">{t('profile.trainingTime')}</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-icon">⭐</div>
+            <div className="stat-value">{totalScore}</div>
+            <div className="stat-label">{t('profile.totalScore')}</div>
+          </div>
         </div>
-      )}
 
-      {totalGames > 0 && (
+        <section className="chart-section">
+          <h3>{t('profile.categoryIndex')}</h3>
+          <p className="chart-hint">{t('profile.categoryHint')}</p>
+          <HorizontalBars rows={categories.map(c => ({ key: c, label: t(`categories.${c}`), value: index[c] }))} />
+        </section>
+
+        <section className="chart-section">
+          <ActivityCalendar days={calendar} weekdays={t('profile.weekdays').split(',')} caption={t('profile.calendar')} />
+        </section>
+
         <div className="reset-section">
-          <button className="reset-all-btn" onClick={handleClearHistory}>
+          <button className="reset-all-btn" onClick={() => setConfirmClear(true)}>
             🗑️ {t('profile.resetAll')}
           </button>
         </div>
-      )}
-    </div>
-  );
+      </div>
+    );
+  };
 
   const renderDailyStats = () => (
     <div className="profile-daily">
@@ -114,12 +113,7 @@ export const Profile: React.FC<ProfileProps> = ({ onBack }) => {
             <div key={day.date} className="daily-card">
               <div className="daily-header">
                 <div className="daily-date">
-                  {new Date(day.date).toLocaleDateString(undefined, {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
+                  {fmtDay(day.date, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                 </div>
                 <div className="daily-games-count">
                   {day.gamesPlayed} {t('profile.games')}
@@ -136,10 +130,7 @@ export const Profile: React.FC<ProfileProps> = ({ onBack }) => {
                 </div>
               </div>
               <div className="daily-progress">
-                <div 
-                  className="progress-fill"
-                  style={{ width: `${(day.gamesPlayed / maxDailyGames) * 100}%` }}
-                />
+                <div className="progress-fill" style={{ width: `${(day.gamesPlayed / maxDailyGames) * 100}%` }} />
               </div>
               <div className="daily-breakdown">
                 {Object.entries(day.gameBreakdown).map(([gameId, data]) => {
@@ -158,100 +149,62 @@ export const Profile: React.FC<ProfileProps> = ({ onBack }) => {
     </div>
   );
 
-  const renderGamesStats = () => (
-    <div className="profile-games">
-      <div className="games-list">
-        {GAMES_META.map((game) => {
-          const stats = getGameStats(game.id);
-          const isSelected = selectedGame === game.id;
-          
-          return (
-            <div 
-              key={game.id}
-              className={`game-stat-card ${isSelected ? 'expanded' : ''}`}
-              onClick={() => setSelectedGame(isSelected ? null : game.id)}
-            >
-              <div className="game-stat-header">
-                <div className="game-info">
-                  <span className="game-icon">{game.icon}</span>
-                  <span className="game-name">
-                    {t(`games.${game.id}.title`, { defaultValue: game.title })}
-                  </span>
-                </div>
-                <div className="game-quick-stats">
-                  <span className="played">{stats.totalGames} {t('profile.played')}</span>
-                  {stats.recentTrend === 'improving' && <span className="trend up">↑</span>}
-                  {stats.recentTrend === 'declining' && <span className="trend down">↓</span>}
-                </div>
-              </div>
-              
-              {isSelected && stats.totalGames > 0 && (
-                <div className="game-stat-details">
-                  <div className="detail-row">
-                    <span className="label">{t('profile.bestScore')}:</span>
-                    <span className="value">{stats.bestScore}</span>
+  const renderGamesStats = () => {
+    if (selectedGame) {
+      return (
+        <GamePage
+          gameId={selectedGame}
+          sessions={sessions}
+          level={getGameLevel(selectedGame)}
+          now={now}
+          onBack={() => setSelectedGame(null)}
+          onReset={resetGame}
+        />
+      );
+    }
+    return (
+      <div className="profile-games">
+        <div className="games-list">
+          {GAMES_META.map((game) => {
+            const stats = getGameStats(game.id);
+            return (
+              <button key={game.id} className="game-stat-card" onClick={() => setSelectedGame(game.id)}>
+                <div className="game-stat-header">
+                  <div className="game-info">
+                    <span className="game-icon">{game.icon}</span>
+                    <span className="game-name">{t(`games.${game.id}.title`, { defaultValue: game.title })}</span>
                   </div>
-                  <div className="detail-row">
-                    <span className="label">{t('profile.avgScore')}:</span>
-                    <span className="value">{stats.averageScore}</span>
+                  <div className="game-quick-stats">
+                    {stats.totalGames > 0 ? (
+                      <>
+                        <span className="best">{t('profile.gamePage.bestRating')}: {stats.bestRating}</span>
+                        <span className="played">{stats.totalGames} {t('profile.played')}</span>
+                        {stats.recentTrend === 'improving' && <span className="trend up" aria-label={t('profile.trends.improving')}>↑</span>}
+                        {stats.recentTrend === 'declining' && <span className="trend down" aria-label={t('profile.trends.declining')}>↓</span>}
+                      </>
+                    ) : (
+                      <span className="played">{t('profile.notPlayedYet')}</span>
+                    )}
                   </div>
-                  <div className="detail-row">
-                    <span className="label">{t('profile.avgAccuracy')}:</span>
-                    <span className="value">{stats.averageAccuracy}%</span>
-                  </div>
-                  <div className="detail-row">
-                    <span className="label">{t('profile.trend')}:</span>
-                    <span className={`value trend-${stats.recentTrend}`}>
-                      {t(`profile.trends.${stats.recentTrend}`)}
-                    </span>
-                  </div>
-                  
-                  {/* Daily Progress Chart */}
-                  {(() => {
-                    const gameDailyStats = getGameDailyStats(game.id, 14);
-                    if (gameDailyStats.length < 2) return null;
-                    
-                    const maxScore = Math.max(...gameDailyStats.map(d => d.averageScore), 1);
-                    
-                    return (
-                      <div className="game-daily-chart">
-                        <h4>{t('profile.dailyProgress')}</h4>
-                        <div className="chart-container">
-                          <div className="chart-bars">
-                            {gameDailyStats.slice(-7).map((day) => (
-                              <div key={day.date} className="chart-bar-item">
-                                <div className="chart-bar-container">
-                                  <div 
-                                    className="chart-bar"
-                                    style={{ height: `${(day.averageScore / maxScore) * 100}%` }}
-                                    title={`${day.averageScore} ${t('common.points')}`}
-                                  />
-                                </div>
-                                <div className="chart-bar-label">
-                                  {new Date(day.date).toLocaleDateString(undefined, { 
-                                    weekday: 'short' 
-                                  })}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })()}
                 </div>
-              )}
-              
-              {isSelected && stats.totalGames === 0 && (
-                <div className="game-stat-details empty">
-                  <p>{t('profile.notPlayedYet')}</p>
-                </div>
-              )}
-            </div>
-          );
-        })}
+              </button>
+            );
+          })}
+        </div>
       </div>
-    </div>
+    );
+  };
+
+  const tab = (id: TabType, label: string) => (
+    <button
+      className={`tab ${activeTab === id ? 'active' : ''}`}
+      onClick={() => {
+        setActiveTab(id);
+        setSelectedGame(null);
+      }}
+    >
+      {label}
+    </button>
   );
 
   return (
@@ -262,39 +215,17 @@ export const Profile: React.FC<ProfileProps> = ({ onBack }) => {
         </button>
         <h1>{t('profile.title')}</h1>
         {totalGames > 0 && (
-          <button className="clear-btn" onClick={handleClearHistory}>
+          <button className="clear-btn" onClick={() => setConfirmClear(true)}>
             🗑️
           </button>
         )}
       </div>
 
       <div className="profile-tabs">
-        <button 
-          className={`tab ${activeTab === 'overview' ? 'active' : ''}`}
-          onClick={() => setActiveTab('overview')}
-        >
-          {t('profile.tabs.overview')}
-        </button>
-        <button 
-          className={`tab ${activeTab === 'daily' ? 'active' : ''}`}
-          onClick={() => setActiveTab('daily')}
-        >
-          {t('profile.tabs.daily')}
-        </button>
-        <button 
-          className={`tab ${activeTab === 'games' ? 'active' : ''}`}
-          onClick={() => setActiveTab('games')}
-        >
-          {t('profile.tabs.games')}
-        </button>
-        {sync && (
-          <button
-            className={`tab ${activeTab === 'sync' ? 'active' : ''}`}
-            onClick={() => setActiveTab('sync')}
-          >
-            {t('profile.tabs.sync')}
-          </button>
-        )}
+        {tab('overview', t('profile.tabs.overview'))}
+        {tab('daily', t('profile.tabs.daily'))}
+        {tab('games', t('profile.tabs.games'))}
+        {sync && tab('sync', t('profile.tabs.sync'))}
       </div>
 
       <div className="profile-content">
@@ -320,4 +251,3 @@ export const Profile: React.FC<ProfileProps> = ({ onBack }) => {
 };
 
 export default Profile;
-

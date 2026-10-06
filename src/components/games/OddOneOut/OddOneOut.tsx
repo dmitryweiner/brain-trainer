@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ProgressBar } from '../../common';
 import { GameShell, type GameViews } from '../../../ui/GameShell';
 import { getGame } from '../../../core/games/registry';
-import { ODD_ONE_OUT, type OddOneOutEvent, type OddOneOutState } from '../../../core/games/oddOneOut/engine';
+import { gridSizeFor, ODD_ONE_OUT, type OddOneOutEvent, type OddOneOutState } from '../../../core/games/oddOneOut/engine';
 import './OddOneOut.scss';
 
 export interface OddOneOutProps {
@@ -15,7 +15,7 @@ type Views = GameViews<OddOneOutState, OddOneOutEvent>;
 
 const ROUNDS = ODD_ONE_OUT.rounds;
 
-const Intro: Views['Intro'] = ({ onStart }) => {
+const Intro: Views['Intro'] = ({ onStart, level }) => {
   const { t } = useTranslation();
   return (
     <div className="odd-one-out-intro">
@@ -33,12 +33,9 @@ const Intro: Views['Intro'] = ({ onStart }) => {
             </ul>
           </div>
           <div className="difficulty-info">
-            <h4>{t('oddOneOut.difficultyLevels')}:</h4>
-            <ul>
-              <li>🟢 {t('oddOneOut.rounds1to3')}: <strong>3×3</strong> ({t('common.difficulty.easy')})</li>
-              <li>🟡 {t('oddOneOut.rounds4to7')}: <strong>4×4</strong> ({t('common.difficulty.medium')})</li>
-              <li>🔴 {t('oddOneOut.rounds8to10')}: <strong>5×5</strong> ({t('common.difficulty.hard')})</li>
-            </ul>
+            <h4>{t('oddOneOut.levelHeading', { level })}</h4>
+            <p>{t('oddOneOut.levelGrid', { from: gridSizeFor(level, 0), to: gridSizeFor(level, ROUNDS - 1) })}</p>
+            <p className="text-muted">{t('oddOneOut.levelRule')}</p>
           </div>
           <div className="scoring-info">
             <p><strong>{t('common.score')}:</strong> {t('oddOneOut.pointsPerCorrect')}</p>
@@ -120,14 +117,7 @@ const Footer: Views['Footer'] = ({ state }) => {
 const Details: Views['Details'] = ({ state, outcome }) => {
   const { t } = useTranslation();
   const { results } = state;
-  const row = (difficulty: 'easy' | 'medium' | 'hard', label: string) => (
-    <div className="breakdown-item">
-      <span>{label}:</span>
-      <span>
-        {results.filter(r => r.correct && r.difficulty === difficulty).length} / {results.filter(r => r.difficulty === difficulty).length}
-      </span>
-    </div>
-  );
+  const sizes = [...new Set(results.map(r => r.gridSize))].sort((x, y) => x - y);
   return (
     <div className="results-details">
       <div className="results-summary">
@@ -147,10 +137,15 @@ const Details: Views['Details'] = ({ state, outcome }) => {
       </div>
 
       <div className="difficulty-breakdown">
-        <h4>{t('oddOneOut.byDifficulty')}:</h4>
-        {row('easy', '🟢 3×3 (1-3)')}
-        {row('medium', '🟡 4×4 (4-7)')}
-        {row('hard', '🔴 5×5 (8-10)')}
+        <h4>{t('oddOneOut.byGrid')}:</h4>
+        {sizes.map(size => (
+          <div className="breakdown-item" key={size}>
+            <span>{size}×{size}:</span>
+            <span>
+              {results.filter(r => r.correct && r.gridSize === size).length} / {results.filter(r => r.gridSize === size).length}
+            </span>
+          </div>
+        ))}
       </div>
     </div>
   );

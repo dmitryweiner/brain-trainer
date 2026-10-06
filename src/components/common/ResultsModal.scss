@@ -221,3 +221,65 @@
   }
 }
 
+
+// Full-screen results (PLAN-IMPROVEMENTS.md, 4.2): a page, not a popup
+.results-overlay {
+  background: $light;
+  align-items: flex-start;
+  overflow-y: auto;
+  padding: $spacing-md;
+
+  .results-modal {
+    max-height: none;
+    margin: auto;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .results-overlay {
+    padding: 0;
+    background: white;
+
+    .results-modal {
+      min-height: 100dvh;
+      border-radius: 0;
+      box-shadow: none;
+      padding: $spacing-lg $spacing-md;
+    }
+  }
+}
+
+.session-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-xs;
+  margin-bottom: $spacing-lg;
+  text-align: center;
+
+  p {
+    margin: 0;
+  }
+
+  .summary-comparison {
+    font-size: 20px;
+    font-weight: 600;
+    color: $dark;
+    margin-top: $spacing-sm;
+
+    &.record {
+      font-size: 24px;
+    }
+  }
+
+  .summary-record,
+  .summary-level {
+    font-size: 18px;
+    color: $gray;
+  }
+
+  .rating-bars {
+    margin-top: $spacing-sm;
+  }
+}

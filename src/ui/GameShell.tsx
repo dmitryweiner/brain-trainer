@@ -40,6 +40,7 @@ export function GameShell<S, E>({ game, views, title, onBack, onNextGame }: Game
         show={phase === 'results' && finished !== null}
         title={`🎮 ${t('common.gameOver')}`}
         score={finished?.session.score ?? 0}
+        session={finished?.session}
         message={finished ? views.message(finished.outcome, t) : ''}
         details={finished && state && Details ? <Details state={state} outcome={finished.outcome} /> : undefined}
         onPlayAgain={start}

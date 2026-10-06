@@ -1,7 +1,11 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from './App';
+
+/** The play button of the card with this (Russian) title */
+const playButtonFor = (title: string) =>
+  within(screen.getByText(title).closest('.game-card') as HTMLElement).getByRole('button', { name: /играть/i });
 
 describe('App', () => {
   // Clear URL hash before each test to ensure clean state
@@ -33,9 +37,7 @@ describe('App', () => {
   it('should navigate to game when card is clicked', async () => {
     const user = userEvent.setup();
     render(<App />);
-
-    const playButtons = screen.getAllByRole('button', { name: /играть/i });
-    await user.click(playButtons[0]);
+    await user.click(playButtonFor('Скорость реакции'));
 
     // Должен отобразиться экран игры Reaction Click
     expect(screen.getByText('Начать игру')).toBeInTheDocument();
@@ -45,9 +47,7 @@ describe('App', () => {
   it('should show back button when in game', async () => {
     const user = userEvent.setup();
     const { container } = render(<App />);
-
-    const playButtons = screen.getAllByRole('button', { name: /играть/i });
-    await user.click(playButtons[0]);
+    await user.click(playButtonFor('Скорость реакции'));
 
     expect(container.querySelector('.back-button')).toBeInTheDocument();
   });
@@ -57,8 +57,7 @@ describe('App', () => {
     const { container } = render(<App />);
 
     // Переход в игру
-    const playButtons = screen.getAllByRole('button', { name: /играть/i });
-    await user.click(playButtons[0]);
+    await user.click(playButtonFor('Скорость реакции'));
 
     expect(screen.getByText('Начать игру')).toBeInTheDocument();
 
@@ -73,9 +72,7 @@ describe('App', () => {
   it('should display game title in header when game is selected', async () => {
     const user = userEvent.setup();
     render(<App />);
-
-    const playButtons = screen.getAllByRole('button', { name: /играть/i });
-    await user.click(playButtons[0]);
+    await user.click(playButtonFor('Скорость реакции'));
 
     // Название в шапке переведено (раньше там был английский title из GAMES_META)
     const titles = screen.getAllByText(/⚡ Скорость реакции/);
@@ -93,8 +90,7 @@ describe('App', () => {
     const { container } = render(<App />);
 
     // Переход к первой игре (Reaction Click)
-    let playButtons = screen.getAllByRole('button', { name: /играть/i });
-    await user.click(playButtons[0]);
+    await user.click(playButtonFor('Скорость реакции'));
     expect(screen.getByText('Начать игру')).toBeInTheDocument();
 
     // Возврат в меню
@@ -102,9 +98,8 @@ describe('App', () => {
     await user.click(backButton);
 
     // Переход ко второй игре (Odd One Out)
-    playButtons = screen.getAllByRole('button', { name: /играть/i });
-    await user.click(playButtons[1]);
-    expect(screen.getByText(/Уровни сложности/)).toBeInTheDocument();
+    await user.click(playButtonFor('Найди лишний'));
+    expect(screen.getByText(/Ваш уровень: 1 из 10/)).toBeInTheDocument();
   });
 
   it('should send a retired game id back to the menu', () => {

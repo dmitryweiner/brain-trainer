@@ -48,18 +48,33 @@ describe('GameCard', () => {
     expect(container.querySelector('.best-score')).not.toBeInTheDocument();
   });
 
-  it('should show best score when provided and greater than 0', () => {
-    const { container } = render(<GameCard game={mockGame} bestScore={100} onPlay={() => {}} />);
-    
-    const bestScoreElement = container.querySelector('.best-score');
-    expect(bestScoreElement).toBeInTheDocument();
-    expect(screen.getByText('100')).toBeInTheDocument();
+  it('should show the record, last rating with its direction, and a sparkline', () => {
+    const { container } = render(
+      <GameCard
+        game={mockGame}
+        progress={{ played: 3, bestRating: 740, lastRating: 610, previousRating: 520, sparkline: [520, 610] }}
+        onPlay={() => {}}
+      />,
+    );
+    expect(container.querySelector('.best-score .stat-value')).toHaveTextContent('740');
+    expect(container.querySelector('.last-score')).toHaveTextContent('610 ▲');
+    expect(screen.getByRole('img', { name: 'Рейтинг последних игр' })).toBeInTheDocument();
+    expect(container.querySelector('.game-card-level')).not.toBeInTheDocument();
   });
 
-  it('should not show best score when it is 0', () => {
-    const { container } = render(<GameCard game={mockGame} bestScore={0} onPlay={() => {}} />);
-    
+  it('should show a level badge for games with levels', () => {
+    render(
+      <GameCard game={mockGame} progress={{ played: 1, bestRating: 300, lastRating: 300, previousRating: null, sparkline: [300], level: 4 }} onPlay={() => {}} />,
+    );
+    expect(screen.getByText('Ур. 4')).toBeInTheDocument();
+  });
+
+  it('should invite to try a game that was not played', () => {
+    const { container } = render(
+      <GameCard game={mockGame} progress={{ played: 0, bestRating: 0, lastRating: null, previousRating: null, sparkline: [] }} onPlay={() => {}} />,
+    );
     expect(container.querySelector('.best-score')).not.toBeInTheDocument();
+    expect(screen.getByText('Ещё не играли: попробуйте!')).toBeInTheDocument();
   });
 
   it('should render difficulty stars', () => {

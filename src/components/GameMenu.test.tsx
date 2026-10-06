@@ -99,9 +99,10 @@ describe('GameMenu', () => {
     
     const { container } = render(<GameMenu onGameSelect={handleGameSelect} />, { wrapper });
     
-    const gamesGrid = container.querySelector('.games-grid');
-    expect(gamesGrid).toBeInTheDocument();
-    expect(gamesGrid?.children).toHaveLength(GAMES_META.length);
+    // one grid per category, together holding every game
+    const grids = [...container.querySelectorAll('.games-grid')];
+    expect(grids.length).toBeGreaterThan(1);
+    expect(grids.reduce((n, g) => n + g.children.length, 0)).toBe(GAMES_META.length);
   });
 
   it('should handle multiple game selections', async () => {
@@ -126,14 +127,15 @@ describe('GameMenu', () => {
     localStorage.clear();
     const now = Date.now();
     localStorage.setItem('brain-trainer-results', JSON.stringify([
-      { gameId: GAMES_META[0].id, score: 12, accuracy: 100, averageTime: 300, timestamp: now - 2000 },
-      { gameId: GAMES_META[0].id, score: 20, accuracy: 100, averageTime: 300, timestamp: now - 1000 },
+      { gameId: 'reaction-click', score: 12, accuracy: 100, averageTime: 300, timestamp: now - 2000 },
+      { gameId: 'reaction-click', score: 20, accuracy: 100, averageTime: 300, timestamp: now - 1000 },
     ]));
 
     const { container } = render(<GameMenu onGameSelect={vi.fn()} />, { wrapper });
 
+    // Best single session (20 v1 points → 750 on the Reaction Click scale), not the sum
     const values = Array.from(container.querySelectorAll('.best-score .stat-value')).map(e => e.textContent);
-    expect(values).toEqual(['20']);
+    expect(values).toEqual(['750']);
     localStorage.clear();
   });
 });
