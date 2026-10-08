@@ -794,14 +794,18 @@
   "repeat": {
     "rule1": "The panels light up one after another.",
     "rule2": "Repeat them in the same order.",
-    "rule3": "Each success adds one step. Two mistakes end the game.",
-    "layout": "{{panels}} panels, starting length {{length}}",
+    "rule3": "Repeat it to win: the next game is a step longer. After a mistake you get a second try; miss it too and the next game is shorter.",
+    "layout": "{{panels}} panels, length {{length}}",
     "watch": "Watch and listen…",
     "yourTurn": "Your turn: {{done}} of {{total}}",
-    "correct": "Correct! One step longer next",
-    "wrong": "Mistake",
     "panel": "Panel {{n}}",
-    "length": "Length"
+    "length": "Length",
+    "win": "You win! 🎉",
+    "tryAgain": "Mistake. One more try — a new sequence",
+    "lost": "Not this time",
+    "nextLength": "Next game",
+    "verdictWin": "🎉 You win!",
+    "verdictLost": "No worries: the next one will be shorter"
   },
   "digits": {
     "rule1": "Digits appear one at a time.",

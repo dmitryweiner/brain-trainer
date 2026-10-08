@@ -134,6 +134,14 @@ describe('levels', () => {
     expect(currentLevel([], def)).toBe(1);
     expect(currentLevel([s({ level: 4, accuracy: 90 }), s({ gameId: 'n-back', level: 9 })], def)).toBe(5);
   });
+
+  it('lets a game decide its own step (Repeat: win → longer, loss → shorter)', () => {
+    const repeat = getGame('sequence-recall');
+    const won = (tries: number) => s({ gameId: 'sequence-recall', level: 4, accuracy: 50, metrics: { won: 1, tries } });
+    expect(currentLevel([won(1)], repeat)).toBe(5);
+    expect(currentLevel([won(2)], repeat)).toBe(4);
+    expect(currentLevel([s({ gameId: 'sequence-recall', level: 1, accuracy: 0, metrics: { won: 0, tries: 2 } })], repeat)).toBe(1);
+  });
 });
 
 describe('categoryIndex', () => {

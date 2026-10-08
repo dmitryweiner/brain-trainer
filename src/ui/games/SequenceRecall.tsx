@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GameShell, type GameViews } from '../GameShell';
 import { getGame } from '../../core/games/registry';
-import { litPanel, SEQUENCE, sequenceLayout, type SequenceEvent, type SequenceState } from '../../core/games/sequenceRecall/engine';
+import { litPanel, SEQUENCE, sequenceLayout, sequenceLevelStep, type SequenceEvent, type SequenceState } from '../../core/games/sequenceRecall/engine';
+import { Confetti } from '../Confetti';
 import { useServices } from '../services';
 import { GameIntro, Lives, StatusLine } from './common';
 import type { ScreenProps } from '../gameScreens';
@@ -22,10 +23,10 @@ const PANELS = [
 
 const Intro: Views['Intro'] = ({ onStart, level }) => {
   const { t } = useTranslation();
-  const { panels, startLength } = sequenceLayout(level);
+  const { panels, length } = sequenceLayout(level);
   return (
     <GameIntro gameId="sequence-recall" level={level} onStart={onStart} rules={['repeat.rule1', 'repeat.rule2', 'repeat.rule3']}>
-      <p className="intro-detail">{t('repeat.layout', { panels, length: startLength })}</p>
+      <p className="intro-detail">{t('repeat.layout', { panels, length })}</p>
     </GameIntro>
   );
 };
@@ -55,7 +56,7 @@ const Board: Views['Board'] = ({ state, dispatch }) => {
     ? t('repeat.watch')
     : state.phase === 'input'
       ? t('repeat.yourTurn', { done: state.inputIndex, total: state.sequence.length })
-      : t(state.lastCorrect ? 'repeat.correct' : 'repeat.wrong');
+      : t(state.lastCorrect ? 'repeat.win' : state.lives > 0 ? 'repeat.tryAgain' : 'repeat.lost');
 
   return (
     <div className="repeat">
@@ -89,24 +90,28 @@ const Footer: Views['Footer'] = ({ state }) => {
   const { t } = useTranslation();
   return (
     <StatusLine items={[
-      `${t('repeat.length')}: ${state.sequence.length}`,
+      `${t('repeat.length')}: ${state.layout.length}`,
       <Lives left={state.lives} total={SEQUENCE.lives} />,
-      `${t('common.score')}: ${state.score}`,
     ]} />
   );
 };
 
-const Details: Views['Details'] = ({ outcome }) => {
+const Details: Views['Details'] = ({ state, outcome }) => {
   const { t } = useTranslation();
+  const next = sequenceLayout(state.level + (sequenceLevelStep(outcome) ?? 0)).length;
   return (
     <div className="results-details">
-      <div className="stat-item highlight"><span className="stat-label">{t('metrics.maxSequence')}</span><span className="stat-value">{outcome.metrics.maxSequence}</span></div>
-      <div className="stat-item"><span className="stat-label">{t('metrics.rounds')}</span><span className="stat-value">{outcome.metrics.rounds}</span></div>
+      {state.won && <Confetti />}
+      <div className="stat-item highlight"><span className="stat-label">{t('repeat.length')}</span><span className="stat-value">{state.layout.length}</span></div>
+      <div className="stat-item"><span className="stat-label">{t('repeat.nextLength')}</span><span className="stat-value">{next}</span></div>
     </div>
   );
 };
 
-const views: Views = { Intro, Board, Footer, Details };
+/** Win or loss is the verdict: the rating band would call a short win "could be better" */
+const message: Views['message'] = (outcome, t) => t(outcome.metrics.won ? 'repeat.verdictWin' : 'repeat.verdictLost');
+
+const views: Views = { Intro, Board, Footer, Details, message };
 
 export const SequenceRecall: React.FC<ScreenProps> = ({ onBack, onNextGame }) => {
   return <GameShell game={getGame('sequence-recall')} views={views} onBack={onBack} onNextGame={onNextGame} />;

@@ -197,11 +197,20 @@ export function nextLevel(level: number, accuracy: number, game: Pick<GameDefini
   return Math.min(game.maxLevel, Math.max(game.minLevel, next));
 }
 
+type LevelRules = Pick<GameDefinition, 'minLevel' | 'maxLevel' | 'levelStep'>;
+
+/** The level after `session`: the game's own step if it has one, else the accuracy rule. */
+export function levelAfter(session: GameSession, game: LevelRules): number {
+  const step = game.levelStep?.(session);
+  if (step === undefined) return nextLevel(session.level, session.accuracy, game);
+  return Math.min(game.maxLevel, Math.max(game.minLevel, session.level + step));
+}
+
 /** The level the next session of `game` is played at. */
 export function currentLevel(sessions: readonly GameSession[], game: GameDefinition): number {
   let last: GameSession | undefined;
   for (const s of sessions) if (s.gameId === game.id) last = s;
-  return last ? nextLevel(last.level, last.accuracy, game) : game.minLevel;
+  return last ? levelAfter(last, game) : game.minLevel;
 }
 
 /** Category index: mean best rating of the category's played games (0 if none played). */
@@ -234,7 +243,7 @@ export interface SessionReview {
 }
 
 export function reviewSession(
-  sessions: readonly GameSession[], sessionId: string, game: Pick<GameDefinition, 'id' | 'minLevel' | 'maxLevel'>,
+  sessions: readonly GameSession[], sessionId: string, game: Pick<GameDefinition, 'id' | 'minLevel' | 'maxLevel' | 'levelStep'>,
 ): SessionReview | null {
   const list = sessions.filter(s => s.gameId === game.id);
   const index = list.findIndex(s => s.id === sessionId);
@@ -250,7 +259,7 @@ export function reviewSession(
     isRecord: previousBest !== null && session.rating > previousBest,
     deltaPct: previous && previous.rating > 0 ? Math.round(((session.rating - previous.rating) / previous.rating) * 100) : null,
     levelBefore: session.level,
-    levelAfter: nextLevel(session.level, session.accuracy, game),
+    levelAfter: levelAfter(session, game),
     recent: list.slice(Math.max(0, index - 9), index + 1).map(s => s.rating),
   };
 }

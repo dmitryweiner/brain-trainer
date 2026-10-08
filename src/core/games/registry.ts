@@ -8,7 +8,7 @@ import { schulteEngine, schulteRating } from './schulte/engine';
 import { whackEngine, whackRating } from './whackAMole/engine';
 import { traceEngine, traceRating } from './traceLine/engine';
 import { rotateShapeEngine, rotateShapeRating } from './rotateShape/engine';
-import { sequenceEngine, sequenceRating } from './sequenceRecall/engine';
+import { sequenceEngine, sequenceLevelStep, sequenceRating, sequenceSessionLevel } from './sequenceRecall/engine';
 import { digitSpanEngine, digitSpanRating } from './digitSpan/engine';
 import { taskSwitchEngine, taskSwitchRating, taskSwitchSessionLevel } from './taskSwitch/engine';
 import { memoryFlipEngine, memoryFlipRating, memoryFlipSessionLevel } from './memoryFlip/engine';
@@ -40,6 +40,7 @@ interface Base {
   engine?: GameDefinition['engine'];
   rating?: GameDefinition['rating'];
   sessionLevel?: GameDefinition['sessionLevel'];
+  levelStep?: GameDefinition['levelStep'];
   minLevel?: number;
   maxLevel?: number;
   sessionKind?: GameDefinition['sessionKind'];
@@ -63,7 +64,10 @@ const LEVELS = { minLevel: MIN_LEVEL, maxLevel: MAX_LEVEL };
 export const GAMES: readonly GameDefinition[] = [
   define({ id: 'memory-matrix', category: 'memory', icon: '🟩', difficulty: 2, legacyMaxScore: 0, engine: memoryMatrixEngine, rating: memoryMatrixRating, ...LEVELS }),
   define({ id: 'where-was', category: 'memory', icon: '📍', difficulty: 2, legacyMaxScore: 0, engine: whereWasEngine, rating: whereWasRating, ...LEVELS }),
-  define({ id: 'sequence-recall', category: 'memory', icon: '🎹', difficulty: 2, legacyMaxScore: 18, engine: sequenceEngine, rating: sequenceRating, ...LEVELS }),
+  define({
+    id: 'sequence-recall', category: 'memory', icon: '🎹', difficulty: 2, legacyMaxScore: 18,
+    engine: sequenceEngine, rating: sequenceRating, sessionLevel: sequenceSessionLevel, levelStep: sequenceLevelStep, ...LEVELS,
+  }),
   define({ id: 'phone-recall', category: 'memory', icon: '📞', difficulty: 3, legacyMaxScore: 22, engine: digitSpanEngine, rating: digitSpanRating, ...LEVELS }),
   define({
     id: 'n-back', category: 'memory', icon: '⏮️', difficulty: 4, legacyMaxScore: 45,

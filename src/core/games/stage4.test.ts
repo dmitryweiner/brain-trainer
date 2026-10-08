@@ -12,7 +12,7 @@ import { corridor, gridSpacing, makePath, pointAt, project } from './traceLine/g
 import { traceEngine, TRACE } from './traceLine/engine';
 import { isChiral, key, mirror, nearMiss, randomChiral, rotate, sameUpToRotation } from './shapes/polyomino';
 import { makeRound, rotateShapeEngine, cellsFor } from './rotateShape/engine';
-import { litPanel, sequenceEngine, sequenceLayout, sequenceRating, SEQUENCE } from './sequenceRecall/engine';
+import { litPanel, sequenceEngine, sequenceLayout, sequenceLevelStep, sequenceRating, sequenceSessionLevel, SEQUENCE } from './sequenceRecall/engine';
 import { digitSpanEngine, digitSpanRating, expected, shownDigit, DIGIT_SPAN } from './digitSpan/engine';
 import { correctSide, switchLayout, taskSwitchEngine, SWITCH } from './taskSwitch/engine';
 import { boardsFor, memoryFlipEngine } from './memoryFlip/engine';
@@ -224,30 +224,57 @@ describe('Rotate the shape', () => {
 });
 
 describe('Repeat (Simon)', () => {
-  it('sets panels, start length and pace by level', () => {
-    expect(sequenceLayout(1)).toMatchObject({ panels: 4, startLength: 3, showMs: 750 });
-    expect(sequenceLayout(6)).toMatchObject({ panels: 6, startLength: 4 });
-    expect(sequenceLayout(10)).toMatchObject({ panels: 9, startLength: 6, showMs: 390 });
+  it('sets length, panels and pace by level', () => {
+    expect(sequenceLayout(1)).toMatchObject({ panels: 4, length: 3, showMs: 750 });
+    expect(sequenceLayout(6)).toMatchObject({ panels: 4, length: 8 });
+    expect(sequenceLayout(7)).toMatchObject({ panels: 6, length: 9 });
+    expect(sequenceLayout(10)).toMatchObject({ panels: 9, length: 12, showMs: 390 });
   });
 
-  it('grows by one after each success; two mistakes end it', () => {
-    let lengths: number[] = [];
-    let mistakes = 0;
-    const { outcome } = play(sequenceEngine, 1, (s, r) => {
-      if (s.phase !== 'input') return;
-      if (s.inputIndex === 0 && !lengths.includes(s.sequence.length)) lengths = [...lengths, s.sequence.length];
-      const wrongNow = s.sequence.length >= 5;
-      if (wrongNow) {
-        mistakes++;
-        r.dispatch({ type: 'tap', panel: (s.sequence[s.inputIndex] + 1) % s.layout.panels });
-      } else {
-        r.dispatch({ type: 'tap', panel: s.sequence[s.inputIndex] });
-      }
-    });
-    expect(lengths).toEqual([3, 4, 5]);
-    expect(mistakes).toBe(SEQUENCE.lives);
-    expect(outcome.metrics).toMatchObject({ maxSequence: 4, rounds: 4 });
-    expect(outcome.score).toBe(3 + 4);
+  /** Plays one game: `wrongTries` tries fail at their second step, then the rest are repeated */
+  const game = (level: number, wrongTries: number) => {
+    const lengths: number[] = [];
+    let tries = 0;
+    return {
+      lengths,
+      ...play(sequenceEngine, level, (s, r) => {
+        if (s.phase !== 'input') return;
+        if (s.inputIndex === 0) { lengths.push(s.sequence.length); tries++; }
+        const wrong = tries <= wrongTries && s.inputIndex === 1;
+        r.dispatch({ type: 'tap', panel: wrong ? (s.sequence[1] + 1) % s.layout.panels : s.sequence[s.inputIndex] });
+      }),
+    };
+  };
+  const step = (outcome: { metrics: Record<string, number> }) => sequenceLevelStep(outcome);
+
+  it('one length per game: a first-try win ends it and the next game is longer', () => {
+    const { outcome, lengths } = game(3, 0);
+    expect(lengths).toEqual([5]);
+    expect(outcome.metrics).toMatchObject({ won: 1, tries: 1, length: 5, maxSequence: 5 });
+    expect(outcome.score).toBe(10);
+    expect(step(outcome)).toBe(1);
+  });
+
+  it('a miss gets a second try at the same length; winning it keeps the length', () => {
+    const { outcome, lengths } = game(3, 1);
+    expect(lengths).toEqual([5, 5]);
+    expect(outcome.metrics).toMatchObject({ won: 1, tries: 2 });
+    expect(step(outcome)).toBe(0);
+  });
+
+  it('two misses lose the game and the next one is shorter', () => {
+    const { outcome, lengths } = game(3, SEQUENCE.lives);
+    expect(lengths).toEqual([5, 5]);
+    expect(outcome.metrics).toMatchObject({ won: 0, tries: 2, maxSequence: 1 });
+    expect(outcome.accuracy).toBe(0);
+    expect(step(outcome)).toBe(-1);
+  });
+
+  it('history of the growing version: replays the length reached', () => {
+    const old = { level: 2, metrics: { maxSequence: 6, rounds: 5, panels: 4 } };
+    expect(sequenceLevelStep(old)).toBe(0);
+    expect(sequenceSessionLevel(old)).toBe(4);
+    expect(sequenceLevelStep({ metrics: {} })).toBeUndefined();
   });
 
   it('shows each panel lit, then dark', () => {

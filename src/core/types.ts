@@ -119,6 +119,11 @@ export interface GameDefinition {
    * the game had levels record level 1 but were played at a fixed difficulty.
    */
   sessionLevel?(session: GameSession): number;
+  /**
+   * The next session's level change (−1, 0, +1) when the game decides it
+   * itself; undefined falls back to the accuracy rule.
+   */
+  levelStep?(session: GameSession): number | undefined;
   /** Present once the game runs on the engine; otherwise its v1 component owns the loop */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- engines are heterogeneous; the shell treats state as opaque
   engine?: GameEngine<any, any>;
