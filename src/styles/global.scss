@@ -273,3 +273,96 @@ h2 {
   }
 }
 
+
+// Short screens (a tablet in landscape, a small phone): fewer scrolls.
+// Touch targets stay at 48 px; only paddings, gaps and type shrink.
+@media (max-height: 760px) {
+  .header-content {
+    min-height: 44px;
+    padding: 2px $spacing-sm;
+  }
+
+  .back-button {
+    font-size: 16px;
+    min-width: 0;
+    padding: 4px 10px;
+  }
+
+  .app-title.game-mode {
+    font-size: 17px;
+  }
+
+  .main-content {
+    padding: $spacing-xs $spacing-sm;
+  }
+
+  .game-layout {
+    padding: $spacing-xs $spacing-sm;
+    min-height: 0;
+  }
+
+  .game-body {
+    padding: $spacing-xs 0;
+  }
+
+  .game-footer {
+    padding: $spacing-xs 0;
+    margin-top: $spacing-xs;
+  }
+
+  .game-intro {
+    padding: 0;
+
+    .intro-card {
+      padding: $spacing-sm $spacing-md;
+
+      h2 {
+        font-size: 22px;
+        margin-bottom: 2px;
+      }
+
+      .lead {
+        font-size: 16px;
+        margin-bottom: $spacing-xs;
+      }
+    }
+
+    .intro-rules {
+      font-size: 16px;
+      line-height: 1.35;
+      margin-bottom: $spacing-xs;
+    }
+
+    .intro-level {
+      padding: 4px;
+      margin-bottom: $spacing-xs;
+    }
+  }
+
+  .intro-detail {
+    font-size: 16px;
+    margin-bottom: $spacing-xs;
+  }
+
+  .game-prompt {
+    font-size: 18px;
+    margin-bottom: $spacing-xs;
+  }
+
+  .square-board {
+    width: min(calc(100vw - 32px), 520px, 56vh);
+  }
+
+  .btn-custom.btn-large {
+    min-height: 52px;
+    font-size: 20px;
+  }
+
+  .game-menu-header {
+    margin-bottom: $spacing-md;
+
+    .menu-title {
+      font-size: 26px;
+    }
+  }
+}

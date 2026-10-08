@@ -94,6 +94,5 @@ const Details: Views['Details'] = ({ outcome }) => {
 const views: Views = { Intro, Board, Footer, Details };
 
 export const TraceLine: React.FC<ScreenProps> = ({ onBack, onNextGame }) => {
-  const { t } = useTranslation();
-  return <GameShell game={getGame('trace-line')} views={views} title={`✍️ ${t('games.trace-line.title')}`} onBack={onBack} onNextGame={onNextGame} />;
+  return <GameShell game={getGame('trace-line')} views={views} onBack={onBack} onNextGame={onNextGame} />;
 };

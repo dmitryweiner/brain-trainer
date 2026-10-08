@@ -60,6 +60,5 @@ const Details: Views['Details'] = ({ outcome }) => {
 const views: Views = { Intro, Board, Footer, Details };
 
 export const Mirror: React.FC<ScreenProps> = ({ onBack, onNextGame }) => {
-  const { t } = useTranslation();
-  return <GameShell game={getGame('mirror')} views={views} title={`🦋 ${t('games.mirror.title')}`} onBack={onBack} onNextGame={onNextGame} />;
+  return <GameShell game={getGame('mirror')} views={views} onBack={onBack} onNextGame={onNextGame} />;
 };

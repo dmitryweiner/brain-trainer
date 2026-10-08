@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { GameShell, type GameViews } from '../../../ui/GameShell';
 import { getGame } from '../../../core/games/registry';
 import {
-  decoyChance, REACTION_CLICK, type ReactionClickEvent, type ReactionClickState,
+  decoyChance, reachMs, REACTION_CLICK, type ReactionClickEvent, type ReactionClickState,
 } from '../../../core/games/reactionClick/engine';
 import { activeSessions, gameStats } from '../../../core/stats';
 import { useEvents, useServices } from '../../../ui/services';
@@ -33,67 +33,39 @@ const Intro: Views['Intro'] = ({ onStart, level }) => (
 const Board: Views['Board'] = ({ state, dispatch }) => {
   const { t } = useTranslation();
   const tap = () => dispatch({ type: 'tap' });
-  const tappable = {
-    onPointerDown: tap,
-    role: 'button',
-    tabIndex: 0,
-    onKeyDown: (e: React.KeyboardEvent) => (e.key === 'Enter' || e.key === ' ') && tap(),
-  };
+  const { phase } = state;
+  const jumping = phase === 'clicked' || phase === 'tooEarly';
+  const running = phase === 'waiting' || phase === 'decoy' || phase === 'ready';
+  const ms = state.reactionTimes[state.reactionTimes.length - 1];
 
-  switch (state.phase) {
-    case 'waiting':
-      return (
-        <div className="reaction-area reaction-waiting" {...tappable}>
-          <div className="reaction-content">
-            <div className="reaction-emoji">⏳</div>
-            <h2>{t('games.reaction-click.waiting')}</h2>
-            <p className="attempt-counter">{t('games.reaction-click.attempt')} {state.attempt + 1} / {TOTAL}</p>
-          </div>
-        </div>
-      );
-    case 'decoy':
-      // looks like a signal on purpose: only green means "go"
-      return (
-        <div className="reaction-area reaction-decoy" {...tappable}>
-          <div className="reaction-content">
-            <div className="reaction-emoji">🟡</div>
-          </div>
-        </div>
-      );
-    case 'ready':
-      return (
-        <div className="reaction-area reaction-ready" {...tappable}>
-          <div className="reaction-content">
-            <div className="reaction-emoji">🟢</div>
-            <h2>{t('games.reaction-click.clickNow')}</h2>
-          </div>
-        </div>
-      );
-    case 'clicked': {
-      const ms = state.reactionTimes[state.reactionTimes.length - 1];
-      return (
-        <div className="reaction-area reaction-clicked">
-          <div className="reaction-content">
-            <div className="reaction-emoji celebration">⚡</div>
-            <h2>{ms} {t('common.ms')}</h2>
-            {state.combo >= 2 && <p>{t('reaction.streak', { count: state.combo })}</p>}
-          </div>
-        </div>
-      );
-    }
-    case 'tooEarly':
-      return (
-        <div className="reaction-area reaction-too-early">
-          <div className="reaction-content">
-            <div className="reaction-emoji explosion">💥</div>
-            <h2>{t('games.reaction-click.tooEarly')}</h2>
-            <p>{t('reaction.onlyGreen')}</p>
-          </div>
-        </div>
-      );
-    default:
-      return null;
-  }
+  let caption = t('reaction.hint');
+  if (phase === 'clicked') caption = `⚡ ${ms} ${t('common.ms')}${state.combo >= 2 ? ` · ${t('reaction.streak', { count: state.combo })}` : ''}`;
+  if (phase === 'tooEarly') caption = t('games.reaction-click.tooEarly');
+  if (phase === 'crashed') caption = t('reaction.crash');
+
+  return (
+    <div
+      className={`dino-scene ${running ? 'running' : ''}`}
+      role="button"
+      tabIndex={0}
+      aria-label={t('reaction.jump')}
+      onPointerDown={tap}
+      onKeyDown={e => (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowUp') && (e.preventDefault(), tap())}
+    >
+      <p className={`dino-caption phase-${phase}`} role="status">{caption}</p>
+      <span className="cloud c1" aria-hidden="true">☁️</span>
+      <span className="cloud c2" aria-hidden="true">☁️</span>
+      {/* keyed by attempt: each jump replays its animation */}
+      <span key={`dino-${state.attempt}-${jumping}`} className={`dino ${jumping ? 'jump' : ''} ${phase === 'crashed' ? 'hurt' : ''}`} aria-hidden="true">🦖</span>
+      {phase === 'ready' && (
+        <span className="cactus approach" style={{ animationDuration: `${reachMs(state.level)}ms` }} aria-hidden="true">🌵</span>
+      )}
+      {phase === 'clicked' && <span className="cactus passed" aria-hidden="true">🌵</span>}
+      {phase === 'crashed' && <span className="cactus hit" aria-hidden="true">🌵💥</span>}
+      {phase === 'decoy' && <span className="bird" aria-hidden="true">🐦</span>}
+      <div className="dino-ground" aria-hidden="true" />
+    </div>
+  );
 };
 
 const Footer: Views['Footer'] = ({ state }) => {
@@ -157,12 +129,10 @@ const views: Views = {
 };
 
 export const ReactionClick: React.FC<ReactionClickProps> = ({ onBackToMenu, onNextGame }) => {
-  const { t } = useTranslation();
   return (
     <GameShell
       game={getGame('reaction-click')}
       views={views}
-      title={`⚡ ${t('games.reaction-click.title')}`}
       onBack={onBackToMenu}
       onNextGame={onNextGame}
     />

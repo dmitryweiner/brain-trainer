@@ -144,20 +144,22 @@ $lit: #43a047;
   box-shadow: inset 0 0 0 1px #d6dcd8;
 }
 
-// Repeat (Simon)
-.repeat-panel {
+// Repeat (Simon): dim and greyish at rest, unmistakably bright when lit.
+// Scoped under .repeat .board-cell so the generic ".board-cell:disabled
+// { opacity: 1 }" cannot brighten every panel while the sequence plays.
+.repeat .board-cell.repeat-panel {
   background: var(--panel);
-  opacity: 0.45;
+  opacity: 0.55;
+  filter: saturate(0.35) brightness(0.8);
   border-radius: 18px;
+  transition: filter 0.08s, opacity 0.08s, transform 0.08s, box-shadow 0.08s;
 
   &.lit {
     opacity: 1;
-    transform: scale(1.04);
-    box-shadow: 0 0 0 4px #fff, 0 0 24px var(--panel);
-  }
-
-  &:not(:disabled):active {
-    opacity: 1;
+    filter: saturate(1.2) brightness(1.25);
+    transform: scale(1.06);
+    box-shadow: 0 0 0 6px #fff, 0 0 36px 10px var(--panel);
+    z-index: 1;
   }
 
   &:disabled {
@@ -318,6 +320,8 @@ $lit: #43a047;
 .switch-answers {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  // "left" and "right" are physical sides, also in Hebrew
+  direction: ltr;
   gap: $spacing-sm;
 
   .btn-custom {
@@ -526,4 +530,26 @@ $lit: #43a047;
   .dot-zone { fill: rgba($primary, 0.1); }
   .dot-target { fill: #66bb6a; transition: fill 0.1s; }
   .dot-target.on { fill: #2e7d32; }
+}
+
+// Short landscape screens (a tablet on its side): arrows beside the maze,
+// not below it where they fell off the screen
+@media (orientation: landscape) and (max-height: 760px) {
+  .maze-layout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-lg;
+
+    .square-board {
+      width: min(calc(100vh - 170px), 520px);
+      margin: 0;
+    }
+
+    .maze-pad {
+      margin-top: 0;
+      grid-template-columns: repeat(3, 72px);
+      grid-template-rows: repeat(2, 72px);
+    }
+  }
 }

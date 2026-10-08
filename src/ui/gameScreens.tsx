@@ -13,13 +13,11 @@ import { DigitSpan } from './games/DigitSpan';
 import { TaskSwitch } from './games/TaskSwitch';
 import { MemoryFlip } from './games/MemoryFlip';
 import { EmojiHunt } from './games/EmojiHunt';
-import { Flags } from './games/Flags';
+import { Capitals, Continents, CountryToFlag, FlagToCountry } from './games/GeoQuiz';
 import { NBack } from './games/NBack';
 import { WhereWas } from './games/WhereWas';
 import { Mirror } from './games/Mirror';
 import { Maze } from './games/Maze';
-import { TrackDot } from './games/TrackDot';
-import { FitPiece } from './games/FitPiece';
 
 export interface ScreenProps {
   onBack: () => void;
@@ -42,11 +40,12 @@ export const GAME_SCREENS: Partial<Record<GameId, GameScreen>> = {
   'dual-rule-reaction': TaskSwitch,
   'memory-flip': MemoryFlip,
   'emoji-hunt': EmojiHunt,
-  'flags-game': Flags,
+  'flags-game': FlagToCountry,
+  'flags-reverse': CountryToFlag,
+  capitals: Capitals,
+  continents: Continents,
   'n-back': NBack,
   'where-was': WhereWas,
   mirror: Mirror,
   maze: Maze,
-  'track-dot': TrackDot,
-  'fit-piece': FitPiece,
 };

@@ -78,10 +78,10 @@ const Board: Views['Board'] = ({ state, dispatch }) => {
 
       <div className="switch-answers">
         <button className="btn-custom btn-secondary btn-large" disabled={state.phase !== 'stimulus'} onPointerDown={() => answer('left')}>
-          ← {t(left)}
+          ⬅️ {t(left)}
         </button>
         <button className="btn-custom btn-secondary btn-large" disabled={state.phase !== 'stimulus'} onPointerDown={() => answer('right')}>
-          {t(right)} →
+          {t(right)} ➡️
         </button>
       </div>
     </div>
@@ -116,6 +116,5 @@ const Details: Views['Details'] = ({ outcome }) => {
 const views: Views = { Intro, Board, Footer, Details };
 
 export const TaskSwitch: React.FC<ScreenProps> = ({ onBack, onNextGame }) => {
-  const { t } = useTranslation();
-  return <GameShell game={getGame('dual-rule-reaction')} views={views} title={`🔀 ${t('games.dual-rule-reaction.title')}`} onBack={onBack} onNextGame={onNextGame} />;
+  return <GameShell game={getGame('dual-rule-reaction')} views={views} onBack={onBack} onNextGame={onNextGame} />;
 };

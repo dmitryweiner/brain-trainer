@@ -28,8 +28,9 @@ const base = `http://localhost:${port}/brain-trainer/`;
 const GAMES = [
   'memory-matrix', 'where-was', 'sequence-recall', 'phone-recall', 'n-back', 'memory-flip',
   'schulte', 'odd-one-out', 'emoji-hunt', 'dual-rule-reaction',
-  'whack-a-mole', 'reaction-click', 'track-dot', 'trace-line',
-  'rotate-shape', 'mirror', 'fit-piece', 'maze', 'flags-game',
+  'whack-a-mole', 'reaction-click', 'trace-line',
+  'rotate-shape', 'mirror', 'maze',
+  'flags-game', 'flags-reverse', 'capitals', 'continents',
 ];
 const PROFILE_TABS = 3; // overview, games list, achievements (by position)
 

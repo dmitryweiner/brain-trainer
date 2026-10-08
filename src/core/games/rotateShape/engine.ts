@@ -1,10 +1,14 @@
-// Rotate the shape: which option is the target turned by 90/180/270°? The
-// others are mirror images and different shapes. The level adds cells and
-// replaces "other shape" distractors with mirrors and near misses.
+// "Turn & fit" (game id rotate-shape): two kinds of rounds, mixed half and
+// half (players found the two games more fun together, 2026-10-08):
+// - turn: which option is the target turned by 90/180/270°? The others are
+//   mirror images and different shapes;
+// - fit: which piece fills the hole cut out of a square (fitPiece/engine).
+// The level adds cells and makes distractors closer.
 import type { EngineContext, GameEngine, SessionOutcome, TimerRequest } from '../../types';
 import type { Rng } from '../../rng';
 import { average, clampLevel, counterCues, elapsed, levelCeiling, percent, speedFactor } from '../common';
 import { key, mirror, nearMiss, randomChiral, rotate, sameUpToRotation, type Shape } from '../shapes/polyomino';
+import { makeFitRound, type FitRound } from '../fitPiece/engine';
 
 export const ROTATE_SHAPE = {
   rounds: 12,
@@ -18,10 +22,13 @@ export function cellsFor(level: number): number {
 }
 
 export interface RotateRound {
+  kind: 'rotate';
   target: Shape;
   options: Shape[];
   answer: number;
 }
+
+export type ShapeRound = RotateRound | ({ kind: 'fit' } & FitRound);
 
 /** A turn that visibly changes the shape (a 180°-symmetric shape cannot use 180°) */
 function visibleTurn(shape: Shape, rng: Rng): Shape {
@@ -53,14 +60,20 @@ export function makeRound(level: number, rng: Rng): RotateRound {
   }
   const options = rng.shuffle([visibleTurn(target, rng), ...distractors]);
   const answer = options.findIndex(o => sameUpToRotation(o, target));
-  return { target, options, answer };
+  return { kind: 'rotate', target, options, answer };
+}
+
+function makeShapeRound(level: number, kind: ShapeRound['kind'], rng: Rng): ShapeRound {
+  return kind === 'fit' ? { kind: 'fit', ...makeFitRound(level, rng) } : makeRound(level, rng);
 }
 
 export interface RotateShapeState {
   phase: 'playing' | 'feedback' | 'done';
   level: number;
   round: number;
-  current: RotateRound;
+  current: ShapeRound;
+  /** round kinds of the session, shuffled half and half */
+  kinds: ShapeRound['kind'][];
   roundStartedAt: number;
   answers: { correct: boolean; timeMs: number }[];
   picked: number | null;
@@ -73,8 +86,10 @@ export type RotateShapeEvent = { type: 'pick'; index: number } | { type: 'next' 
 export const rotateShapeEngine: GameEngine<RotateShapeState, RotateShapeEvent> = {
   init(level, ctx: EngineContext) {
     const L = clampLevel(level);
+    const half = ROTATE_SHAPE.rounds / 2;
+    const kinds = ctx.rng.shuffle([...Array(half).fill('rotate'), ...Array(ROTATE_SHAPE.rounds - half).fill('fit')]) as ShapeRound['kind'][];
     return {
-      phase: 'playing', level: L, round: 0, current: makeRound(L, ctx.rng), roundStartedAt: ctx.now,
+      phase: 'playing', level: L, round: 0, kinds, current: makeShapeRound(L, kinds[0], ctx.rng), roundStartedAt: ctx.now,
       answers: [], picked: null, score: 0, until: 0,
     };
   },
@@ -83,7 +98,10 @@ export const rotateShapeEngine: GameEngine<RotateShapeState, RotateShapeEvent> =
     if (event.type === 'next') {
       if (state.phase !== 'feedback') return state;
       if (state.round >= ROTATE_SHAPE.rounds) return { ...state, phase: 'done' };
-      return { ...state, phase: 'playing', current: makeRound(state.level, ctx.rng), roundStartedAt: ctx.now, picked: null };
+      return {
+        ...state, phase: 'playing', current: makeShapeRound(state.level, state.kinds[state.round], ctx.rng),
+        roundStartedAt: ctx.now, picked: null,
+      };
     }
     if (state.phase !== 'playing' || event.index < 0 || event.index >= state.current.options.length) return state;
     const correct = event.index === state.current.answer;

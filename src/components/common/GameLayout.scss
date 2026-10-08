@@ -27,7 +27,8 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  // top-aligned: centring made the board jump and pushed buttons off short screens
+  justify-content: flex-start;
   align-items: center;
   padding: $spacing-md 0;
 }

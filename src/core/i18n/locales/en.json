@@ -11,8 +11,8 @@
   },
   "games": {
     "reaction-click": {
-      "title": "Reaction Click",
-      "description": "Reaction speed training",
+      "title": "Dino Jump",
+      "description": "Reaction speed",
       "instructions": {
         "lead": "Reaction speed training",
         "wait": "Wait for the screen to turn green",
@@ -212,8 +212,8 @@
       "description": "Visual search"
     },
     "flags-game": {
-      "title": "Flags Game",
-      "description": "Country flags"
+      "title": "Flags of the World",
+      "description": "Whose flag is it?"
     },
     "memory-matrix": {
       "title": "Memory Matrix",
@@ -232,7 +232,7 @@
       "description": "Precise movement"
     },
     "rotate-shape": {
-      "title": "Rotate the Shape",
+      "title": "Turn & Fit",
       "description": "Spatial thinking"
     },
     "where-was": {
@@ -254,6 +254,18 @@
     "fit-piece": {
       "title": "Fit the Piece",
       "description": "Spatial thinking"
+    },
+    "flags-reverse": {
+      "title": "Find the Flag",
+      "description": "The flag of a named country"
+    },
+    "capitals": {
+      "title": "Capitals",
+      "description": "Countries and their capitals"
+    },
+    "continents": {
+      "title": "Parts of the World",
+      "description": "Where is the country?"
     }
   },
   "flagsGame": {
@@ -696,7 +708,8 @@
     "extraCells": "Extra cells",
     "longestHoldMs": "Longest on target",
     "onTargetMs": "Time on target",
-    "attempts": "Attempts"
+    "attempts": "Attempts",
+    "crashes": "Crashes"
   },
   "pwa": {
     "updateReady": "A new version is available",
@@ -762,9 +775,9 @@
     "progress": "Done"
   },
   "rotate": {
-    "rule1": "The shape is at the top.",
-    "rule2": "Find the same shape below, only rotated.",
-    "rule3": "Watch out for mirror copies: no rotation makes them.",
+    "rule1": "Two kinds of tasks, mixed.",
+    "rule2": "“Turn”: find the same shape, only rotated. A mirror copy is not it!",
+    "rule3": "“Fit”: find the piece that fills the hole in the square. Pieces may be turned.",
     "layout": "Shapes of {{cells}} cells",
     "prompt": "Which option is the same shape, rotated?",
     "target": "The shape",
@@ -796,9 +809,9 @@
     "length": "Digits"
   },
   "switch": {
-    "ruleShape": "“Shape” rule: circle ←, square →.",
-    "ruleColor": "“Colour” rule: green ←, red →.",
-    "ruleInk": "“Ink” rule: a colour word is printed in a colour; answer by the ink, not the word.",
+    "ruleShape": "“Shape” rule: circle — left button ⬅️, square — right button ➡️.",
+    "ruleColor": "“Colour” rule: green — left button ⬅️, red — right button ➡️.",
+    "ruleInk": "“Ink” rule: a colour word is printed in a colour. Answer by the ink, not the word: green ⬅️, red ➡️.",
     "ruleWarned": "You will be warned before the rule changes.",
     "ruleUnwarned": "The rule changes without warning: watch the icon.",
     "ruleTime": "Answers are timed. A mistake or a late answer costs a life.",
@@ -846,15 +859,6 @@
     "layout": "Board from {{from}}×{{from}} to {{to}}×{{to}}",
     "find": "Find:"
   },
-  "flags": {
-    "rule1": "Guess the country from its flag, or the flag from the country.",
-    "rule2": "Quick answers earn more points.",
-    "modeFlagToCountry": "Flag → country",
-    "modeCountryToFlag": "Country → flag",
-    "layout": "Answer options: {{options}}",
-    "whichCountry": "Which country is it?",
-    "whichFlag": "Which is this country's flag?"
-  },
   "nback": {
     "rule1": "Cells of a 3×3 grid light up one after another.",
     "rule2": "Press “Match” when it is the same cell as N steps back.",
@@ -892,16 +896,12 @@
     "prompt": "Which option is the shape seen in the mirror?"
   },
   "fit": {
-    "rule1": "A piece has been cut out of the square.",
-    "rule2": "Find the piece that fills the hole exactly.",
-    "rule3": "Pieces may be turned but not flipped.",
-    "layout": "{{board}}×{{board}} square, a hole of {{cells}} cells",
     "prompt": "Which piece fills the hole?",
     "board": "The square with a hole"
   },
   "maze": {
     "rule1": "Roll the ball to the flag.",
-    "rule2": "Swipe or press the arrows: the ball rolls to the next turn or junction.",
+    "rule2": "Press the arrows or swipe: the ball moves one cell at a time.",
     "rule3": "Shorter and faster is better. There are three mazes.",
     "layout": "{{size}}×{{size}} maze",
     "prompt": "Roll the ball to the flag",
@@ -913,25 +913,17 @@
     "mazeOf": "Maze {{n}} of {{total}}",
     "economy": "Path economy"
   },
-  "trackDot": {
-    "rule1": "Put your finger on the green dot.",
-    "rule2": "The dot will move: keep your finger on it.",
-    "rule3": "The game lasts 30 seconds; time on target counts.",
-    "ready": "Get ready: put your finger on the dot",
-    "touch": "Touch the dot and hold",
-    "on": "Keep it up!",
-    "off": "Catch the dot",
-    "onTarget": "On target"
-  },
   "reaction": {
-    "rule1": "Wait for the screen to turn green.",
-    "rule2": "Then tap as fast as you can.",
-    "ruleDecoy": "Sometimes it flashes yellow — a decoy, do not tap!",
-    "rule3": "10 attempts and 3 lives: tapping too early costs a life. A streak of quick reactions multiplies the points.",
+    "rule1": "The dino is running. When a cactus 🌵 appears, tap to jump over it!",
+    "rule2": "The faster you tap, the more points: the game measures your reaction time.",
+    "ruleDecoy": "Do not jump over the bird 🐦: a needless jump costs a life.",
+    "rule3": "10 obstacles and 3 lives: a crash or an early jump costs a life. A streak of quick jumps multiplies the points.",
     "streak": "Streak: {{count}}",
-    "onlyGreen": "Tap on green only",
     "bestEver": "All-time best",
-    "distribution": "Reaction time distribution"
+    "distribution": "Reaction time distribution",
+    "hint": "Jump when a cactus appears!",
+    "crash": "Bump! Too late",
+    "jump": "Jump"
   },
   "workout": {
     "title": "Daily workout",
@@ -998,6 +990,125 @@
     "sessions-200": {
       "title": "Marathon",
       "description": "Play 200 games"
+    }
+  },
+  "capitals": {
+    "AD": "Andorra la Vella",
+    "AE": "Abu Dhabi",
+    "AF": "Kabul",
+    "AL": "Tirana",
+    "AM": "Yerevan",
+    "AR": "Buenos Aires",
+    "AT": "Vienna",
+    "AU": "Canberra",
+    "AZ": "Baku",
+    "BA": "Sarajevo",
+    "BD": "Dhaka",
+    "BE": "Brussels",
+    "BG": "Sofia",
+    "BR": "Brasília",
+    "BY": "Minsk",
+    "CA": "Ottawa",
+    "CH": "Bern",
+    "CL": "Santiago",
+    "CN": "Beijing",
+    "CO": "Bogotá",
+    "CU": "Havana",
+    "CY": "Nicosia",
+    "CZ": "Prague",
+    "DE": "Berlin",
+    "DK": "Copenhagen",
+    "DZ": "Algiers",
+    "EE": "Tallinn",
+    "EG": "Cairo",
+    "ES": "Madrid",
+    "FI": "Helsinki",
+    "FR": "Paris",
+    "GB": "London",
+    "GE": "Tbilisi",
+    "GR": "Athens",
+    "HR": "Zagreb",
+    "HU": "Budapest",
+    "ID": "Jakarta",
+    "IE": "Dublin",
+    "IL": "Jerusalem",
+    "IN": "New Delhi",
+    "IQ": "Baghdad",
+    "IR": "Tehran",
+    "IS": "Reykjavík",
+    "IT": "Rome",
+    "JP": "Tokyo",
+    "KE": "Nairobi",
+    "KR": "Seoul",
+    "KZ": "Astana",
+    "LT": "Vilnius",
+    "LV": "Riga",
+    "MA": "Rabat",
+    "MD": "Chișinău",
+    "ME": "Podgorica",
+    "MK": "Skopje",
+    "MX": "Mexico City",
+    "MY": "Kuala Lumpur",
+    "NG": "Abuja",
+    "NL": "Amsterdam",
+    "NO": "Oslo",
+    "NZ": "Wellington",
+    "PE": "Lima",
+    "PH": "Manila",
+    "PK": "Islamabad",
+    "PL": "Warsaw",
+    "PT": "Lisbon",
+    "RO": "Bucharest",
+    "RS": "Belgrade",
+    "RU": "Moscow",
+    "SA": "Riyadh",
+    "SE": "Stockholm",
+    "SG": "Singapore",
+    "SI": "Ljubljana",
+    "SK": "Bratislava",
+    "TH": "Bangkok",
+    "TR": "Ankara",
+    "TW": "Taipei",
+    "UA": "Kyiv",
+    "US": "Washington",
+    "UZ": "Tashkent",
+    "VE": "Caracas",
+    "VN": "Hanoi",
+    "ZA": "Pretoria"
+  },
+  "continents": {
+    "europe": "Europe",
+    "asia": "Asia",
+    "africa": "Africa",
+    "north-america": "North America",
+    "south-america": "South America",
+    "oceania": "Australia & Oceania"
+  },
+  "geo": {
+    "askCountry": "Which country is it?",
+    "askFlag": "Which is this country’s flag?",
+    "askCapital": "What is this country’s capital?",
+    "askCapitalOf": "Which country’s capital is it?",
+    "askContinent": "Which part of the world is this country in?",
+    "thisFlag": "The flag",
+    "layout": "Answer options: {{options}}.",
+    "flagOnly": "The country’s name is hidden — only the flag.",
+    "speedRule": "Quick answers earn more points.",
+    "flagToCountry": {
+      "rule1": "Look at the flag.",
+      "rule2": "Pick the country it belongs to."
+    },
+    "countryToFlag": {
+      "rule1": "A country is named.",
+      "rule2": "Find its flag among the options."
+    },
+    "capitals": {
+      "rule1": "Two kinds of questions, mixed: name a country’s capital, or the country of a capital.",
+      "rule2": "From level 5 the country is shown only by its flag."
+    },
+    "continents": {
+      "rule1": "Look at the country and its flag.",
+      "rule2": "Pick the part of the world it is in."
     }
   }
 }

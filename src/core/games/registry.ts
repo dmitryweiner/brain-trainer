@@ -13,14 +13,13 @@ import { digitSpanEngine, digitSpanRating } from './digitSpan/engine';
 import { taskSwitchEngine, taskSwitchRating, taskSwitchSessionLevel } from './taskSwitch/engine';
 import { memoryFlipEngine, memoryFlipRating, memoryFlipSessionLevel } from './memoryFlip/engine';
 import { emojiHuntEngine, emojiHuntRating, emojiHuntSessionLevel } from './emojiHunt/engine';
-import { flagsEngine, flagsRating } from './flags/engine';
+import { geoRating, makeGeoEngine } from './geoQuiz/engine';
 import { nBackEngine, nBackRating, nBackSessionLevel } from './nBack/engine';
 import { whereWasEngine, whereWasRating } from './whereWas/engine';
 import { mirrorEngine, mirrorRating } from './mirror/engine';
 import { mazeEngine, mazeRating } from './maze/engine';
-import { trackDotEngine, trackDotRating } from './trackDot/engine';
-import { fitPieceEngine, fitPieceRating } from './fitPiece/engine';
-import { MAX_LEVEL, MIN_LEVEL } from './common';
+import { fitPieceRating } from './fitPiece/engine';
+import { levelCeiling, MAX_LEVEL, MIN_LEVEL } from './common';
 
 export function clampRating(value: number): number {
   if (!Number.isFinite(value)) return 0;
@@ -88,14 +87,15 @@ export const GAMES: readonly GameDefinition[] = [
     engine: taskSwitchEngine, rating: taskSwitchRating, sessionLevel: taskSwitchSessionLevel, ...LEVELS,
   }),
   define({ id: 'whack-a-mole', category: 'reaction', icon: '🐹', difficulty: 1, legacyMaxScore: 0, engine: whackEngine, rating: whackRating, sessionKind: 'timed', ...LEVELS }),
-  define({ id: 'reaction-click', category: 'reaction', icon: '⚡', difficulty: 1, legacyMaxScore: 25, engine: reactionClickEngine, rating: reactionClickRating, ...LEVELS }),
-  define({ id: 'track-dot', category: 'reaction', icon: '🎯', difficulty: 2, legacyMaxScore: 0, engine: trackDotEngine, rating: trackDotRating, sessionKind: 'timed', ...LEVELS }),
+  define({ id: 'reaction-click', category: 'reaction', icon: '🦖', difficulty: 1, legacyMaxScore: 25, engine: reactionClickEngine, rating: reactionClickRating, ...LEVELS }),
   define({ id: 'trace-line', category: 'reaction', icon: '✍️', difficulty: 2, legacyMaxScore: 0, engine: traceEngine, rating: traceRating, ...LEVELS }),
-  define({ id: 'rotate-shape', category: 'spatial', icon: '🔷', difficulty: 3, legacyMaxScore: 0, engine: rotateShapeEngine, rating: rotateShapeRating, ...LEVELS }),
+  define({ id: 'rotate-shape', category: 'spatial', icon: '🧩', difficulty: 3, legacyMaxScore: 0, engine: rotateShapeEngine, rating: rotateShapeRating, ...LEVELS }),
   define({ id: 'mirror', category: 'spatial', icon: '🦋', difficulty: 3, legacyMaxScore: 0, engine: mirrorEngine, rating: mirrorRating, ...LEVELS }),
-  define({ id: 'fit-piece', category: 'spatial', icon: '🧩', difficulty: 3, legacyMaxScore: 0, engine: fitPieceEngine, rating: fitPieceRating, ...LEVELS }),
   define({ id: 'maze', category: 'spatial', icon: '🏁', difficulty: 2, legacyMaxScore: 0, engine: mazeEngine, rating: mazeRating, ...LEVELS }),
-  define({ id: 'flags-game', category: 'knowledge', icon: '🏳️', difficulty: 2, legacyMaxScore: 100, engine: flagsEngine, rating: flagsRating, ...LEVELS }),
+  define({ id: 'flags-game', category: 'knowledge', icon: '🏳️', difficulty: 2, legacyMaxScore: 100, engine: makeGeoEngine('flag-to-country'), rating: geoRating, ...LEVELS }),
+  define({ id: 'flags-reverse', category: 'knowledge', icon: '🚩', difficulty: 2, legacyMaxScore: 0, engine: makeGeoEngine('country-to-flag'), rating: geoRating, ...LEVELS }),
+  define({ id: 'capitals', category: 'knowledge', icon: '🏛️', difficulty: 3, legacyMaxScore: 0, engine: makeGeoEngine('capitals'), rating: geoRating, ...LEVELS }),
+  define({ id: 'continents', category: 'knowledge', icon: '🌍', difficulty: 2, legacyMaxScore: 0, engine: makeGeoEngine('continents'), rating: geoRating, ...LEVELS }),
 ];
 
 /**
@@ -107,6 +107,10 @@ export const RETIRED_GAMES: readonly GameDefinition[] = [
   define({ id: 'symbol-match', category: 'attention', icon: '👀', difficulty: 1, legacyMaxScore: 20 }),
   define({ id: 'hidden-number', category: 'attention', icon: '🔢', difficulty: 2, legacyMaxScore: 30 }),
   define({ id: 'logic-pair-concept', category: 'knowledge', icon: '🔗', difficulty: 3, legacyMaxScore: 20 }),
+  // removed after the first real users (2026-10-08): "Track the dot" was boring;
+  // "Fit the piece" became the second half of "Turn & fit" (rotate-shape)
+  define({ id: 'track-dot', category: 'reaction', icon: '🎯', difficulty: 2, legacyMaxScore: 0, ...LEVELS, rating: (o, level) => (o.accuracy / 100) * levelCeiling(level) }),
+  define({ id: 'fit-piece', category: 'spatial', icon: '🧩', difficulty: 3, legacyMaxScore: 0, ...LEVELS, rating: fitPieceRating }),
 ];
 
 const ALL = new Map<GameId, GameDefinition>([...GAMES, ...RETIRED_GAMES].map(g => [g.id, g]));

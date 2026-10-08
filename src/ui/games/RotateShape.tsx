@@ -19,32 +19,47 @@ const Intro: Views['Intro'] = ({ onStart, level }) => {
   );
 };
 
+/** The square with the hole; after an answer the right piece is shown in it */
+const HoleBoard: React.FC<{ board: number; hole: readonly (readonly [number, number])[]; filled: boolean; label: string }> = ({
+  board, hole, filled, label,
+}) => {
+  const isHole = (x: number, y: number) => hole.some(c => c[0] === x && c[1] === y);
+  return (
+    <svg className="fit-board" viewBox={`0 0 ${board} ${board}`} role="img" aria-label={label}>
+      {Array.from({ length: board * board }, (_, i) => {
+        const x = i % board;
+        const y = Math.floor(i / board);
+        const h = isHole(x, y);
+        return <rect key={i} x={x + 0.04} y={y + 0.04} width="0.92" height="0.92" rx="0.1" className={h ? (filled ? 'fit-filled' : 'fit-hole') : 'fit-solid'} />;
+      })}
+    </svg>
+  );
+};
+
 const Board: Views['Board'] = ({ state, dispatch }) => {
   const { t } = useTranslation();
   const { current } = state;
+  const feedback = state.phase === 'feedback';
   return (
     <div className="rotate-shape">
-      <p className="game-prompt">{t('rotate.prompt')}</p>
+      <p className="game-prompt">{t(current.kind === 'fit' ? 'fit.prompt' : 'rotate.prompt')}</p>
       <div className="rotate-target">
-        <ShapeView shape={current.target} label={t('rotate.target')} />
+        {current.kind === 'fit'
+          ? <HoleBoard board={current.board} hole={current.hole} filled={feedback} label={t('fit.board')} />
+          : <ShapeView shape={current.target} label={t('rotate.target')} />}
       </div>
       <div className="rotate-options">
-        {current.options.map((shape, i) => {
-          const result = state.phase === 'feedback'
-            ? i === current.answer ? 'right' : i === state.picked ? 'wrong' : ''
-            : '';
-          return (
-            <button
-              key={i}
-              className={`board-cell rotate-option ${result}`}
-              disabled={state.phase !== 'playing'}
-              onClick={() => dispatch({ type: 'pick', index: i })}
-              aria-label={t('rotate.option', { n: i + 1 })}
-            >
-              <ShapeView shape={shape} />
-            </button>
-          );
-        })}
+        {current.options.map((shape, i) => (
+          <button
+            key={i}
+            className={`board-cell rotate-option ${feedback ? (i === current.answer ? 'right' : i === state.picked ? 'wrong' : '') : ''}`}
+            disabled={state.phase !== 'playing'}
+            onClick={() => dispatch({ type: 'pick', index: i })}
+            aria-label={t('rotate.option', { n: i + 1 })}
+          >
+            <ShapeView shape={shape} />
+          </button>
+        ))}
       </div>
     </div>
   );
@@ -74,6 +89,5 @@ const Details: Views['Details'] = ({ outcome }) => {
 const views: Views = { Intro, Board, Footer, Details };
 
 export const RotateShape: React.FC<ScreenProps> = ({ onBack, onNextGame }) => {
-  const { t } = useTranslation();
-  return <GameShell game={getGame('rotate-shape')} views={views} title={`🔷 ${t('games.rotate-shape.title')}`} onBack={onBack} onNextGame={onNextGame} />;
+  return <GameShell game={getGame('rotate-shape')} views={views} onBack={onBack} onNextGame={onNextGame} />;
 };

@@ -56,6 +56,7 @@ const Board: Views['Board'] = ({ state, dispatch }) => {
   return (
     <div className="maze">
       <p className="game-prompt" role="status">{state.phase === 'solved' ? t('maze.solved') : t('maze.prompt')}</p>
+      <div className="maze-layout">
       <div className="square-board">
         <svg
           className="maze-board"
@@ -83,6 +84,7 @@ const Board: Views['Board'] = ({ state, dispatch }) => {
             {glyph}
           </button>
         ))}
+      </div>
       </div>
     </div>
   );
@@ -116,6 +118,5 @@ const Details: Views['Details'] = ({ outcome }) => {
 const views: Views = { Intro, Board, Footer, Details };
 
 export const Maze: React.FC<ScreenProps> = ({ onBack, onNextGame }) => {
-  const { t } = useTranslation();
-  return <GameShell game={getGame('maze')} views={views} title={`🏁 ${t('games.maze.title')}`} onBack={onBack} onNextGame={onNextGame} />;
+  return <GameShell game={getGame('maze')} views={views} onBack={onBack} onNextGame={onNextGame} />;
 };

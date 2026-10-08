@@ -166,12 +166,10 @@ const views: Views = {
 };
 
 export const OddOneOut: React.FC<OddOneOutProps> = ({ onBackToMenu, onNextGame }) => {
-  const { t } = useTranslation();
   return (
     <GameShell
       game={getGame('odd-one-out')}
       views={views}
-      title={`🔍 ${t('oddOneOut.title')}`}
       onBack={onBackToMenu}
       onNextGame={onNextGame}
     />

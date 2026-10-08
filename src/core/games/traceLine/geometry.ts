@@ -11,7 +11,7 @@ export interface TracePath {
   /** cumulative length at each point */
   cum: number[];
   length: number;
-  kind: 'wave' | 'zigzag' | 'spiral';
+  kind: 'wave' | 'zigzag' | 'grid';
 }
 
 function withLengths(points: Pt[], kind: TracePath['kind']): TracePath {
@@ -34,35 +34,65 @@ function resample(corners: Pt[], step = 1): Pt[] {
   return out;
 }
 
-/** Levels 1–3 waves, 4–6 zigzags, 7–10 spirals; each harder within its kind. */
+/**
+ * A long winding route over an n×n grid of points (randomized depth-first
+ * search that keeps the longest path found): turns like a maze corridor.
+ */
+function gridRoute(n: number, rng: Rng): Pt[] {
+  const target = Math.ceil(n * n * 0.6);
+  const seen = new Set<number>();
+  let best: number[] = [];
+  const path: number[] = [];
+  let budget = 4000;
+  const walk = (at: number): boolean => {
+    path.push(at);
+    seen.add(at);
+    if (path.length > best.length) best = [...path];
+    if (path.length >= target || --budget <= 0) return true;
+    const x = at % n;
+    const y = Math.floor(at / n);
+    const next = rng.shuffle([[1, 0], [-1, 0], [0, 1], [0, -1]])
+      .map(([dx, dy]) => [x + dx, y + dy])
+      .filter(([nx, ny]) => nx >= 0 && ny >= 0 && nx < n && ny < n && !seen.has(ny * n + nx));
+    for (const [nx, ny] of next) if (walk(ny * n + nx)) return true;
+    path.pop();
+    seen.delete(at);
+    return false;
+  };
+  walk(rng.int(0, 1) * (n - 1) + rng.int(0, 1) * (n - 1) * n);
+  const step = 80 / (n - 1);
+  return best.map(i => ({ x: 10 + (i % n) * step, y: 10 + Math.floor(i / n) * step }));
+}
+
+/**
+ * Level 1 a wave, 2 a zigzag, from 3 a maze-like route over a grid that grows
+ * from 5×5 to 9×9 (players found waves and spirals too easy, 2026-10-08).
+ */
 export function makePath(level: number, rng: Rng): TracePath {
   const flip = rng.next() < 0.5 ? -1 : 1;
-  if (level <= 3) {
-    const amp = (12 + 6 * level) * flip;
-    const periods = 1 + 0.5 * (level - 1) + rng.next() * 0.5;
+  if (level <= 1) {
+    const amp = 24 * flip;
     const pts = Array.from({ length: 161 }, (_, i) => {
       const t = i / 160;
-      return { x: 10 + 80 * t, y: 50 + amp * Math.sin(t * periods * 2 * Math.PI) };
+      return { x: 10 + 80 * t, y: 50 + amp * Math.sin(t * 1.5 * 2 * Math.PI) };
     });
     return withLengths(pts, 'wave');
   }
-  if (level <= 6) {
-    const segments = 3 + (level - 3);
+  if (level <= 2) {
+    const segments = 5;
     const corners = Array.from({ length: segments + 1 }, (_, i) => ({
       x: 10 + (80 * i) / segments,
-      y: i % 2 === 0 ? 50 - 25 * flip : 50 + 25 * flip,
+      y: i % 2 === 0 ? 50 - 30 * flip : 50 + 30 * flip,
     }));
     return withLengths(resample(corners), 'zigzag');
   }
-  const turns = 1.25 + 0.25 * (level - 7);
-  const start = rng.next() * 2 * Math.PI;
-  const pts = Array.from({ length: 241 }, (_, i) => {
-    const t = i / 240;
-    const r = 6 + 34 * t;
-    const a = start + flip * t * turns * 2 * Math.PI;
-    return { x: 50 + r * Math.cos(a), y: 50 + r * Math.sin(a) };
-  });
-  return withLengths(pts, 'spiral');
+  const n = Math.min(9, 4 + Math.ceil((level - 2) / 1.6));
+  return withLengths(resample(gridRoute(n, rng)), 'grid');
+}
+
+/** Distance between neighbouring grid lines of a level's route (the corridor must be narrower) */
+export function gridSpacing(level: number): number {
+  return level <= 2 ? Infinity : 80 / (Math.min(9, 4 + Math.ceil((level - 2) / 1.6)) - 1);
 }
 
 /** Half-width of the corridor the finger must stay in */

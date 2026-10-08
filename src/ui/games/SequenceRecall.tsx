@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GameShell, type GameViews } from '../GameShell';
 import { getGame } from '../../core/games/registry';
@@ -9,6 +9,9 @@ import type { ScreenProps } from '../gameScreens';
 import './games.scss';
 
 type Views = GameViews<SequenceState, SequenceEvent>;
+
+/** How long a pressed panel glows and sounds */
+const PRESS_MS = 400;
 
 /** Panel colours (distinct also in grayscale by position) and their tones: a pentatonic-ish scale */
 const PANELS = [
@@ -29,8 +32,14 @@ const Intro: Views['Intro'] = ({ onStart, level }) => {
 
 const Board: Views['Board'] = ({ state, dispatch }) => {
   const { t } = useTranslation();
-  const { audio, prefs } = useServices();
+  const { audio, prefs, scheduler } = useServices();
   const tone = (freq: number, ms: number) => prefs.get().sound && audio?.tone(freq, ms);
+  // the panel the player just pressed lights up like a shown one
+  const [pressed, setPressed] = useState<number | null>(null);
+  const pressTimer = useRef<unknown>(null);
+  useEffect(() => () => {
+    if (pressTimer.current !== null) scheduler.clearTimeout(pressTimer.current);
+  }, [scheduler]);
   const lit = litPanel(state);
   const { panels, showMs } = state.layout;
   const cols = panels === 4 ? 2 : 3;
@@ -56,13 +65,16 @@ const Board: Views['Board'] = ({ state, dispatch }) => {
           {PANELS.slice(0, panels).map((p, i) => (
             <button
               key={i}
-              className={`board-cell repeat-panel ${lit === i ? 'lit' : ''}`}
+              className={`board-cell repeat-panel ${lit === i || pressed === i ? 'lit' : ''}`}
               style={{ ['--panel' as string]: p.color }}
               disabled={state.phase !== 'input'}
               aria-label={t('repeat.panel', { n: i + 1 })}
               onPointerDown={() => {
                 if (state.phase !== 'input') return;
-                tone(p.freq, 220);
+                tone(p.freq, PRESS_MS + 50);
+                setPressed(i);
+                if (pressTimer.current !== null) scheduler.clearTimeout(pressTimer.current);
+                pressTimer.current = scheduler.setTimeout(() => setPressed(null), PRESS_MS);
                 dispatch({ type: 'tap', panel: i });
               }}
             />
@@ -97,6 +109,5 @@ const Details: Views['Details'] = ({ outcome }) => {
 const views: Views = { Intro, Board, Footer, Details };
 
 export const SequenceRecall: React.FC<ScreenProps> = ({ onBack, onNextGame }) => {
-  const { t } = useTranslation();
-  return <GameShell game={getGame('sequence-recall')} views={views} title={`🎹 ${t('games.sequence-recall.title')}`} onBack={onBack} onNextGame={onNextGame} />;
+  return <GameShell game={getGame('sequence-recall')} views={views} onBack={onBack} onNextGame={onNextGame} />;
 };

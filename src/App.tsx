@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScoreProvider, useScoreContext } from './context/ScoreContext';
 import { GameHistoryProvider } from './context/GameHistoryContext';
@@ -53,15 +53,26 @@ function AppContent() {
   const [route, setRoute] = useState<Route>(() => normalize(navigation.current(), !!sync));
   // playing today's workout: "next game" goes to its next open slot
   const [inWorkout, setInWorkout] = useState(false);
+  // where the menu was scrolled to, so coming back lands on the same game
+  const menuScroll = useRef(0);
+  const routeRef = useRef(route);
+  const changeRoute = (next: Route) => {
+    if (routeRef.current.view === 'menu' && next.view !== 'menu') menuScroll.current = window.scrollY;
+    routeRef.current = next;
+    setRoute(next);
+  };
+  useLayoutEffect(() => {
+    window.scrollTo(0, route.view === 'menu' ? menuScroll.current : 0);
+  }, [route]);
   const { totalScore } = useScoreContext();
   useDocumentLanguage();
 
   // Browser back/forward (and, in Capacitor, the hardware back button)
-  useEffect(() => navigation.subscribe(r => setRoute(normalize(r, !!sync))), [navigation, sync]);
+  useEffect(() => navigation.subscribe(r => changeRoute(normalize(r, !!sync))), [navigation, sync]);
 
   const go = (next: Route) => {
+    changeRoute(next);
     navigation.go(next);
-    setRoute(next);
   };
   const backToMenu = () => {
     setInWorkout(false);

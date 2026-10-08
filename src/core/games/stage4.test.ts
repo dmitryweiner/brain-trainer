@@ -8,7 +8,7 @@ import { normalizeSession, GAMES } from './registry';
 import { matrixLayout, memoryMatrixEngine, MEMORY_MATRIX } from './memoryMatrix/engine';
 import { schulteEngine, schulteLayout, schulteSequence, schulteRating } from './schulte/engine';
 import { whackEngine, whackLayout, WHACK } from './whackAMole/engine';
-import { corridor, makePath, pointAt, project } from './traceLine/geometry';
+import { corridor, gridSpacing, makePath, pointAt, project } from './traceLine/geometry';
 import { traceEngine, TRACE } from './traceLine/engine';
 import { isChiral, key, mirror, nearMiss, randomChiral, rotate, sameUpToRotation } from './shapes/polyomino';
 import { makeRound, rotateShapeEngine, cellsFor } from './rotateShape/engine';
@@ -17,7 +17,8 @@ import { digitSpanEngine, digitSpanRating, expected, shownDigit, DIGIT_SPAN } fr
 import { correctSide, switchLayout, taskSwitchEngine, SWITCH } from './taskSwitch/engine';
 import { boardsFor, memoryFlipEngine } from './memoryFlip/engine';
 import { emojiHuntEngine, huntRound } from './emojiHunt/engine';
-import { flagsEngine, optionCount, timeBonus } from './flags/engine';
+import { makeGeoEngine, makeQuestion, optionCount, timeBonus, type GeoKind } from './geoQuiz/engine';
+import { CAPITAL_COUNTRIES, CONTINENT_OF } from './geoQuiz/data';
 import { isTarget, nBackEngine, nBackLayout, nBackRating, nBackSequence } from './nBack/engine';
 
 const ctx = (now: number, seed = 1): EngineContext => ({ now, rng: createRng(seed) });
@@ -126,9 +127,13 @@ describe('Whack-a-mole', () => {
 });
 
 describe('Trace the line', () => {
-  it('builds waves, zigzags and spirals inside the box, and narrows the corridor', () => {
+  it('builds waves, zigzags and maze-like grid routes inside the box, and narrows the corridor', () => {
     const rng = createRng(4);
-    expect([1, 5, 9].map(l => makePath(l, rng).kind)).toEqual(['wave', 'zigzag', 'spiral']);
+    expect([1, 2, 5].map(l => makePath(l, rng).kind)).toEqual(['wave', 'zigzag', 'grid']);
+    // the corridor never spans two neighbouring lines of a grid route
+    for (let L = 3; L <= 10; L++) expect(corridor(L) * 2).toBeLessThan(gridSpacing(L));
+    // grid routes wind through most of the grid
+    expect(makePath(10, rng).length).toBeGreaterThan(300);
     for (let L = 1; L <= 10; L++) {
       for (const p of makePath(L, rng).points) {
         expect(p.x).toBeGreaterThanOrEqual(0);
@@ -359,17 +364,42 @@ describe('Emoji Hunt', () => {
   });
 });
 
-describe('Flags', () => {
-  it('uses the chosen direction and more options at higher levels', () => {
-    expect(flagsEngine.init(1, ctx(0), 'country-to-flag').mode).toBe('country-to-flag');
-    expect(flagsEngine.init(1, ctx(0)).mode).toBe('flag-to-country');
+describe('geography quizzes', () => {
+  it('more options with the level; quick answers earn a bonus', () => {
     expect([1, 5, 9].map(optionCount)).toEqual([4, 5, 6]);
     expect(timeBonus(1500)).toBe(10);
     expect(timeBonus(10000)).toBe(0);
   });
 
+  it('every question has its answer among distinct options', () => {
+    const rng = createRng(3);
+    for (const kind of ['flag-to-country', 'country-to-flag', 'capitals', 'continents'] as GeoKind[]) {
+      for (const level of [1, 5, 10]) {
+        for (let i = 0; i < 30; i++) {
+          const q = makeQuestion(kind, level, [], rng);
+          expect(q.options).toContain(q.answer);
+          expect(new Set(q.options).size).toBe(q.options.length);
+        }
+      }
+    }
+  });
+
+  it('hides the country name from level 5 in capitals and continents', () => {
+    const rng = createRng(1);
+    const shows = (level: number) => new Set(Array.from({ length: 40 }, () => makeQuestion('continents', level, [], rng).prompt.show));
+    expect([...shows(1)]).toEqual(['flag+country']);
+    expect([...shows(5)]).toEqual(['flag']);
+    expect(makeQuestion('continents', 5, [], rng).options).toHaveLength(6);
+  });
+
+  it('only asks undisputed continents and never a city-state capital', () => {
+    for (const code of Object.keys(CONTINENT_OF)) expect(['RU', 'TR', 'KZ', 'EG', 'GE', 'AM', 'AZ', 'CY']).not.toContain(code);
+    expect(CAPITAL_COUNTRIES).not.toContain('SG');
+    expect(CAPITAL_COUNTRIES).not.toContain('DZ');
+  });
+
   it('never repeats a country within a session', () => {
-    const { runner } = play(flagsEngine, 9, (s, r) => s.phase === 'playing' && r.dispatch({ type: 'pick', code: s.answer.code }));
+    const { runner } = play(makeGeoEngine('capitals'), 9, (s, r) => s.phase === 'playing' && r.dispatch({ type: 'pick', option: s.question.answer }));
     expect(new Set(runner.state.used).size).toBe(runner.state.used.length);
     expect(runner.state.answers.every(a => a.correct)).toBe(true);
   });

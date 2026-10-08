@@ -28,6 +28,9 @@ export const GAME_IDS: readonly GameId[] = [
   'maze',
   'track-dot',
   'fit-piece',
+  'flags-reverse',
+  'capitals',
+  'continents',
 ];
 
 export interface SessionEvent {

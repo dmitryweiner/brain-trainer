@@ -3,9 +3,11 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from './App';
 
-/** The play button of the card with this (Russian) title */
-const playButtonFor = (title: string) =>
-  within(screen.getByText(title).closest('.game-card') as HTMLElement).getByRole('button', { name: /играть/i });
+/** The play button of the card with this (Russian) title (the workout block may name the game too) */
+const playButtonFor = (title: string) => {
+  const card = screen.getAllByText(title).map(e => e.closest('.game-card')).find(Boolean) as HTMLElement;
+  return within(card).getByRole('button', { name: /играть/i });
+};
 
 describe('App', () => {
   // Clear URL hash before each test to ensure clean state
@@ -37,17 +39,17 @@ describe('App', () => {
   it('should navigate to game when card is clicked', async () => {
     const user = userEvent.setup();
     render(<App />);
-    await user.click(playButtonFor('Скорость реакции'));
+    await user.click(playButtonFor('Дино-прыжок'));
 
     // Должен отобразиться экран игры Reaction Click
     expect(screen.getByText('Начать игру')).toBeInTheDocument();
-    expect(screen.getByText('Тренировка скорости реакции')).toBeInTheDocument();
+    expect(screen.getByText('Скорость реакции')).toBeInTheDocument();
   });
 
   it('should show back button when in game', async () => {
     const user = userEvent.setup();
     const { container } = render(<App />);
-    await user.click(playButtonFor('Скорость реакции'));
+    await user.click(playButtonFor('Дино-прыжок'));
 
     expect(container.querySelector('.back-button')).toBeInTheDocument();
   });
@@ -57,7 +59,7 @@ describe('App', () => {
     const { container } = render(<App />);
 
     // Переход в игру
-    await user.click(playButtonFor('Скорость реакции'));
+    await user.click(playButtonFor('Дино-прыжок'));
 
     expect(screen.getByText('Начать игру')).toBeInTheDocument();
 
@@ -72,10 +74,10 @@ describe('App', () => {
   it('should display game title in header when game is selected', async () => {
     const user = userEvent.setup();
     render(<App />);
-    await user.click(playButtonFor('Скорость реакции'));
+    await user.click(playButtonFor('Дино-прыжок'));
 
     // Название в шапке переведено (раньше там был английский title из GAMES_META)
-    const titles = screen.getAllByText(/⚡ Скорость реакции/);
+    const titles = screen.getAllByText(/🦖 Дино-прыжок/);
     expect(titles.length).toBeGreaterThan(0);
   });
 
@@ -90,7 +92,7 @@ describe('App', () => {
     const { container } = render(<App />);
 
     // Переход к первой игре (Reaction Click)
-    await user.click(playButtonFor('Скорость реакции'));
+    await user.click(playButtonFor('Дино-прыжок'));
     expect(screen.getByText('Начать игру')).toBeInTheDocument();
 
     // Возврат в меню

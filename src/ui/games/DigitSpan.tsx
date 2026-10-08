@@ -110,6 +110,5 @@ const Details: Views['Details'] = ({ outcome }) => {
 const views: Views = { Intro, Board, Footer, Details };
 
 export const DigitSpan: React.FC<ScreenProps> = ({ onBack, onNextGame }) => {
-  const { t } = useTranslation();
-  return <GameShell game={getGame('phone-recall')} views={views} title={`📞 ${t('games.phone-recall.title')}`} onBack={onBack} onNextGame={onNextGame} />;
+  return <GameShell game={getGame('phone-recall')} views={views} onBack={onBack} onNextGame={onNextGame} />;
 };

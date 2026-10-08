@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { createRng } from '../rng';
 import type { EngineContext } from '../types';
-import { decoyChance, reactionClickEngine, reactionClickRating, reactionPoints, REACTION_CLICK } from './reactionClick/engine';
+import { decoyChance, reachMs, reactionClickEngine, reactionClickRating, reactionPoints, REACTION_CLICK } from './reactionClick/engine';
 import {
   oddOneOutEngine, difficultyFor, gridSizeFor, oddOneOutRating, levelCeiling, ODD_ONE_OUT, V1_EQUIVALENT_LEVEL,
 } from './oddOneOut/engine';
@@ -44,7 +44,7 @@ describe('reactionClickEngine', () => {
 
   it('reports accuracy, average and best/worst times', () => {
     const outcome = reactionClickEngine.result({
-      phase: 'done', level: 1, attempt: 5, lives: 1, reactionTimes: [200, 400, 600], score: 10, falseStarts: 2,
+      phase: 'done', level: 1, attempt: 5, lives: 1, reactionTimes: [200, 400, 600], score: 10, falseStarts: 2, crashes: 0,
       combo: 0, maxCombo: 1, until: 0, readyAt: 0, decoyPending: false,
     });
     expect(outcome).toEqual({
@@ -52,7 +52,7 @@ describe('reactionClickEngine', () => {
       accuracy: 60,
       avgTimeMs: 400,
       metrics: {
-        falseStarts: 2, hits: 3, attempts: 5, maxCombo: 1, livesLeft: 1, rules: REACTION_CLICK.rules,
+        falseStarts: 2, crashes: 0, hits: 3, attempts: 5, maxCombo: 1, livesLeft: 1, rules: REACTION_CLICK.rules,
         bestReactionMs: 200, worstReactionMs: 600,
       },
     });
@@ -76,6 +76,15 @@ describe('reactionClickEngine', () => {
     expect(s.phase).toBe('decoy');
     s = reactionClickEngine.reduce(s, { type: 'tap' }, ctxAt(1100));
     expect(s).toMatchObject({ phase: 'tooEarly', falseStarts: 1, lives: REACTION_CLICK.lives - 1 });
+  });
+
+  it('too slow: the dino crashes into the cactus and loses a life', () => {
+    let s = reactionClickEngine.init(1, ctxAt(0));
+    s = reactionClickEngine.reduce(s, { type: 'go' }, ctxAt(s.until));
+    expect(reactionClickEngine.timers(s)[0]).toMatchObject({ at: s.readyAt + reachMs(1), event: { type: 'crash' } });
+    s = reactionClickEngine.reduce(s, { type: 'crash' }, ctxAt(s.readyAt + reachMs(1)));
+    expect(s).toMatchObject({ phase: 'crashed', crashes: 1, lives: REACTION_CLICK.lives - 1, attempt: 1 });
+    expect(reachMs(10)).toBeLessThan(reachMs(1));
   });
 
   it('a decoy left alone is followed by the real signal', () => {

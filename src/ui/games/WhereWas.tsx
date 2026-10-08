@@ -76,6 +76,5 @@ const Details: Views['Details'] = ({ outcome }) => {
 const views: Views = { Intro, Board, Footer, Details };
 
 export const WhereWas: React.FC<ScreenProps> = ({ onBack, onNextGame }) => {
-  const { t } = useTranslation();
-  return <GameShell game={getGame('where-was')} views={views} title={`📍 ${t('games.where-was.title')}`} onBack={onBack} onNextGame={onNextGame} />;
+  return <GameShell game={getGame('where-was')} views={views} onBack={onBack} onNextGame={onNextGame} />;
 };

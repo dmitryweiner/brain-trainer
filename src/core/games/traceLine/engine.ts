@@ -2,12 +2,13 @@
 // leaving the corridor. Three curves per session; the level picks the kind
 // of curve and narrows the corridor.
 import type { GameEngine, SessionOutcome, TimerRequest } from '../../types';
-import { average, clampLevel, counterCues, elapsed, levelCeiling, percent, speedFactor } from '../common';
+import { average, clampLevel, counterCues, elapsed, levelCeiling, percent } from '../common';
 import { corridor, makePath, project, type Pt, type TracePath } from './geometry';
 
 export const TRACE = {
   rounds: 3,
-  roundMs: 30_000,
+  // grid routes are long: a minute per curve
+  roundMs: 60_000,
   feedbackMs: 900,
   /** How far ahead of the reached point a move may land and still count */
   lookahead: 12,
@@ -148,8 +149,11 @@ export const traceEngine: GameEngine<TraceState, TraceEvent> = {
   },
 };
 
-/** Share of the trace inside the corridor × share of curves finished × mild speed × level ceiling */
+/**
+ * Share of the trace inside the corridor × share of curves finished × the
+ * level's ceiling. No speed term: the time mostly reflects the route's length.
+ */
 export function traceRating(outcome: SessionOutcome, level: number): number {
   const finished = outcome.metrics.rounds > 0 ? outcome.metrics.completed / outcome.metrics.rounds : 0;
-  return (outcome.accuracy / 100) * finished * speedFactor(outcome.avgTimeMs, 5000, 20000, 0.7) * levelCeiling(level);
+  return (outcome.accuracy / 100) * finished * levelCeiling(level);
 }

@@ -69,6 +69,5 @@ const Details: Views['Details'] = ({ outcome }) => {
 const views: Views = { Intro, Board, Footer, Details };
 
 export const EmojiHunt: React.FC<ScreenProps> = ({ onBack, onNextGame }) => {
-  const { t } = useTranslation();
-  return <GameShell game={getGame('emoji-hunt')} views={views} title={`🔎 ${t('games.emoji-hunt.title')}`} onBack={onBack} onNextGame={onNextGame} />;
+  return <GameShell game={getGame('emoji-hunt')} views={views} onBack={onBack} onNextGame={onNextGame} />;
 };

@@ -1,7 +1,8 @@
-// Reaction Click: wait for the green signal, tap as fast as possible. A tap
-// before it — or on a yellow decoy (from level 4) — is a false start and
-// costs a life. 10 attempts, 3 lives; quick reactions in a row multiply the
-// points.
+// Reaction Click, shown as a runner game: a cactus appears in front of the
+// running dino, tap to jump — the reaction time is measured from its
+// appearance. Too slow and the dino crashes; a jump before it — or over a
+// bird decoy (from level 4) — is a false start. Both cost a life. 10
+// obstacles, 3 lives; quick reactions in a row multiply the points.
 import type { EngineContext, GameEngine, SessionOutcome, TimerRequest } from '../../types';
 import { average, clampLevel, counterCues, elapsed } from '../common';
 
@@ -21,12 +22,17 @@ export const REACTION_CLICK = {
   rules: 2,
 } as const;
 
+/** How long the cactus takes to reach the dino: the time to react */
+export function reachMs(level: number): number {
+  return Math.max(600, 1400 - 90 * (clampLevel(level) - 1));
+}
+
 export function decoyChance(level: number): number {
   const L = clampLevel(level);
   return L < 4 ? 0 : 0.15 + 0.03 * L;
 }
 
-export type ReactionPhase = 'waiting' | 'decoy' | 'ready' | 'clicked' | 'tooEarly' | 'done';
+export type ReactionPhase = 'waiting' | 'decoy' | 'ready' | 'clicked' | 'tooEarly' | 'crashed' | 'done';
 
 export interface ReactionClickState {
   phase: ReactionPhase;
@@ -37,6 +43,8 @@ export interface ReactionClickState {
   reactionTimes: number[];
   score: number;
   falseStarts: number;
+  /** too slow: the dino ran into the cactus */
+  crashes: number;
   combo: number;
   maxCombo: number;
   /** waiting/decoy: when the phase ends; clicked/tooEarly: when the next attempt starts */
@@ -47,7 +55,7 @@ export interface ReactionClickState {
   decoyPending: boolean;
 }
 
-export type ReactionClickEvent = { type: 'tap' } | { type: 'go' } | { type: 'next' };
+export type ReactionClickEvent = { type: 'tap' } | { type: 'go' } | { type: 'next' } | { type: 'crash' };
 
 export function reactionPoints(ms: number): number {
   if (ms < 300) return 5;
@@ -81,7 +89,7 @@ export const reactionClickEngine: GameEngine<ReactionClickState, ReactionClickEv
     return waitFor(
       {
         phase: 'waiting', level: clampLevel(level), attempt: 0, lives: REACTION_CLICK.lives, reactionTimes: [], score: 0,
-        falseStarts: 0, combo: 0, maxCombo: 0, until: 0, readyAt: 0, decoyPending: false,
+        falseStarts: 0, crashes: 0, combo: 0, maxCombo: 0, until: 0, readyAt: 0, decoyPending: false,
       },
       ctx,
     );
@@ -117,8 +125,19 @@ export const reactionClickEngine: GameEngine<ReactionClickState, ReactionClickEv
           };
         }
         return state;
+      case 'crash':
+        if (state.phase !== 'ready') return state;
+        return {
+          ...state,
+          phase: 'crashed',
+          attempt: state.attempt + 1,
+          lives: state.lives - 1,
+          crashes: state.crashes + 1,
+          combo: 0,
+          until: now + REACTION_CLICK.falseStartPauseMs,
+        };
       case 'next':
-        if (state.phase !== 'clicked' && state.phase !== 'tooEarly') return state;
+        if (state.phase !== 'clicked' && state.phase !== 'tooEarly' && state.phase !== 'crashed') return state;
         return state.attempt >= REACTION_CLICK.attempts || state.lives <= 0 ? { ...state, phase: 'done' } : waitFor(state, ctx);
     }
   },
@@ -127,13 +146,16 @@ export const reactionClickEngine: GameEngine<ReactionClickState, ReactionClickEv
     if (state.phase === 'waiting' || state.phase === 'decoy') {
       return [{ id: `go-${state.attempt}-${state.phase}-${state.until}`, at: state.until, event: { type: 'go' } }];
     }
-    if (state.phase === 'clicked' || state.phase === 'tooEarly') {
+    if (state.phase === 'ready') {
+      return [{ id: `crash-${state.attempt}`, at: state.readyAt + reachMs(state.level), event: { type: 'crash' } }];
+    }
+    if (state.phase === 'clicked' || state.phase === 'tooEarly' || state.phase === 'crashed') {
       return [{ id: `next-${state.attempt}`, at: state.until, event: { type: 'next' } }];
     }
     return [];
   },
 
-  cues: counterCues<ReactionClickState>(s => s.reactionTimes.length, s => s.falseStarts),
+  cues: counterCues<ReactionClickState>(s => s.reactionTimes.length, s => s.falseStarts + s.crashes),
 
   isFinished: state => state.phase === 'done',
 
@@ -141,6 +163,7 @@ export const reactionClickEngine: GameEngine<ReactionClickState, ReactionClickEv
     const times = state.reactionTimes;
     const metrics: Record<string, number> = {
       falseStarts: state.falseStarts,
+      crashes: state.crashes,
       hits: times.length,
       attempts: state.attempt,
       maxCombo: state.maxCombo,

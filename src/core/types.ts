@@ -27,7 +27,11 @@ export type GameId =
   | 'mirror'
   | 'maze'
   | 'track-dot'
-  | 'fit-piece';
+  | 'fit-piece'
+  // after the first real users (2026-10-08)
+  | 'flags-reverse'
+  | 'capitals'
+  | 'continents';
 
 export type GameCategory = 'memory' | 'attention' | 'reaction' | 'spatial' | 'knowledge';
 

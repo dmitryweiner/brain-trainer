@@ -6,8 +6,7 @@ import { FakeScheduler } from '../testing/fakeScheduler';
 import { GAMES } from './registry';
 import { currentQuestion, whereLayout, whereWasEngine, WHERE_WAS } from './whereWas/engine';
 import { makeMirrorRound, mirrorEngine } from './mirror/engine';
-import { generateMaze, mazeEngine, mazeSize, OPEN, roll, shortestPath, type Dir } from './maze/engine';
-import { dotAt, makeDotPath, trackDotEngine, TRACK_DOT, type TrackDotState } from './trackDot/engine';
+import { generateMaze, mazeEngine, mazeSize, OPEN, shortestPath, type Dir } from './maze/engine';
 import { fitLayout, makeFitRound } from './fitPiece/engine';
 import { mirror, sameUpToRotation, normalize } from './shapes/polyomino';
 import { oddOneOutEngine } from './oddOneOut/engine';
@@ -99,13 +98,19 @@ describe('Maze', () => {
     expect(shortestPath(maze)).toBeGreaterThanOrEqual(2 * (n - 1));
   });
 
-  it('rolls through corridors and stops at junctions and walls', () => {
-    const maze = generateMaze(6, createRng(5));
+  it('moves one cell per press and stops at walls', () => {
+    let st = mazeEngine.init(1, ctx(0, 5));
     for (const d of ['up', 'right', 'down', 'left'] as Dir[]) {
-      const path = roll(maze, 0, d);
-      if (!(maze.cells[0] & OPEN[d])) expect(path).toEqual([]);
-      else expect(path.length).toBeGreaterThan(0);
+      const next = mazeEngine.reduce(st, { type: 'move', dir: d }, ctx(1));
+      if (st.maze.cells[0] & OPEN[d]) {
+        expect(next.cellsMoved).toBe(1);
+        expect(next.trail).toEqual([0, next.ball]);
+        st = next;
+        break;
+      }
+      expect(next).toBe(st);
     }
+    expect(st.cellsMoved).toBe(1);
   });
 
   it('a solver following the shortest path scores full efficiency', () => {
@@ -133,40 +138,6 @@ describe('Maze', () => {
     });
     expect(outcome.metrics).toMatchObject({ completed: 3, mazes: 3, extraCells: 0 });
     expect(outcome.accuracy).toBe(100);
-  });
-});
-
-describe('Track the dot', () => {
-  it('keeps the path inside the board', () => {
-    const path = makeDotPath(10, createRng(3));
-    for (let t = 0; t < 30000; t += 37) {
-      const p = dotAt(path, t);
-      expect(p.x).toBeGreaterThanOrEqual(10);
-      expect(p.x).toBeLessThanOrEqual(90);
-      expect(p.y).toBeGreaterThanOrEqual(10);
-      expect(p.y).toBeLessThanOrEqual(90);
-    }
-  });
-
-  it('a finger that follows exactly is on target the whole time', () => {
-    const clock = new FakeScheduler();
-    let outcome = null as null | ReturnType<typeof trackDotEngine.result>;
-    const runner = new EngineRunner(trackDotEngine, clock, { level: 5, seed: 2, onFinish: o => (outcome = o) });
-    while (!outcome) {
-      const at = dotAt(runner.state.path, clock.now() + 50 - runner.state.movingAt);
-      runner.dispatch({ type: 'pointer', ...at });
-      clock.advance(50);
-    }
-    expect(outcome.accuracy).toBe(100);
-    expect(outcome.metrics.longestHoldMs).toBeGreaterThanOrEqual(TRACK_DOT.sessionMs - 200);
-  });
-
-  it('no finger: zero, and losing the target buzzes once', () => {
-    let s: TrackDotState = { ...trackDotEngine.init(1, ctx(0)), phase: 'playing', onTarget: true };
-    const next = trackDotEngine.reduce(s, { type: 'tick' }, ctx(1600));
-    expect(trackDotEngine.cues!(s, next)).toEqual(['bad']);
-    s = next;
-    expect(trackDotEngine.cues!(s, trackDotEngine.reduce(s, { type: 'tick' }, ctx(1700)))).toEqual([]);
   });
 });
 

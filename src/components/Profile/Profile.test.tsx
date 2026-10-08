@@ -65,7 +65,7 @@ describe('Profile', () => {
     expect(screen.getByRole('button', { name: 'Неделя' })).toHaveAttribute('aria-pressed', 'true');
 
     await user.click(screen.getByRole('button', { name: '← Все игры' }));
-    expect(screen.getByRole('button', { name: /Скорость реакции/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Дино-прыжок/ })).toBeInTheDocument();
   });
 
   it('resets one game after confirmation', async () => {

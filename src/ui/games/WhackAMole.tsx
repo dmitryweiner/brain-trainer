@@ -81,6 +81,5 @@ const Details: Views['Details'] = ({ outcome }) => {
 const views: Views = { Intro, Board, Footer, Details };
 
 export const WhackAMole: React.FC<ScreenProps> = ({ onBack, onNextGame }) => {
-  const { t } = useTranslation();
-  return <GameShell game={getGame('whack-a-mole')} views={views} title={`🐹 ${t('games.whack-a-mole.title')}`} onBack={onBack} onNextGame={onNextGame} />;
+  return <GameShell game={getGame('whack-a-mole')} views={views} onBack={onBack} onNextGame={onNextGame} />;
 };

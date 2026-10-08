@@ -20,7 +20,6 @@ export interface GameViews<S, E> {
 export interface GameShellProps<S, E> {
   game: GameDefinition;
   views: GameViews<S, E>;
-  title: string;
   onBack: () => void;
   onNextGame?: () => void;
 }
@@ -36,13 +35,14 @@ export function verdict(rating: number, t: (key: string) => string): string {
 }
 
 /** intro → engine → results, recording the session once (PLAN-IMPROVEMENTS.md, 5.2). */
-export function GameShell<S, E>({ game, views, title, onBack, onNextGame }: GameShellProps<S, E>) {
+export function GameShell<S, E>({ game, views, onBack, onNextGame }: GameShellProps<S, E>) {
   const { t } = useTranslation();
   const { phase, state, level, dispatch, start, finished } = useGameEngine<S, E>(game);
   const { Intro, Board, Footer, Details } = views;
 
   return (
-    <GameLayout title={title} footer={phase === 'playing' && state && Footer ? <Footer state={state} /> : undefined}>
+    // the header already names the game: no second title above it
+    <GameLayout footer={phase === 'playing' && state && Footer ? <Footer state={state} /> : undefined}>
       {phase === 'intro' && <Intro onStart={start} level={level} />}
       {phase === 'playing' && state && <Board state={state} dispatch={dispatch} />}
 

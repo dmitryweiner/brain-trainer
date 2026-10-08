@@ -1,6 +1,7 @@
-// Maze: roll the ball from the top-left corner to the exit. A swipe or an
-// arrow rolls it until a wall or a junction. Three mazes per session; the
-// level sets the size (5×5…12×12).
+// Maze: move the ball from the top-left corner to the exit, one cell per
+// arrow or swipe (rolling to the next junction surprised players: one press
+// moved the ball many cells). Three mazes per session; the level sets the
+// size (5×5…12×12).
 import type { EngineContext, GameEngine, SessionOutcome, TimerRequest } from '../../types';
 import type { Rng } from '../../rng';
 import { clampLevel, counterCues, elapsed, levelCeiling, speedFactor } from '../common';
@@ -60,30 +61,6 @@ export function generateMaze(size: number, rng: Rng): Maze {
 function step(maze: Maze, at: number, d: Dir): number | null {
   if (!(maze.cells[at] & OPEN[d])) return null;
   return at + DELTA[d][1] * maze.size + DELTA[d][0];
-}
-
-function openCount(bits: number): number {
-  return DIRS.filter(d => bits & OPEN[d]).length;
-}
-
-/** Cells passed when rolling from `at` towards `d`: stops at walls, junctions and the exit */
-export function roll(maze: Maze, at: number, d: Dir): number[] {
-  const path: number[] = [];
-  const exit = maze.size * maze.size - 1;
-  let cur = at;
-  for (;;) {
-    const next = step(maze, cur, d);
-    if (next === null) break;
-    path.push(next);
-    cur = next;
-    if (cur === exit || openCount(maze.cells[cur]) !== 2) break;
-    // in a corridor that bends, follow the bend
-    if (!(maze.cells[cur] & OPEN[d])) {
-      const turn = DIRS.find(o => o !== OPPOSITE[d] && maze.cells[cur] & OPEN[o])!;
-      d = turn;
-    }
-  }
-  return path;
 }
 
 /** Cells on the shortest path from start to exit (BFS) */
@@ -158,10 +135,9 @@ export const mazeEngine: GameEngine<MazeState, MazeEvent> = {
     }
     if (state.phase !== 'playing') return state;
     if (event.type === 'timeout') return event.index === state.index ? finish(state, now, false) : state;
-    const path = roll(state.maze, state.ball, event.dir);
-    if (path.length === 0) return state;
-    const ball = path[path.length - 1];
-    const next = { ...state, ball, trail: [...state.trail, ...path], cellsMoved: state.cellsMoved + path.length };
+    const ball = step(state.maze, state.ball, event.dir);
+    if (ball === null) return state;
+    const next = { ...state, ball, trail: [...state.trail, ball], cellsMoved: state.cellsMoved + 1 };
     return ball === state.maze.size * state.maze.size - 1 ? finish(next, now, true) : next;
   },
 

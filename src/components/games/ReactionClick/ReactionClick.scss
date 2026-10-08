@@ -471,3 +471,159 @@
   font-size: 17px;
   margin: 16px 0 8px;
 }
+
+// Runner scene (2026-10-08: "make it a mini-game like the dino in the browser")
+.dino-scene {
+  position: relative;
+  width: min(calc(100vw - 32px), 640px);
+  height: min(52vh, 320px);
+  margin: 0 auto;
+  border-radius: 18px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #e3f2fd 0%, #f1f8e9 78%);
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  outline: none;
+
+  &:focus-visible {
+    box-shadow: 0 0 0 4px rgba(30, 136, 229, 0.5);
+  }
+
+  .dino-caption {
+    position: absolute;
+    top: 10px;
+    inset-inline: 0;
+    margin: 0;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
+    color: #37474f;
+
+    &.phase-clicked { color: #2e7d32; }
+    &.phase-tooEarly,
+    &.phase-crashed { color: #c62828; }
+  }
+
+  .cloud {
+    position: absolute;
+    font-size: 34px;
+    opacity: 0.8;
+
+    &.c1 { top: 22%; left: 60%; }
+    &.c2 { top: 34%; left: 20%; font-size: 26px; }
+  }
+
+  &.running .cloud {
+    animation: drift 9s linear infinite;
+  }
+
+  &.running .cloud.c2 {
+    animation-duration: 13s;
+  }
+
+  .dino {
+    position: absolute;
+    left: 10%;
+    bottom: 20%;
+    font-size: clamp(48px, 9vh, 72px);
+    line-height: 1;
+    // the emoji faces left in most fonts: turn it to run right
+    transform: scaleX(-1);
+
+    &.jump {
+      animation: dino-jump 0.6s cubic-bezier(0.3, 0.7, 0.4, 1);
+    }
+
+    &.hurt {
+      filter: grayscale(0.6);
+    }
+  }
+
+  .cactus {
+    position: absolute;
+    bottom: 20%;
+    font-size: clamp(40px, 8vh, 60px);
+    line-height: 1;
+
+    &.approach {
+      animation-name: cactus-approach;
+      animation-timing-function: linear;
+      animation-fill-mode: forwards;
+    }
+
+    &.passed {
+      animation: cactus-pass 0.6s linear forwards;
+    }
+
+    &.hit {
+      left: 16%;
+    }
+  }
+
+  .bird {
+    position: absolute;
+    top: 40%;
+    font-size: clamp(36px, 7vh, 52px);
+    animation: bird-fly 0.7s linear forwards;
+  }
+
+  .dino-ground {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 20%;
+    background:
+      repeating-linear-gradient(90deg, #8d6e63 0 18px, transparent 18px 46px) 0 6px / 100% 3px no-repeat,
+      #d7ccc8;
+    border-top: 3px solid #6d4c41;
+  }
+
+  &.running .dino-ground {
+    animation: ground-run 0.5s linear infinite;
+  }
+}
+
+[dir='rtl'] .dino-scene {
+  // the scene is a picture, not text: same direction in every language
+  direction: ltr;
+}
+
+@keyframes dino-jump {
+  0% { transform: scaleX(-1) translateY(0); }
+  45% { transform: scaleX(-1) translateY(-110%); }
+  100% { transform: scaleX(-1) translateY(0); }
+}
+
+@keyframes cactus-approach {
+  from { left: 88%; }
+  to { left: 16%; }
+}
+
+@keyframes cactus-pass {
+  from { left: 16%; }
+  to { left: -12%; }
+}
+
+@keyframes bird-fly {
+  from { left: 100%; }
+  to { left: 55%; }
+}
+
+@keyframes drift {
+  from { transform: translateX(0); }
+  to { transform: translateX(-120vw); }
+}
+
+@keyframes ground-run {
+  from { background-position: 0 6px, 0 0; }
+  to { background-position: -46px 6px, 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dino-scene .cloud,
+  .dino-scene .dino-ground {
+    animation: none !important;
+  }
+}

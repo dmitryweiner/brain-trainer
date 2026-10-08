@@ -81,6 +81,5 @@ const Details: Views['Details'] = ({ outcome }) => {
 const views: Views = { Intro, Board, Footer, Details };
 
 export const MemoryMatrix: React.FC<ScreenProps> = ({ onBack, onNextGame }) => {
-  const { t } = useTranslation();
-  return <GameShell game={getGame('memory-matrix')} views={views} title={`🟩 ${t('games.memory-matrix.title')}`} onBack={onBack} onNextGame={onNextGame} />;
+  return <GameShell game={getGame('memory-matrix')} views={views} onBack={onBack} onNextGame={onNextGame} />;
 };

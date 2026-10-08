@@ -73,6 +73,5 @@ const Details: Views['Details'] = ({ outcome }) => {
 const views: Views = { Intro, Board, Footer, Details };
 
 export const MemoryFlip: React.FC<ScreenProps> = ({ onBack, onNextGame }) => {
-  const { t } = useTranslation();
-  return <GameShell game={getGame('memory-flip')} views={views} title={`🃏 ${t('games.memory-flip.title')}`} onBack={onBack} onNextGame={onNextGame} />;
+  return <GameShell game={getGame('memory-flip')} views={views} onBack={onBack} onNextGame={onNextGame} />;
 };
