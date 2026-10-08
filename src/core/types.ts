@@ -31,7 +31,9 @@ export type GameId =
   // after the first real users (2026-10-08)
   | 'flags-reverse'
   | 'capitals'
-  | 'continents';
+  | 'continents'
+  | 'currencies'
+  | 'languages';
 
 export type GameCategory = 'memory' | 'attention' | 'reaction' | 'spatial' | 'knowledge';
 

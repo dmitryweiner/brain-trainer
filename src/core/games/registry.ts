@@ -96,6 +96,8 @@ export const GAMES: readonly GameDefinition[] = [
   define({ id: 'flags-reverse', category: 'knowledge', icon: '🚩', difficulty: 2, legacyMaxScore: 0, engine: makeGeoEngine('country-to-flag'), rating: geoRating, ...LEVELS }),
   define({ id: 'capitals', category: 'knowledge', icon: '🏛️', difficulty: 3, legacyMaxScore: 0, engine: makeGeoEngine('capitals'), rating: geoRating, ...LEVELS }),
   define({ id: 'continents', category: 'knowledge', icon: '🌍', difficulty: 2, legacyMaxScore: 0, engine: makeGeoEngine('continents'), rating: geoRating, ...LEVELS }),
+  define({ id: 'currencies', category: 'knowledge', icon: '💰', difficulty: 3, legacyMaxScore: 0, engine: makeGeoEngine('currencies'), rating: geoRating, ...LEVELS }),
+  define({ id: 'languages', category: 'knowledge', icon: '🗣️', difficulty: 3, legacyMaxScore: 0, engine: makeGeoEngine('languages'), rating: geoRating, ...LEVELS }),
 ];
 
 /**

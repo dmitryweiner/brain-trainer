@@ -19,6 +19,8 @@ import { boardsFor, memoryFlipEngine } from './memoryFlip/engine';
 import { emojiHuntEngine, huntRound } from './emojiHunt/engine';
 import { makeGeoEngine, makeQuestion, optionCount, timeBonus, type GeoKind } from './geoQuiz/engine';
 import { CAPITAL_COUNTRIES, CONTINENT_OF } from './geoQuiz/data';
+import { CURRENCY_CONFLICTS, CURRENCY_OF, LANGUAGES_OF } from './geoQuiz/facts';
+import type { SupportedCountryCode } from './flags/data';
 import { isTarget, nBackEngine, nBackLayout, nBackRating, nBackSequence } from './nBack/engine';
 
 const ctx = (now: number, seed = 1): EngineContext => ({ now, rng: createRng(seed) });
@@ -373,7 +375,7 @@ describe('geography quizzes', () => {
 
   it('every question has its answer among distinct options', () => {
     const rng = createRng(3);
-    for (const kind of ['flag-to-country', 'country-to-flag', 'capitals', 'continents'] as GeoKind[]) {
+    for (const kind of ['flag-to-country', 'country-to-flag', 'capitals', 'continents', 'currencies', 'languages'] as GeoKind[]) {
       for (const level of [1, 5, 10]) {
         for (let i = 0; i < 30; i++) {
           const q = makeQuestion(kind, level, [], rng);
@@ -396,6 +398,38 @@ describe('geography quizzes', () => {
     for (const code of Object.keys(CONTINENT_OF)) expect(['RU', 'TR', 'KZ', 'EG', 'GE', 'AM', 'AZ', 'CY']).not.toContain(code);
     expect(CAPITAL_COUNTRIES).toContain('SG');
     expect(CAPITAL_COUNTRIES).toContain('DZ');
+  });
+
+  it('currency questions have exactly one right answer', () => {
+    const rng = createRng(5);
+    const clash = (a: string, b: string) => a === b || CURRENCY_CONFLICTS.some(p => p.includes(a) && p.includes(b));
+    for (let i = 0; i < 300; i++) {
+      const q = makeQuestion('currencies', 1 + (i % 10), [], rng);
+      if (q.optionKind === 'currency') {
+        expect(q.answer).toBe(CURRENCY_OF[q.prompt.code]);
+        for (const a of q.options) for (const b of q.options) if (a !== b) expect(clash(a, b), `${a}/${b}`).toBe(false);
+      } else {
+        expect(q.prompt.show).toBe('currency');
+        const currency = CURRENCY_OF[q.prompt.code];
+        expect(q.options.filter(c => clash(CURRENCY_OF[c as SupportedCountryCode], currency))).toEqual([q.answer]);
+      }
+    }
+  });
+
+  it('language questions have exactly one right answer', () => {
+    const rng = createRng(6);
+    for (let i = 0; i < 300; i++) {
+      const q = makeQuestion('languages', 1 + (i % 10), [], rng);
+      const official = LANGUAGES_OF[q.prompt.code]!;
+      if (q.optionKind === 'language') {
+        expect(q.answer).toBe(official[0]);
+        expect(q.options.filter(l => official.includes(l))).toEqual([q.answer]);
+      } else {
+        expect(q.prompt.show).toBe('language');
+        expect(q.options.filter(c => LANGUAGES_OF[c as SupportedCountryCode]?.includes(official[0]))).toEqual([q.answer]);
+      }
+      expect(q.options).toHaveLength(optionCount(1 + (i % 10)));
+    }
   });
 
   it('never repeats a country within a session', () => {

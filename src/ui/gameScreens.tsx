@@ -13,7 +13,7 @@ import { DigitSpan } from './games/DigitSpan';
 import { TaskSwitch } from './games/TaskSwitch';
 import { MemoryFlip } from './games/MemoryFlip';
 import { EmojiHunt } from './games/EmojiHunt';
-import { Capitals, Continents, CountryToFlag, FlagToCountry } from './games/GeoQuiz';
+import { Capitals, Continents, CountryToFlag, Currencies, FlagToCountry, Languages } from './games/GeoQuiz';
 import { NBack } from './games/NBack';
 import { WhereWas } from './games/WhereWas';
 import { Mirror } from './games/Mirror';
@@ -44,6 +44,8 @@ export const GAME_SCREENS: Partial<Record<GameId, GameScreen>> = {
   'flags-reverse': CountryToFlag,
   capitals: Capitals,
   continents: Continents,
+  currencies: Currencies,
+  languages: Languages,
   'n-back': NBack,
   'where-was': WhereWas,
   mirror: Mirror,

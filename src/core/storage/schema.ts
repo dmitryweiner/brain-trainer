@@ -31,6 +31,8 @@ export const GAME_IDS: readonly GameId[] = [
   'flags-reverse',
   'capitals',
   'continents',
+  'currencies',
+  'languages',
 ];
 
 export interface SessionEvent {

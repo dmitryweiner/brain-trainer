@@ -1,10 +1,11 @@
-// One screen for the four geography quizzes (core/games/geoQuiz).
+// One screen for the geography quizzes (core/games/geoQuiz).
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { GameShell, type GameViews } from '../GameShell';
 import { getGame } from '../../core/games/registry';
 import type { GameId } from '../../core/types';
 import { flagOf, FLAG_ONLY_FROM, GEO, optionCount, type GeoEvent, type GeoOptionKind, type GeoState } from '../../core/games/geoQuiz/engine';
+import { CURRENCY_OF, LANGUAGES_OF } from '../../core/games/geoQuiz/facts';
 import { GameIntro, StatusLine } from './common';
 import type { ScreenProps } from '../gameScreens';
 import './games.scss';
@@ -24,6 +25,10 @@ function OptionLabel({ kind, value }: { kind: GeoOptionKind; value: string }) {
       return <>{t(`capitals.${value}`)}</>;
     case 'continent':
       return <><span aria-hidden="true">{CONTINENT_ICON[value]}</span> {t(`continents.${value}`)}</>;
+    case 'currency':
+      return <>{t(`currencies.${value}`)}</>;
+    case 'language':
+      return <>{t(`languages.${value}`)}</>;
     default:
       return <>{t(`countries.${value}`)}</>;
   }
@@ -44,6 +49,8 @@ const Board: Views['Board'] = ({ state, dispatch }) => {
         )}
         {(prompt.show === 'country' || prompt.show === 'flag+country') && <p className="flags-country">{t(`countries.${prompt.code}`)}</p>}
         {prompt.show === 'capital' && <p className="flags-country">🏛️ {t(`capitals.${prompt.code}`)}</p>}
+        {prompt.show === 'currency' && <p className="flags-country">💰 {t(`currencies.${CURRENCY_OF[prompt.code]}`)}</p>}
+        {prompt.show === 'language' && <p className="flags-country">🗣️ {t(`languages.${LANGUAGES_OF[prompt.code]![0]}`)}</p>}
         <p className="game-prompt">{t(question.ask)}</p>
       </div>
       <div className={`flags-options ${question.optionKind === 'flag' ? 'as-flags' : ''}`}>
@@ -88,13 +95,17 @@ const Details: Views['Details'] = ({ outcome }) => {
 /** i18n group of each quiz's rules: geo.<group>.rule1/rule2 */
 const RULES: Record<string, string> = {
   'flags-game': 'flagToCountry', 'flags-reverse': 'countryToFlag', capitals: 'capitals', continents: 'continents',
+  currencies: 'currencies', languages: 'languages',
 };
+
+/** Quizzes that hide the country's name from level FLAG_ONLY_FROM */
+const FLAG_ONLY_GAMES: readonly GameId[] = ['capitals', 'continents', 'currencies', 'languages'];
 
 function screenFor(gameId: GameId): React.FC<ScreenProps> {
   const Intro: Views['Intro'] = ({ onStart, level }) => {
     const { t } = useTranslation();
     const group = RULES[gameId];
-    const flagOnly = level >= FLAG_ONLY_FROM && (gameId === 'capitals' || gameId === 'continents');
+    const flagOnly = level >= FLAG_ONLY_FROM && FLAG_ONLY_GAMES.includes(gameId);
     return (
       <GameIntro gameId={gameId} level={level} onStart={onStart} rules={[`geo.${group}.rule1`, `geo.${group}.rule2`, 'geo.speedRule']}>
         <p className="intro-detail">
@@ -115,3 +126,5 @@ export const FlagToCountry = screenFor('flags-game');
 export const CountryToFlag = screenFor('flags-reverse');
 export const Capitals = screenFor('capitals');
 export const Continents = screenFor('continents');
+export const Currencies = screenFor('currencies');
+export const Languages = screenFor('languages');
