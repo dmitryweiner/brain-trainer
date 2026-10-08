@@ -27,7 +27,8 @@ export const CONTINENT_OF: Partial<Record<SupportedCountryCode, Continent>> = {
 };
 
 /**
- * Countries whose capital is asked about. Left out: Singapore (a city-state)
- * and Algeria (in Russian the capital and the country are both «Алжир»).
+ * Countries whose capital is asked about: all of them. Pairs where the
+ * capital shares the country's name (Singapore; Algeria — «Алжир» in Russian)
+ * stay on purpose: they are fun and worth knowing.
  */
-export const CAPITAL_COUNTRIES: readonly SupportedCountryCode[] = SUPPORTED_COUNTRY_CODES.filter(c => c !== 'SG' && c !== 'DZ');
+export const CAPITAL_COUNTRIES: readonly SupportedCountryCode[] = SUPPORTED_COUNTRY_CODES;

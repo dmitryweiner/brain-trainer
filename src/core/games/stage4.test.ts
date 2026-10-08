@@ -392,10 +392,10 @@ describe('geography quizzes', () => {
     expect(makeQuestion('continents', 5, [], rng).options).toHaveLength(6);
   });
 
-  it('only asks undisputed continents and never a city-state capital', () => {
+  it('only asks undisputed continents; capitals of every country, namesakes included', () => {
     for (const code of Object.keys(CONTINENT_OF)) expect(['RU', 'TR', 'KZ', 'EG', 'GE', 'AM', 'AZ', 'CY']).not.toContain(code);
-    expect(CAPITAL_COUNTRIES).not.toContain('SG');
-    expect(CAPITAL_COUNTRIES).not.toContain('DZ');
+    expect(CAPITAL_COUNTRIES).toContain('SG');
+    expect(CAPITAL_COUNTRIES).toContain('DZ');
   });
 
   it('never repeats a country within a session', () => {
