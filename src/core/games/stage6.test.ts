@@ -76,9 +76,9 @@ describe('Mirror', () => {
     expect(k(reflect(L, 'top'))).toBe(k([[0, 2], [0, 1], [0, 0], [1, 0]]));
   });
 
-  it('mirrors stand at the sides up to level 3, anywhere from level 4', () => {
+  it('mirrors stand on every side at every level', () => {
     const sides = (L: number) => new Set(Array.from({ length: 60 }, (_, i) => makeMirrorRound(L, createRng(i)).side));
-    expect([...sides(2)].sort()).toEqual(['left', 'right']);
+    expect(sides(1).size).toBe(4);
     expect(sides(5).size).toBe(4);
   });
 

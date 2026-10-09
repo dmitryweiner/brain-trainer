@@ -2,8 +2,8 @@
 // reflection? The answer is the exact image in that mirror: a side mirror
 // flips left–right, one above or below flips upside down, so the image in the
 // other kind of mirror is a distractor, along with the shape turned and near
-// misses. Side mirrors only up to level 3; from level 4 any side (players
-// asked for mirrors not only on the right, 2026-10-09).
+// misses. The mirror stands on any side at every level (players asked for
+// mirrors not only at the sides, 2026-10-09).
 import type { EngineContext, GameEngine, SessionOutcome, TimerRequest } from '../../types';
 import type { Rng } from '../../rng';
 import { average, clampLevel, counterCues, elapsed, levelCeiling, percent, speedFactor } from '../common';
@@ -30,14 +30,12 @@ export function reflect(shape: Shape, side: MirrorSide): Shape {
   return side === 'left' || side === 'right' ? mirror(shape) : normalize(shape.map(([x, y]) => [x, -y] as const));
 }
 
-export function sidesFor(level: number): MirrorSide[] {
-  return clampLevel(level) <= 3 ? ['left', 'right'] : ['left', 'right', 'top', 'bottom'];
-}
+export const MIRROR_SIDES: readonly MirrorSide[] = ['left', 'right', 'top', 'bottom'];
 
 export function makeMirrorRound(level: number, rng: Rng): MirrorRound {
   const L = clampLevel(level);
   const target = randomChiral(cellsFor(L), rng);
-  const side = rng.pick(sidesFor(L));
+  const side = rng.pick(MIRROR_SIDES);
   const image = reflect(target, side);
   const otherAxis = reflect(target, side === 'left' || side === 'right' ? 'top' : 'left');
   const candidates: Shape[] = [];

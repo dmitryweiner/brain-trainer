@@ -877,7 +877,6 @@
     "rule1": "A mirror stands next to the shape.",
     "rule3": "A turned shape is not a reflection!",
     "prompt": "Which option is the shape seen in the mirror?",
-    "rule2sides": "The mirror is at the side. Find the shape’s reflection in it.",
     "rule2any": "The mirror may stand on any side: left, right, above or below. Find the reflection in that very mirror.",
     "side": {
       "left": "Mirror on the left",
