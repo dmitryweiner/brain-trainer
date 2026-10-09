@@ -36,3 +36,32 @@ export const COUNTRY_OF_UNIQUE_CURRENCY: ReadonlyMap<string, SupportedCountryCod
     return users.length === 1 ? [[c, users[0]] as const] : [];
   }),
 );
+
+/** Each country's currency sign, as printed on its price tags */
+export const CURRENCY_SYMBOL_OF: Record<SupportedCountryCode, string> = {
+  AD: '€', AE: 'د.إ', AF: '؋', AL: 'L', AM: '֏', AR: '$', AT: '€', AU: '$', AZ: '₼', BA: 'KM', BD: '৳', BE: '€', BG: '€',
+  BR: 'R$', BY: 'Br', CA: '$', CH: 'Fr.', CL: '$', CN: '¥', CO: '$', CU: '$', CY: '€', CZ: 'Kč', DE: '€', DK: 'kr',
+  DZ: 'د.ج', EE: '€', EG: 'E£', ES: '€', FI: '€', FR: '€', GB: '£', GE: '₾', GR: '€', HR: '€', HU: 'Ft', ID: 'Rp',
+  IE: '€', IL: '₪', IN: '₹', IQ: 'ع.د', IR: '﷼', IS: 'kr', IT: '€', JP: '¥', KE: 'KSh', KR: '₩', KZ: '₸', LT: '€',
+  LV: '€', MA: 'د.م.', MD: 'L', ME: '€', MK: 'ден', MX: '$', MY: 'RM', NG: '₦', NL: '€', NO: 'kr', NZ: '$', PE: 'S/',
+  PH: '₱', PK: 'Rs', PL: 'zł', PT: '€', RO: 'lei', RS: 'дин.', RU: '₽', SA: 'ر.س', SE: 'kr', SG: '$', SI: '€',
+  SK: '€', TH: '฿', TR: '₺', TW: 'NT$', UA: '₴', US: '$', UZ: 'soʻm', VE: 'Bs.', VN: '₫', ZA: 'R',
+};
+
+/**
+ * The sign shown with a currency among the options when no country is in
+ * question: the usual one, or none where the countries sharing the name use
+ * different signs (dinar, dirham, rial, leu).
+ */
+export const CURRENCY_SYMBOL: Record<string, string | null> = {
+  euro: '€', dirham: null, afghani: '؋', lek: 'L', dram: '֏', peso: '$', dollar: '$', manat: '₼', mark: 'KM', taka: '৳',
+  real: 'R$', ruble: '₽', franc: 'Fr.', yuan: '¥', krona: 'kr', dinar: null, pound: '£', lari: '₾', forint: 'Ft',
+  rupiah: 'Rp', shekel: '₪', rupee: '₹', rial: null, yen: '¥', shilling: 'KSh', won: '₩', tenge: '₸', leu: null,
+  denar: 'ден', ringgit: 'RM', naira: '₦', sol: 'S/', zloty: 'zł', baht: '฿', lira: '₺', hryvnia: '₴', sum: 'soʻm',
+  bolivar: 'Bs.', dong: '₫', rand: 'R',
+};
+
+/** The sign of `currency`, as used in `country` when it is that country's currency */
+export function currencySymbol(currency: string, country?: SupportedCountryCode): string | null {
+  return country && CURRENCY_OF[country] === currency ? CURRENCY_SYMBOL_OF[country] : CURRENCY_SYMBOL[currency] ?? null;
+}

@@ -5,7 +5,8 @@ import { GameShell, type GameViews } from '../GameShell';
 import { getGame } from '../../core/games/registry';
 import type { GameId } from '../../core/types';
 import { flagOf, FLAG_ONLY_FROM, GEO, optionCount, type GeoEvent, type GeoOptionKind, type GeoState } from '../../core/games/geoQuiz/engine';
-import { CURRENCY_OF } from '../../core/games/geoQuiz/facts';
+import { CURRENCY_OF, currencySymbol } from '../../core/games/geoQuiz/facts';
+import type { SupportedCountryCode } from '../../core/games/flags/data';
 import { CAR_BRAND_NAME, type CarBrand } from '../../core/games/geoQuiz/cars';
 import { CAR_LOGOS } from './carLogos';
 import { GameIntro, StatusLine } from './common';
@@ -28,7 +29,15 @@ function CarLogo({ brand, label }: { brand: string; label?: string }) {
   );
 }
 
-function OptionLabel({ kind, value }: { kind: GeoOptionKind; value: string }) {
+/** A currency's name with its sign: "Hryvnia ₴" (the sign isolated, Arabic ones would reorder the line) */
+function CurrencyName({ currency, country }: { currency: string; country?: SupportedCountryCode }) {
+  const { t } = useTranslation();
+  const sign = currencySymbol(currency, country);
+  return <>{t(`currencies.${currency}`)}{sign && <> <bdi className="currency-sign">{sign}</bdi></>}</>;
+}
+
+/** `country`: the country the question is about, whose own sign the right currency shows */
+function OptionLabel({ kind, value, country }: { kind: GeoOptionKind; value: string; country?: SupportedCountryCode }) {
   const { t } = useTranslation();
   switch (kind) {
     case 'flag':
@@ -38,7 +47,7 @@ function OptionLabel({ kind, value }: { kind: GeoOptionKind; value: string }) {
     case 'continent':
       return <><span aria-hidden="true">{CONTINENT_ICON[value]}</span> {t(`continents.${value}`)}</>;
     case 'currency':
-      return <>{t(`currencies.${value}`)}</>;
+      return <CurrencyName currency={value} country={country} />;
     case 'brand':
       return <>{CAR_BRAND_NAME[value as CarBrand]}</>;
     case 'logo':
@@ -65,7 +74,7 @@ const Board: Views['Board'] = ({ state, dispatch }) => {
         )}
         {(prompt.show === 'country' || prompt.show === 'flag+country') && <p className="flags-country">{t(`countries.${prompt.code}`)}</p>}
         {prompt.show === 'capital' && <p className="flags-country">🏛️ {t(`capitals.${prompt.code}`)}</p>}
-        {prompt.show === 'currency' && <p className="flags-country">💰 {t(`currencies.${CURRENCY_OF[prompt.code]}`)}</p>}
+        {prompt.show === 'currency' && <p className="flags-country">💰 <CurrencyName currency={CURRENCY_OF[prompt.code]} country={prompt.code} /></p>}
         {prompt.show === 'logo' && <div className="car-logo-prompt"><CarLogo brand={prompt.code} label={t('geo.thisLogo')} /></div>}
         {prompt.show === 'brand' && <p className="flags-country">{CAR_BRAND_NAME[prompt.code]}</p>}
         <p className="game-prompt">{t(question.ask)}</p>
@@ -80,7 +89,7 @@ const Board: Views['Board'] = ({ state, dispatch }) => {
               disabled={state.phase !== 'playing'}
               onClick={() => dispatch({ type: 'pick', option })}
             >
-              <OptionLabel kind={question.optionKind} value={option} />
+              <OptionLabel kind={question.optionKind} value={option} country={prompt.code as SupportedCountryCode} />
             </button>
           );
         })}

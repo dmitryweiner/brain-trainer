@@ -427,6 +427,12 @@ $lit: #43a047;
 
 img.car-logo { object-fit: contain; }
 
+// a currency's sign after its name
+.currency-sign {
+  color: #607d8b;
+  font-weight: 700;
+}
+
 // a country's flag before its name in an option
 .geo-inline-flag {
   font-size: 1.5em;

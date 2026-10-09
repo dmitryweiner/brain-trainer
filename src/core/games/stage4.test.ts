@@ -20,7 +20,7 @@ import { boardsFor, memoryFlipEngine } from './memoryFlip/engine';
 import { emojiHuntEngine, huntRound } from './emojiHunt/engine';
 import { makeGeoEngine, makeQuestion, optionCount, timeBonus, type GeoKind } from './geoQuiz/engine';
 import { CAPITAL_COUNTRIES, CONTINENT_OF } from './geoQuiz/data';
-import { CURRENCY_CONFLICTS, CURRENCY_OF } from './geoQuiz/facts';
+import { CURRENCIES, CURRENCY_CONFLICTS, CURRENCY_OF, CURRENCY_SYMBOL, CURRENCY_SYMBOL_OF, currencySymbol } from './geoQuiz/facts';
 import type { SupportedCountryCode } from './flags/data';
 import { isTarget, nBackEngine, nBackLayout, nBackRating, nBackSequence } from './nBack/engine';
 
@@ -428,6 +428,19 @@ describe('geography quizzes', () => {
     for (const code of Object.keys(CONTINENT_OF)) expect(['RU', 'TR', 'KZ', 'EG', 'GE', 'AM', 'AZ', 'CY']).not.toContain(code);
     expect(CAPITAL_COUNTRIES).toContain('SG');
     expect(CAPITAL_COUNTRIES).toContain('DZ');
+  });
+
+  it('every currency has a sign; a shared name without a shared sign shows none', () => {
+    expect(Object.keys(CURRENCY_SYMBOL).sort()).toEqual([...CURRENCIES].sort());
+    for (const c of CURRENCIES) {
+      const signs = new Set((Object.keys(CURRENCY_OF) as SupportedCountryCode[]).filter(k => CURRENCY_OF[k] === c).map(k => CURRENCY_SYMBOL_OF[k]));
+      if (CURRENCY_SYMBOL[c] === null) expect(signs.size, c).toBeGreaterThan(1);
+      else expect(signs.size === 1 ? [...signs][0] : CURRENCY_SYMBOL[c], c).toBe(CURRENCY_SYMBOL[c]);
+    }
+    expect(currencySymbol('ruble', 'BY')).toBe('Br');
+    expect(currencySymbol('ruble', 'UA')).toBe('₽');
+    expect(currencySymbol('dinar')).toBeNull();
+    expect(currencySymbol('dinar', 'RS')).toBe('дин.');
   });
 
   it('currency questions have exactly one right answer', () => {
