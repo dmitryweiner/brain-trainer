@@ -53,7 +53,12 @@ function OptionLabel({ kind, value, country }: { kind: GeoOptionKind; value: str
     case 'logo':
       return <CarLogo brand={value} label={t('geo.logoOption')} />;
     case 'country+flag':
-      return <><span className="geo-inline-flag" aria-hidden="true">{flagOf(value)}</span> {t(`countries.${value}`)}</>;
+      return (
+        <span className="geo-country-option">
+          <span className="geo-option-flag" aria-hidden="true">{flagOf(value)}</span>
+          <span>{t(`countries.${value}`)}</span>
+        </span>
+      );
     default:
       return <>{t(`countries.${value}`)}</>;
   }

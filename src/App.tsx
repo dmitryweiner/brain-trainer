@@ -94,7 +94,8 @@ function AppContent() {
         totalScore={totalScore}
         showBackButton={route.view !== 'menu'}
         onBack={backToMenu}
-        gameTitle={game ? `${game.icon} ${t(`games.${game.id}.title`)}` : undefined}
+        // a no-break space keeps the icon with the title on narrow screens
+        gameTitle={game ? `${game.icon}\u00a0${t(`games.${game.id}.title`)}` : undefined}
         onProfileClick={() => go({ view: 'profile' })}
         showProfileButton={route.view === 'menu'}
       />

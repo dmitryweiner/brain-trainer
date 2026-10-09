@@ -69,8 +69,18 @@ try {
     mkdirSync(`shots/${lang}`, { recursive: true });
 
     const shot = async (name, fullPage = false) => {
-      const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+      // against clientWidth: on a phone a too-wide page widens the layout viewport
+      // (innerWidth) and is zoomed out, so scrollWidth − innerWidth stays 0
+      const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
       if (overflow > 1) report.push(`${lang}/${name}: horizontal overflow ${overflow}px`);
+      // clipped content does not scroll the page: also look for elements past the edges
+      const outside = await page.evaluate(() => [...document.querySelectorAll('body *')]
+        .filter(e => e.children.length === 0 && e.getClientRects().length > 0)
+        .filter(e => { const r = e.getBoundingClientRect(); return r.width > 0 && (r.right > document.documentElement.clientWidth + 1 || r.left < -1); })
+        // inside a scrolling strip (profile tabs) that is by design
+        .filter(e => { for (let a = e.parentElement; a; a = a.parentElement) if (/auto|scroll/.test(getComputedStyle(a).overflowX)) return false; return true; })
+        .slice(0, 3).map(e => e.className || e.tagName.toLowerCase()));
+      if (outside.length) report.push(`${lang}/${name}: past the screen edge: ${outside.join(', ')}`);
       await page.screenshot({ path: `shots/${lang}/${name}.png`, fullPage });
     };
     const want = name => !only || only.includes(name);

@@ -30,6 +30,9 @@
   cursor: pointer;
   transition: background-color 0.2s ease;
   min-width: 100px;
+  // the arrow and the word on one line, whatever the screen
+  white-space: nowrap;
+  flex: none;
   
   &:hover:not(:disabled) {
     background: rgba(255, 255, 255, 0.3);
@@ -171,8 +174,9 @@
   font-weight: 700;
 }
 
-// Адаптивность для маленьких экранов
-@media (max-width: $breakpoint-xs) {
+// Адаптивность для маленьких экранов: обычные телефоны (360–400px) тоже, иначе
+// кнопка «Назад» без переноса выталкивает флажок языка за край
+@media (max-width: 400px) {
   .header-content {
     padding: 4px $spacing-sm;
     min-height: 42px;

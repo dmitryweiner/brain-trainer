@@ -24,6 +24,10 @@ Worker + D1 in `cloud/`). UI languages: ru, en, uk, he (RTL).
   screenshots each game's intro and play screen at phone size into `shots/`
   (gitignored), reporting horizontal overflow and console errors. Look at the
   PNGs after any visual change. Without `--only` it shoots every menu game.
+  Also run it narrow (`--width 360 --height 740`, and `--width 320 --height 640`):
+  most layout bugs players reported only showed on small phones. Long and
+  short labels must lay out the same way (e.g. a flag always above a country
+  name, not beside short names and above long ones).
 - `npm run logos` — contact sheet of every car logo (`shots/logos.png`);
   `npm run logos -- a.svg b.svg` previews candidate files.
 - `node scripts/crop-emblem.mjs in.svg out.svg [--axis x|y]` — crops a logo to

@@ -319,15 +319,18 @@ $lit: #43a047;
 
 .switch-answers {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  // minmax(0, …): the buttons may shrink below their text width on 320px phones
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   // "left" and "right" are physical sides, also in Hebrew
   direction: ltr;
   gap: $spacing-sm;
 
   .btn-custom {
     min-height: 72px;
-    font-size: 22px;
+    font-size: clamp(17px, 5.5vw, 22px);
+    padding-inline: $spacing-xs;
     width: 100%;
+    min-width: 0; // .btn-large asks for 180px: two of them do not fit 320px
   }
 }
 
@@ -433,10 +436,20 @@ img.car-logo { object-fit: contain; }
   font-weight: 700;
 }
 
-// a country's flag before its name in an option
-.geo-inline-flag {
+// a country with its flag: always the flag above the name, so short and long
+// names look the same (inline, long names wrapped under the flag and short
+// ones did not)
+.geo-country-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  line-height: 1.2;
+}
+
+.geo-option-flag {
   font-size: 1.5em;
-  vertical-align: middle;
+  line-height: 1;
 }
 
 // N-Back
