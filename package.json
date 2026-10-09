@@ -17,8 +17,11 @@
     "check": "npm run lint && npm run typecheck && npm test",
     "check:cloud": "cd cloud && npm run check && npm test",
     "deploy:cloud": "cd cloud && npm run deploy",
+    "smoke:cloud": "node cloud/scripts/smoke.mjs",
     "icons": "pwa-assets-generator",
-    "snap": "node scripts/snap.mjs"
+    "snap": "node scripts/snap.mjs",
+    "logos": "node scripts/logo-sheet.mjs",
+    "i18n:merge": "node scripts/i18n-merge.mjs"
   },
   "dependencies": {
     "bootstrap": "^5.3.0",

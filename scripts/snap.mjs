@@ -9,7 +9,7 @@
 // and the profile tabs into shots/<lang>/. Reports horizontal overflow and
 // console errors: the usual signs of a layout broken on narrow screens.
 import { execSync, spawn } from 'node:child_process';
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, readFileSync } from 'node:fs';
 import { chromium } from 'playwright';
 
 const args = process.argv.slice(2);
@@ -25,13 +25,10 @@ const only = onlyList.length > 0 ? onlyList : null;
 const port = 4199;
 const base = `http://localhost:${port}/brain-trainer/`;
 
-const GAMES = [
-  'memory-matrix', 'where-was', 'sequence-recall', 'phone-recall', 'n-back', 'memory-flip',
-  'schulte', 'odd-one-out', 'emoji-hunt', 'dual-rule-reaction',
-  'whack-a-mole', 'reaction-click', 'trace-line',
-  'rotate-shape', 'mirror', 'maze',
-  'flags-game', 'capitals', 'continents', 'currencies', 'car-logos',
-];
+// the menu's games, in menu order, straight from the registry
+const registry = readFileSync('src/core/games/registry.ts', 'utf8');
+const menu = registry.slice(registry.indexOf('export const GAMES'), registry.indexOf('export const RETIRED_GAMES'));
+const GAMES = [...menu.matchAll(/\bid: '([a-z-]+)'/g)].map(m => m[1]);
 const PROFILE_TABS = 3; // overview, games list, achievements (by position)
 
 if (!args.includes('--no-build')) execSync('npm run build', { stdio: 'inherit' });
