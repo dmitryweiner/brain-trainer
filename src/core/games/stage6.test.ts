@@ -89,8 +89,17 @@ describe('Mirror', () => {
 });
 
 describe('Maze', () => {
-  it('grows from 5×5 to 12×12', () => {
-    expect([1, 10].map(mazeSize)).toEqual([5, 12]);
+  it('grows from 6×6 to 14×14', () => {
+    expect([1, 10].map(mazeSize)).toEqual([6, 14]);
+  });
+
+  it('forks often: several junctions on the way out', () => {
+    let forks = 0;
+    for (let seed = 0; seed < 50; seed++) {
+      const maze = generateMaze(12, createRng(seed));
+      forks += maze.cells.filter(c => [1, 2, 4, 8].filter(b => c & b).length >= 3).length;
+    }
+    expect(forks / 50).toBeGreaterThan(25); // depth-first carving gave about 14
   });
 
   it('is a perfect maze: every cell reachable, walls consistent', () => {

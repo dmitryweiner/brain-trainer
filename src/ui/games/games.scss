@@ -425,6 +425,8 @@ $lit: #43a047;
   height: 1em;
 }
 
+img.car-logo { object-fit: contain; }
+
 // a country's flag before its name in an option
 .geo-inline-flag {
   font-size: 1.5em;

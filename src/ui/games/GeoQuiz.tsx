@@ -20,6 +20,7 @@ const CONTINENT_ICON: Record<string, string> = {
 
 function CarLogo({ brand, label }: { brand: string; label?: string }) {
   const logo = CAR_LOGOS[brand as CarBrand];
+  if ('src' in logo) return <img className="car-logo" src={logo.src} alt={label ?? ''} draggable={false} />;
   return (
     <svg className="car-logo" viewBox="0 0 24 24" role={label ? 'img' : undefined} aria-label={label} aria-hidden={label ? undefined : true}>
       <path fill={logo.color} d={logo.path} />

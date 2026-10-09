@@ -3,7 +3,7 @@
 // moved the ball many cells). The way must be planned: hitting a wall loses
 // the maze, the ball does not go back, so a dead end loses it too (players
 // asked for both, 2026-10-09). Three mazes per session; the level sets the
-// size (5×5…12×12).
+// size (6×6…14×14).
 import type { EngineContext, GameEngine, SessionOutcome, TimerRequest } from '../../types';
 import type { Rng } from '../../rng';
 import { clampLevel, counterCues, elapsed, levelCeiling, percent, speedFactor } from '../common';
@@ -11,6 +11,12 @@ import { clampLevel, counterCues, elapsed, levelCeiling, percent, speedFactor } 
 export const MAZE = {
   mazes: 3,
   mazeMs: 120_000,
+  /**
+   * Growing tree: carry on from the newest cell this often, else branch off
+   * a random earlier one. Pure depth-first (1) made long corridors with few
+   * forks, too easy (2026-10-09); 0.5 doubles the forks on the way out.
+   */
+  newestBias: 0.5,
   doneMs: 900,
 } as const;
 
@@ -29,16 +35,17 @@ export interface Maze {
 }
 
 export function mazeSize(level: number): number {
-  return 5 + Math.round(((clampLevel(level) - 1) * 7) / 9);
+  return 6 + Math.round(((clampLevel(level) - 1) * 8) / 9);
 }
 
-/** A perfect maze (one path between any two cells) by depth-first carving */
+/** A perfect maze (one path between any two cells), carved by a growing tree */
 export function generateMaze(size: number, rng: Rng): Maze {
   const cells = Array(size * size).fill(0);
   const seen = new Set<number>([0]);
-  const stack = [0];
-  while (stack.length > 0) {
-    const at = stack[stack.length - 1];
+  const active = [0];
+  while (active.length > 0) {
+    const index = rng.next() < MAZE.newestBias ? active.length - 1 : rng.int(0, active.length - 1);
+    const at = active[index];
     const x = at % size;
     const y = Math.floor(at / size);
     const options = DIRS.filter(d => {
@@ -47,7 +54,7 @@ export function generateMaze(size: number, rng: Rng): Maze {
       return nx >= 0 && ny >= 0 && nx < size && ny < size && !seen.has(ny * size + nx);
     });
     if (options.length === 0) {
-      stack.pop();
+      active.splice(index, 1);
       continue;
     }
     const d = rng.pick(options);
@@ -55,7 +62,7 @@ export function generateMaze(size: number, rng: Rng): Maze {
     cells[at] |= OPEN[d];
     cells[next] |= OPEN[OPPOSITE[d]];
     seen.add(next);
-    stack.push(next);
+    active.push(next);
   }
   return { size, cells };
 }
