@@ -10,43 +10,6 @@
     "footer": "All results are saved automatically"
   },
   "games": {
-    "reaction-click": {
-      "title": "Dino Jump",
-      "description": "Reaction speed",
-      "instructions": {
-        "lead": "Reaction speed training",
-        "wait": "Wait for the screen to turn green",
-        "clickFast": "Click as fast as possible",
-        "dontClickEarly": "Don't click too early!",
-        "scoring": "Points for speed",
-        "score5": "< 300ms: 5 points",
-        "score3": "300-500ms: 3 points",
-        "score2": "500-800ms: 2 points",
-        "score1": "> 800ms: 1 point",
-        "totalAttempts": "Total attempts"
-      },
-      "waiting": "Wait...",
-      "clickNow": "CLICK!",
-      "tooEarly": "Too early!",
-      "waitForButton": "Wait for the button 🔘",
-      "great": "Great!",
-      "attempt": "Attempt",
-      "results": {
-        "tryAgain": "😅 Try again!",
-        "incredible": "⚡ Incredible reaction! Lightning fast!",
-        "excellent": "🔥 Excellent speed! Outstanding result!",
-        "good": "👍 Good job! Keep it up!",
-        "notBad": "💪 Not bad! Room for improvement!",
-        "keepPracticing": "🎯 Keep practicing, speed will come!"
-      },
-      "noSuccessfulAttempts": "No successful attempts",
-      "completedAttempts": "You completed {{completed}} out of {{total}} attempts",
-      "tooEarlyCount": "{{count}} too early",
-      "bestReaction": "Best reaction",
-      "averageReaction": "Average reaction",
-      "worstReaction": "Worst reaction",
-      "allResults": "All results"
-    },
     "color-tap": {
       "title": "Color Tap",
       "description": "Reaction and selection",
@@ -278,6 +241,10 @@
     "car-logos": {
       "title": "Car Logos",
       "description": "Whose badge is it?"
+    },
+    "reaction-click": {
+      "title": "Hare Race",
+      "description": "Reaction speed: by eye and by ear"
     }
   },
   "flagsGame": {
@@ -889,6 +856,12 @@
     },
     "n-back": {
       "hits": "Hits"
+    },
+    "reaction-click": {
+      "bestVisualMs": "Best by day ☀️",
+      "bestAudioMs": "Best by night 🌙",
+      "medianMs": "Best median",
+      "wins": "Most wins"
     }
   },
   "whereWas": {
@@ -937,18 +910,6 @@
       "deadEnd": "A dead end! Maze lost",
       "timeout": "Time is up"
     }
-  },
-  "reaction": {
-    "rule1": "The dino is running. When a cactus 🌵 appears, tap to jump over it!",
-    "rule2": "The faster you tap, the more points: the game measures your reaction time.",
-    "ruleDecoy": "Do not jump over the bird 🐦: a needless jump costs a life.",
-    "rule3": "10 obstacles and 3 lives: a crash or an early jump costs a life. A streak of quick jumps multiplies the points.",
-    "streak": "Streak: {{count}}",
-    "bestEver": "All-time best",
-    "distribution": "Reaction time distribution",
-    "hint": "Jump when a cactus appears!",
-    "crash": "Bump! Too late",
-    "jump": "Jump"
   },
   "workout": {
     "title": "Daily workout",
@@ -1187,5 +1148,62 @@
     "bolivar": "Bolívar",
     "dong": "Dong",
     "rand": "Rand"
+  },
+  "hare": {
+    "rule1": "Two hares on the start line. By day the signal is a flag 🚩 and a yellow sky, by night the owl's whistle 🦉.",
+    "rule2": "At the signal tap the field (or press Space). The quicker hare gets the carrot 🥕. Before the signal is a false start.",
+    "rule3": "10 races. Three wins in a row double the points.",
+    "opponentToday": "Today you race {{icon}} {{name}}, ≈ {{ms}} ms",
+    "modeLabel": "When to race",
+    "mode": {
+      "visual": "Day",
+      "audio": "Night",
+      "mixed": "Day & night"
+    },
+    "testWhistle": "Test the whistle",
+    "soundOff": "Night races need sound: turn it on to hear the whistle.",
+    "accuracyTitle": "About the measurement",
+    "accuracy1": "Time runs from the moment the flag appears on the screen or the whistle sounds to your touch. The phone's screen and touch sensor add a few dozen milliseconds — your opponent is on the same scale.",
+    "accuracy2": "Wireless headphones delay sound by 0.1–0.3 s: for a fair result at night, use the speaker.",
+    "accuracy3": "A tap within 100 ms of the signal is a false start, as in athletics: nobody reacts that fast, it is a guess.",
+    "opponents": {
+      "sonya": "Sleepy",
+      "shustrik": "Nimble",
+      "veterok": "Breeze",
+      "molniya": "Lightning"
+    },
+    "you": "You",
+    "tapField": "Race field: tap at the signal",
+    "waitDay": "Watch for the flag…",
+    "waitNight": "Listen for the whistle…",
+    "won": "{{ms}} ms — the carrot is yours!",
+    "lost": "{{ms}} ms — {{name}} was first",
+    "falseStart": "False start!",
+    "asleep": "Asleep on the start line",
+    "race": "Race",
+    "wins": "Wins",
+    "streak": "Streak",
+    "winsOf": "{{wins}} wins of {{races}}",
+    "against": "The opponent reacts in ≈ {{ms}} ms",
+    "dayTile": "☀️ By day",
+    "nightTile": "🌙 By night",
+    "medianNote": "median of the races",
+    "record": "best {{ms}} ms",
+    "newRecord": "🏆 new best: {{ms}} ms",
+    "nightFaster": "You are {{ms}} ms quicker at night — like most people: we react faster to sound.",
+    "dayFaster": "You are {{ms}} ms quicker by day. People usually react faster to sound — check your headphones.",
+    "sameSpeed": "Just as quick by day as by night.",
+    "noTimes": "No race counted",
+    "racesHeading": "Races",
+    "falseStartShort": "false start",
+    "asleepShort": "asleep",
+    "distribution": "Reaction time distribution",
+    "results": {
+      "champion": "🏆 Champion of the forest!",
+      "great": "🥕 Great races! The next opponent will be quicker.",
+      "good": "👍 A good race!",
+      "tryAgain": "💪 The opponent was quicker — the next one will be slower.",
+      "asleep": "😴 No race counted — give it another go!"
+    }
   }
 }

@@ -1,7 +1,7 @@
 // The one place a game is registered (PLAN-IMPROVEMENTS.md, 5.2). Menu,
 // routing, profile and stats read this list; the UI layer adds the views.
 import type { GameCategory, GameDefinition, GameId, GameSession, SessionOutcome } from '../types';
-import { reactionClickEngine, reactionClickRating } from './reactionClick/engine';
+import { hareRaceEngine, hareRaceLevelStep, reactionClickRating } from './reactionClick/engine';
 import { oddOneOutEngine, oddOneOutRating, oddOneOutSessionLevel } from './oddOneOut/engine';
 import { memoryMatrixEngine, memoryMatrixRating } from './memoryMatrix/engine';
 import { schulteEngine, schulteRating } from './schulte/engine';
@@ -91,7 +91,10 @@ export const GAMES: readonly GameDefinition[] = [
     engine: taskSwitchEngine, rating: taskSwitchRating, sessionLevel: taskSwitchSessionLevel, ...LEVELS,
   }),
   define({ id: 'whack-a-mole', category: 'reaction', icon: '🐹', difficulty: 1, legacyMaxScore: 0, engine: whackEngine, rating: whackRating, sessionKind: 'timed', ...LEVELS }),
-  define({ id: 'reaction-click', category: 'reaction', icon: '🦖', difficulty: 1, legacyMaxScore: 25, engine: reactionClickEngine, rating: reactionClickRating, ...LEVELS }),
+  define({
+    id: 'reaction-click', category: 'reaction', icon: '🐰', difficulty: 1, legacyMaxScore: 25,
+    engine: hareRaceEngine, rating: reactionClickRating, levelStep: hareRaceLevelStep, ...LEVELS,
+  }),
   define({ id: 'trace-line', category: 'reaction', icon: '✍️', difficulty: 2, legacyMaxScore: 0, engine: traceEngine, rating: traceRating, ...LEVELS }),
   define({ id: 'rotate-shape', category: 'spatial', icon: '🧩', difficulty: 3, legacyMaxScore: 0, engine: rotateShapeEngine, rating: rotateShapeRating, ...LEVELS }),
   define({ id: 'mirror', category: 'spatial', icon: '🦋', difficulty: 3, legacyMaxScore: 0, engine: mirrorEngine, rating: mirrorRating, ...LEVELS }),

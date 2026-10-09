@@ -39,17 +39,17 @@ describe('App', () => {
   it('should navigate to game when card is clicked', async () => {
     const user = userEvent.setup();
     render(<App />);
-    await user.click(playButtonFor('Дино-прыжок'));
+    await user.click(playButtonFor('Заячьи гонки'));
 
     // Должен отобразиться экран игры Reaction Click
     expect(screen.getByText('Начать игру')).toBeInTheDocument();
-    expect(screen.getByText('Скорость реакции')).toBeInTheDocument();
+    expect(screen.getByText('Скорость реакции: на глаз и на слух')).toBeInTheDocument();
   });
 
   it('should show back button when in game', async () => {
     const user = userEvent.setup();
     const { container } = render(<App />);
-    await user.click(playButtonFor('Дино-прыжок'));
+    await user.click(playButtonFor('Заячьи гонки'));
 
     expect(container.querySelector('.back-button')).toBeInTheDocument();
   });
@@ -59,7 +59,7 @@ describe('App', () => {
     const { container } = render(<App />);
 
     // Переход в игру
-    await user.click(playButtonFor('Дино-прыжок'));
+    await user.click(playButtonFor('Заячьи гонки'));
 
     expect(screen.getByText('Начать игру')).toBeInTheDocument();
 
@@ -74,10 +74,10 @@ describe('App', () => {
   it('should display game title in header when game is selected', async () => {
     const user = userEvent.setup();
     render(<App />);
-    await user.click(playButtonFor('Дино-прыжок'));
+    await user.click(playButtonFor('Заячьи гонки'));
 
     // Название в шапке переведено (раньше там был английский title из GAMES_META)
-    const titles = screen.getAllByText(/🦖 Дино-прыжок/);
+    const titles = screen.getAllByText(/🐰 Заячьи гонки/);
     expect(titles.length).toBeGreaterThan(0);
   });
 
@@ -92,7 +92,7 @@ describe('App', () => {
     const { container } = render(<App />);
 
     // Переход к первой игре (Reaction Click)
-    await user.click(playButtonFor('Дино-прыжок'));
+    await user.click(playButtonFor('Заячьи гонки'));
     expect(screen.getByText('Начать игру')).toBeInTheDocument();
 
     // Возврат в меню

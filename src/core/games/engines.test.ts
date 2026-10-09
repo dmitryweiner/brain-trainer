@@ -1,101 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { createRng } from '../rng';
 import type { EngineContext } from '../types';
-import { decoyChance, reachMs, reactionClickEngine, reactionClickRating, reactionPoints, REACTION_CLICK } from './reactionClick/engine';
 import {
   oddOneOutEngine, difficultyFor, gridSizeFor, oddOneOutRating, levelCeiling, ODD_ONE_OUT, V1_EQUIVALENT_LEVEL,
 } from './oddOneOut/engine';
 import { normalizeSession } from './registry';
 
 const ctxAt = (now: number, seed = 1): EngineContext => ({ now, rng: createRng(seed) });
-
-describe('reactionClickEngine', () => {
-  it('scores reaction times by bands', () => {
-    expect(reactionPoints(299)).toBe(5);
-    expect(reactionPoints(300)).toBe(3);
-    expect(reactionPoints(500)).toBe(2);
-    expect(reactionPoints(800)).toBe(1);
-  });
-
-  it('waits a random 1–4 s before the signal', () => {
-    for (let seed = 1; seed < 50; seed++) {
-      const s = reactionClickEngine.init(1, ctxAt(0, seed));
-      expect(s.until).toBeGreaterThanOrEqual(REACTION_CLICK.minDelayMs);
-      expect(s.until).toBeLessThanOrEqual(REACTION_CLICK.maxDelayMs);
-    }
-  });
-
-  it('counts a false start as a used attempt with no time', () => {
-    const ctx = ctxAt(0);
-    let s = reactionClickEngine.init(1, ctx);
-    s = reactionClickEngine.reduce(s, { type: 'tap' }, ctxAt(100));
-    expect(s.phase).toBe('tooEarly');
-    expect(s.attempt).toBe(1);
-    expect(s.falseStarts).toBe(1);
-    expect(s.reactionTimes).toEqual([]);
-  });
-
-  it('ignores taps during feedback', () => {
-    let s = reactionClickEngine.init(1, ctxAt(0));
-    s = reactionClickEngine.reduce(s, { type: 'tap' }, ctxAt(10));
-    const again = reactionClickEngine.reduce(s, { type: 'tap' }, ctxAt(20));
-    expect(again).toBe(s);
-  });
-
-  it('reports accuracy, average and best/worst times', () => {
-    const outcome = reactionClickEngine.result({
-      phase: 'done', level: 1, attempt: 5, lives: 1, reactionTimes: [200, 400, 600], score: 10, falseStarts: 2, crashes: 0,
-      combo: 0, maxCombo: 1, until: 0, readyAt: 0, decoyPending: false,
-    });
-    expect(outcome).toEqual({
-      score: 10,
-      accuracy: 60,
-      avgTimeMs: 400,
-      metrics: {
-        falseStarts: 2, crashes: 0, hits: 3, attempts: 5, maxCombo: 1, livesLeft: 1, rules: REACTION_CLICK.rules,
-        bestReactionMs: 200, worstReactionMs: 600,
-      },
-    });
-  });
-
-  it('a false start costs a life; three end the session', () => {
-    let s = reactionClickEngine.init(1, ctxAt(0));
-    for (let i = 0; i < REACTION_CLICK.lives; i++) {
-      s = reactionClickEngine.reduce(s, { type: 'tap' }, ctxAt(i * 2000 + 10));
-      s = reactionClickEngine.reduce(s, { type: 'next' }, ctxAt(i * 2000 + 1100));
-    }
-    expect(s.phase).toBe('done');
-    expect(s.lives).toBe(0);
-  });
-
-  it('shows decoys from level 4, and tapping one is a false start', () => {
-    expect(decoyChance(3)).toBe(0);
-    expect(decoyChance(4)).toBeGreaterThan(0);
-    let s = { ...reactionClickEngine.init(10, ctxAt(0)), decoyPending: true };
-    s = reactionClickEngine.reduce(s, { type: 'go' }, ctxAt(1000));
-    expect(s.phase).toBe('decoy');
-    s = reactionClickEngine.reduce(s, { type: 'tap' }, ctxAt(1100));
-    expect(s).toMatchObject({ phase: 'tooEarly', falseStarts: 1, lives: REACTION_CLICK.lives - 1 });
-  });
-
-  it('too slow: the dino crashes into the cactus and loses a life', () => {
-    let s = reactionClickEngine.init(1, ctxAt(0));
-    s = reactionClickEngine.reduce(s, { type: 'go' }, ctxAt(s.until));
-    expect(reactionClickEngine.timers(s)[0]).toMatchObject({ at: s.readyAt + reachMs(1), event: { type: 'crash' } });
-    s = reactionClickEngine.reduce(s, { type: 'crash' }, ctxAt(s.readyAt + reachMs(1)));
-    expect(s).toMatchObject({ phase: 'crashed', crashes: 1, lives: REACTION_CLICK.lives - 1, attempt: 1 });
-    expect(reachMs(10)).toBeLessThan(reachMs(1));
-  });
-
-  it('a decoy left alone is followed by the real signal', () => {
-    let s = { ...reactionClickEngine.init(10, ctxAt(0)), decoyPending: true };
-    s = reactionClickEngine.reduce(s, { type: 'go' }, ctxAt(1000));
-    s = reactionClickEngine.reduce(s, { type: 'go' }, ctxAt(1700));
-    expect(s.phase).toBe('waiting');
-    s = reactionClickEngine.reduce(s, { type: 'go' }, ctxAt(3000));
-    expect(s.phase).toBe('ready');
-  });
-});
 
 describe('oddOneOutEngine', () => {
   it('sets grid and pair difficulty by level, growing within the session', () => {
@@ -176,29 +87,5 @@ describe('oddOneOutEngine', () => {
     expect(normalizeSession(stored({ correct: 10, maxGridSize: 5 }))).toMatchObject({ level: 4, rating: levelCeiling(4) });
     // sessions with levels keep theirs
     expect(normalizeSession({ ...stored({ correct: 10, rules: ODD_ONE_OUT.rules }), level: 7 })).toMatchObject({ level: 7, rating: levelCeiling(7) });
-  });
-});
-
-describe('reactionClickRating', () => {
-  const r = (metrics: Record<string, number>, avgTimeMs: number, level = 10) =>
-    reactionClickRating({ score: 0, accuracy: 0, avgTimeMs, metrics }, level);
-
-  it('multiplies clean-attempt share by speed and a small level factor', () => {
-    const full = { hits: 10, attempts: 10, rules: REACTION_CLICK.rules };
-    expect(r(full, 200)).toBeCloseTo(1000);
-    expect(r(full, 1000)).toBe(0);
-    expect(r(full, 600)).toBeCloseTo(500);
-    expect(r({ ...full, hits: 6 }, 200)).toBeCloseTo(600);
-    expect(r(full, 200, 1)).toBeCloseTo(865);
-  });
-
-  it('counts attempts lost to running out of lives as misses', () => {
-    expect(r({ hits: 4, attempts: 7, rules: REACTION_CLICK.rules }, 200)).toBeCloseTo(400);
-  });
-
-  it('rates stage-2 sessions (5 attempts) and v1 points on the same scale', () => {
-    expect(r({ hits: 5 }, 200, 1)).toBeCloseTo(865);
-    expect(r({}, 0, 1)).toBeCloseTo(0);
-    expect(reactionClickRating({ score: 25, accuracy: 100, avgTimeMs: 0, metrics: {} }, 1)).toBeCloseTo(937.5 * 0.865);
   });
 });

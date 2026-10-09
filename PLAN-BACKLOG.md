@@ -40,7 +40,7 @@
 
 - **Убрать Bootstrap CSS** (план 5.3): ~300 КБ CSS. Найти, какие классы Bootstrap ещё используются (`btn`, `text-muted`, `mb-2`, `text-center`…), заменить своими, удалить зависимость.
 - **Разделение кода:** один чанк JS ~520 КБ (Vite предупреждает о чанке больше 500 КБ), CSS ~290 КБ (почти весь — Bootstrap). Загружать экраны игр через `React.lazy` по одному; precache PWA всё равно скачает их для офлайна, но первый запуск на слабом телефоне станет быстрее.
-- Перенести Reaction Click и Odd One Out из `components/games/` в `ui/games/`, удалить их отдельные SCSS (см. 1.1).
+- ~~Перенести Reaction Click~~ (стал «Заячьими гонками» в `ui/games/HareRace.tsx`, 2026-10-09) и Odd One Out из `components/games/` в `ui/games/`, удалить отдельный SCSS Odd One Out (см. 1.1).
 - `useGameHistory.addGameResult` больше не вызывается играми, только тестами: убрать вместе с v1-формой `GameResult` в адаптерах, когда профиль перейдёт на `sessions`.
 - Файлы в корне от прошлой разработки (`STAGE*_COMPLETE.md`, `GAME*_COMPLETE.md`, `prompt*.txt`, `instructions.md`): решить, удалить или перенести в `docs/history/`.
 - `localStorage` ограничен ~5 МБ (план 8): при росте истории перейти на IndexedDB за тем же `KeyValueStore`.

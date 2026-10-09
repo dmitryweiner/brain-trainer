@@ -7,7 +7,7 @@ import { GAMES } from '../../core/games/registry';
 import { GAME_SCREENS } from '../gameScreens';
 
 /** A translation key that reached the screen untranslated */
-const RAW_KEY = /\b(games|game|metrics|memoryMatrix|schulte|whack|trace|rotate|repeat|digits|switch|flip|hunt|flags|nback|results|common)\.[a-zA-Z-]+/;
+const RAW_KEY = /\b(games|game|metrics|memoryMatrix|schulte|whack|trace|rotate|repeat|digits|switch|flip|hunt|flags|nback|hare|results|common)\.[a-zA-Z-]+/;
 
 describe('every game screen', () => {
   beforeEach(() => localStorage.clear());

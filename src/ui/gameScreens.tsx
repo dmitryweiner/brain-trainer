@@ -1,7 +1,6 @@
 // Game id → screen. Every game runs on its engine through GameShell.
 import React from 'react';
 import type { GameId } from '../core/types';
-import { ReactionClick } from '../components/games/ReactionClick';
 import { OddOneOut } from '../components/games/OddOneOut';
 import { MemoryMatrix } from './games/MemoryMatrix';
 import { Schulte } from './games/Schulte';
@@ -18,6 +17,7 @@ import { NBack } from './games/NBack';
 import { WhereWas } from './games/WhereWas';
 import { Mirror } from './games/Mirror';
 import { Maze } from './games/Maze';
+import { HareRace } from './games/HareRace';
 
 export interface ScreenProps {
   onBack: () => void;
@@ -28,7 +28,7 @@ export interface ScreenProps {
 export type GameScreen = React.FC<ScreenProps>;
 
 export const GAME_SCREENS: Partial<Record<GameId, GameScreen>> = {
-  'reaction-click': ({ onBack, onNextGame }) => <ReactionClick onBackToMenu={onBack} onNextGame={onNextGame} />,
+  'reaction-click': HareRace,
   'odd-one-out': ({ onBack, onNextGame }) => <OddOneOut onBackToMenu={onBack} onNextGame={onNextGame} />,
   'memory-matrix': MemoryMatrix,
   schulte: Schulte,

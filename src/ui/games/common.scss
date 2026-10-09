@@ -157,3 +157,75 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 }
+
+// Results screen numbers (a game's Details). Moved here from the Dino Jump
+// styles, which every game picked up from there.
+.results-details {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  margin-top: $spacing-md;
+  width: 100%;
+  max-width: 500px;
+
+  .results-summary {
+    text-align: center;
+    padding: $spacing-sm;
+    background: linear-gradient(135deg, rgba($primary, 0.1) 0%, rgba($secondary, 0.1) 100%);
+    border-radius: 8px;
+    margin-bottom: $spacing-sm;
+
+    .summary-text {
+      margin: 0;
+      font-size: 16px;
+      color: $dark;
+      font-weight: 500;
+    }
+  }
+
+  .stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-md;
+    background: $light;
+    border-radius: 8px;
+    font-size: 18px;
+
+    &.highlight {
+      background: linear-gradient(135deg, rgba($primary, 0.15) 0%, rgba($primary, 0.05) 100%);
+      border: 2px solid rgba($primary, 0.3);
+    }
+
+    .stat-label {
+      color: $gray;
+      font-weight: 500;
+    }
+
+    .stat-value {
+      font-weight: 700;
+      color: $dark;
+      font-size: 20px;
+
+      &.stat-best {
+        color: $game-green;
+      }
+    }
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    .stat-item {
+      font-size: 16px;
+      padding: $spacing-sm;
+
+      .stat-value {
+        font-size: 18px;
+      }
+    }
+  }
+}
+
+.details-heading {
+  font-size: 17px;
+  margin: 16px 0 8px;
+}

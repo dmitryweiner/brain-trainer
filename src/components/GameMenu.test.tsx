@@ -49,7 +49,7 @@ describe('GameMenu', () => {
     render(<GameMenu onGameSelect={handleGameSelect} />, { wrapper });
     
     // Проверяем несколько описаний
-    expect(screen.getByText('Скорость реакции')).toBeInTheDocument();
+    expect(screen.getByText('Скорость реакции: на глаз и на слух')).toBeInTheDocument();
     expect(screen.getByText('Визуальный анализ')).toBeInTheDocument();
   });
 
@@ -59,7 +59,7 @@ describe('GameMenu', () => {
     render(<GameMenu onGameSelect={handleGameSelect} />, { wrapper });
     
     // Проверяем несколько иконок
-    expect(screen.getByText('🦖')).toBeInTheDocument();
+    expect(screen.getByText('🐰')).toBeInTheDocument();
     expect(screen.getByText('🔍')).toBeInTheDocument();
   });
 

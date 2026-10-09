@@ -1,30 +1,30 @@
 import { describe, it, expect, vi } from 'vitest';
 import { EngineRunner } from './runner';
 import { FakeScheduler } from '../testing/fakeScheduler';
-import { reactionClickEngine, REACTION_CLICK } from '../games/reactionClick/engine';
+import { hareRaceEngine, HARE_RACE } from '../games/reactionClick/engine';
 import type { GameEngine } from '../types';
 
 describe('EngineRunner', () => {
   it('fires the timers the engine asks for and finishes once', () => {
     const scheduler = new FakeScheduler();
     const onFinish = vi.fn();
-    const runner = new EngineRunner(reactionClickEngine, scheduler, { level: 1, seed: 7, onFinish });
+    const runner = new EngineRunner(hareRaceEngine, scheduler, { level: 1, seed: 7, variant: 'visual', onFinish });
 
-    for (let i = 0; i < REACTION_CLICK.attempts; i++) {
-      expect(runner.state.phase).toBe('waiting');
+    for (let i = 0; i < HARE_RACE.races; i++) {
+      expect(runner.state.phase).toBe('idle');
       scheduler.advance(runner.state.until - scheduler.now());
-      expect(runner.state.phase).toBe('ready');
+      expect(runner.state.phase).toBe('signal');
       scheduler.advance(250);
       runner.dispatch({ type: 'tap' });
-      expect(runner.state.phase).toBe('clicked');
-      scheduler.advance(REACTION_CLICK.clickedPauseMs);
+      expect(runner.state.phase).toBe('review');
+      scheduler.advance(HARE_RACE.reviewMs);
     }
 
     expect(runner.state.phase).toBe('done');
     expect(onFinish).toHaveBeenCalledTimes(1);
     const [outcome, durationMs] = onFinish.mock.calls[0];
-    // 5 points each; quick streak multiplier 1,1,1,2,2,2,3,3,3,4
-    expect(outcome.score).toBe(5 * 22);
+    // 10 + 3 for each win, doubled from the third in a row
+    expect(outcome.score).toBe(13 * 18);
     expect(outcome.metrics.bestReactionMs).toBe(250);
     expect(durationMs).toBe(scheduler.now());
     expect(scheduler.pendingCount).toBe(0);
@@ -35,31 +35,31 @@ describe('EngineRunner', () => {
 
   it('cancels a timer the new state no longer wants', () => {
     const scheduler = new FakeScheduler();
-    const runner = new EngineRunner(reactionClickEngine, scheduler, { level: 1, seed: 1 });
+    const runner = new EngineRunner(hareRaceEngine, scheduler, { level: 1, seed: 1 });
     expect(scheduler.pendingCount).toBe(1); // the "go" signal
 
     runner.dispatch({ type: 'tap' }); // false start
-    expect(runner.state.phase).toBe('tooEarly');
+    expect(runner.state.races[0].result).toBe('falseStart');
     expect(scheduler.pendingCount).toBe(1); // only "next"; "go" was cancelled
 
-    scheduler.advance(REACTION_CLICK.falseStartPauseMs);
-    expect(runner.state.phase).toBe('waiting');
-    expect(runner.state.attempt).toBe(1);
+    scheduler.advance(HARE_RACE.reviewMs);
+    expect(runner.state.phase).toBe('idle');
+    expect(runner.state.races).toHaveLength(1);
   });
 
   it('notifies subscribers and stops after dispose', () => {
     const scheduler = new FakeScheduler();
-    const runner = new EngineRunner(reactionClickEngine, scheduler, { level: 1, seed: 3 });
+    const runner = new EngineRunner(hareRaceEngine, scheduler, { level: 1, seed: 3 });
     const listener = vi.fn();
     runner.subscribe(listener);
 
-    scheduler.advance(REACTION_CLICK.maxDelayMs);
+    scheduler.advance(runner.state.until);
     expect(listener).toHaveBeenCalledTimes(1);
 
     runner.dispose();
     expect(scheduler.pendingCount).toBe(0);
     runner.dispatch({ type: 'tap' });
-    expect(runner.state.phase).toBe('ready');
+    expect(runner.state.phase).toBe('signal');
   });
 
   it('keeps a running timer when the engine re-requests it unchanged', () => {
