@@ -1,5 +1,5 @@
-// Geography quizzes on one engine: flag → country, country → flag, capitals,
-// currencies and languages (both ways, mixed), parts of the world. The kind is fixed per registered
+// Fact quizzes on one engine: flags, capitals, currencies and car logos (each
+// both ways, mixed at random), parts of the world. The kind is fixed per registered
 // game (makeGeoEngine). The level adds options and, from level 5, hides the
 // country's name so the flag alone must be recognised.
 import type { EngineContext, GameEngine, SessionOutcome, TimerRequest } from '../../types';
@@ -7,9 +7,8 @@ import type { Rng } from '../../rng';
 import { average, clampLevel, counterCues, elapsed, levelCeiling, percent, speedFactor } from '../common';
 import { SUPPORTED_COUNTRY_CODES, FLAG_EMOJIS, type SupportedCountryCode } from '../flags/data';
 import { CAPITAL_COUNTRIES, CONTINENT_OF, CONTINENTS, type Continent } from './data';
-import {
-  COUNTRY_OF_UNIQUE_CURRENCY, COUNTRY_OF_UNIQUE_LANGUAGE, CURRENCIES, CURRENCY_CONFLICTS, CURRENCY_OF, LANGUAGES, LANGUAGES_OF,
-} from './facts';
+import { COUNTRY_OF_UNIQUE_CURRENCY, CURRENCIES, CURRENCY_CONFLICTS, CURRENCY_OF } from './facts';
+import { CAR_BRANDS, type CarBrand } from './cars';
 
 export const GEO = {
   rounds: 8,
@@ -18,7 +17,7 @@ export const GEO = {
   maxTimeBonus: 10,
 } as const;
 
-export type GeoKind = 'flag-to-country' | 'country-to-flag' | 'capitals' | 'continents' | 'currencies' | 'languages';
+export type GeoKind = 'flags' | 'capitals' | 'continents' | 'currencies' | 'car-logos';
 
 /** What the question shows */
 export type GeoPrompt =
@@ -26,12 +25,18 @@ export type GeoPrompt =
   | { show: 'country'; code: SupportedCountryCode }
   | { show: 'flag+country'; code: SupportedCountryCode }
   | { show: 'capital'; code: SupportedCountryCode }
-  /** the country's currency / main language, named */
+  /** the country's currency, named */
   | { show: 'currency'; code: SupportedCountryCode }
-  | { show: 'language'; code: SupportedCountryCode };
+  /** a car brand's logo, or its name */
+  | { show: 'logo'; code: CarBrand }
+  | { show: 'brand'; code: CarBrand };
 
-/** What the options are: countries by name, flags, capitals (by country code), continents, currency or language ids */
-export type GeoOptionKind = 'country' | 'flag' | 'capital' | 'continent' | 'currency' | 'language';
+/**
+ * What the options are: countries by name (with their flags where the flag
+ * gives nothing away), flags, capitals (by country code), continents, currency ids,
+ * car brands by name or by logo
+ */
+export type GeoOptionKind = 'country' | 'country+flag' | 'flag' | 'capital' | 'continent' | 'currency' | 'brand' | 'logo';
 
 export interface GeoQuestion {
   /** i18n key of the question line */
@@ -60,7 +65,7 @@ export function flagOf(code: string): string {
   return FLAG_EMOJIS[code as SupportedCountryCode] ?? '🏳️';
 }
 
-function choices(pool: readonly SupportedCountryCode[], answer: SupportedCountryCode, n: number, rng: Rng): string[] {
+function choices<T extends string>(pool: readonly T[], answer: T, n: number, rng: Rng): string[] {
   return rng.shuffle([answer, ...rng.sample(pool.filter(c => c !== answer), n - 1)]);
 }
 
@@ -77,36 +82,35 @@ function pickOptions<T extends string>(answer: T, pool: readonly T[], n: number,
 }
 
 const UNIQUE_CURRENCY_COUNTRIES = [...COUNTRY_OF_UNIQUE_CURRENCY.values()];
-const UNIQUE_LANGUAGE_COUNTRIES = [...COUNTRY_OF_UNIQUE_LANGUAGE.values()];
-const LANGUAGE_COUNTRIES = Object.keys(LANGUAGES_OF) as SupportedCountryCode[];
 
 export function makeQuestion(kind: GeoKind, level: number, used: readonly string[], rng: Rng): GeoQuestion {
   const L = clampLevel(level);
   const n = optionCount(L);
   const named = L < FLAG_ONLY_FROM;
+  const shownCountry = (code: SupportedCountryCode): GeoPrompt => (named ? { show: 'flag+country', code } : { show: 'flag', code });
   const fresh = <T extends string>(pool: readonly T[]) => {
     const unused = pool.filter(c => !used.includes(c));
     return rng.pick(unused.length > 0 ? unused : pool);
   };
   switch (kind) {
-    case 'flag-to-country': {
+    case 'flags': {
+      // whose flag is it, or which flag is the country's: at random
       const code = fresh(SUPPORTED_COUNTRY_CODES);
-      return { ask: 'geo.askCountry', prompt: { show: 'flag', code }, optionKind: 'country', options: choices(SUPPORTED_COUNTRY_CODES, code, n, rng), answer: code };
-    }
-    case 'country-to-flag': {
-      const code = fresh(SUPPORTED_COUNTRY_CODES);
-      return { ask: 'geo.askFlag', prompt: { show: 'country', code }, optionKind: 'flag', options: choices(SUPPORTED_COUNTRY_CODES, code, n, rng), answer: code };
+      const options = choices(SUPPORTED_COUNTRY_CODES, code, n, rng);
+      return rng.next() < 0.5
+        ? { ask: 'geo.askCountry', prompt: { show: 'flag', code }, optionKind: 'country', options, answer: code }
+        : { ask: 'geo.askFlag', prompt: { show: 'country', code }, optionKind: 'flag', options, answer: code };
     }
     case 'capitals': {
       const code = fresh(CAPITAL_COUNTRIES);
       // half the questions ask for the capital, half for the country of a capital
       if (rng.next() < 0.5) {
         return {
-          ask: 'geo.askCapital', prompt: { show: named ? 'flag+country' : 'flag', code }, optionKind: 'capital',
+          ask: 'geo.askCapital', prompt: shownCountry(code), optionKind: 'capital',
           options: choices(CAPITAL_COUNTRIES, code, n, rng), answer: code,
         };
       }
-      return { ask: 'geo.askCapitalOf', prompt: { show: 'capital', code }, optionKind: 'country', options: choices(CAPITAL_COUNTRIES, code, n, rng), answer: code };
+      return { ask: 'geo.askCapitalOf', prompt: { show: 'capital', code }, optionKind: 'country+flag', options: choices(CAPITAL_COUNTRIES, code, n, rng), answer: code };
     }
     case 'continents': {
       const pool = Object.keys(CONTINENT_OF) as SupportedCountryCode[];
@@ -114,7 +118,7 @@ export function makeQuestion(kind: GeoKind, level: number, used: readonly string
       const answer = CONTINENT_OF[code]!;
       const others = CONTINENTS.filter(c => c !== answer);
       const options = rng.shuffle([answer, ...rng.sample(others, (named ? 4 : CONTINENTS.length) - 1)]);
-      return { ask: 'geo.askContinent', prompt: { show: named ? 'flag+country' : 'flag', code }, optionKind: 'continent', options, answer };
+      return { ask: 'geo.askContinent', prompt: shownCountry(code), optionKind: 'continent', options, answer };
     }
     case 'currencies': {
       // "which country pays in…?" only for currencies used by one country
@@ -122,25 +126,20 @@ export function makeQuestion(kind: GeoKind, level: number, used: readonly string
         const code = fresh(UNIQUE_CURRENCY_COUNTRIES);
         const currency = CURRENCY_OF[code];
         const options = pickOptions(code, SUPPORTED_COUNTRY_CODES, n, rng, c => !conflicting(CURRENCY_OF[c], currency));
-        return { ask: 'geo.askCurrencyOf', prompt: { show: 'currency', code }, optionKind: 'country', options, answer: code };
+        return { ask: 'geo.askCurrencyOf', prompt: { show: 'currency', code }, optionKind: 'country+flag', options, answer: code };
       }
       const code = fresh(SUPPORTED_COUNTRY_CODES);
       const answer = CURRENCY_OF[code];
       const options = pickOptions(answer, CURRENCIES, n, rng, (o, chosen) => chosen.every(c => !conflicting(o, c)));
-      return { ask: 'geo.askCurrency', prompt: { show: named ? 'flag+country' : 'flag', code }, optionKind: 'currency', options, answer };
+      return { ask: 'geo.askCurrency', prompt: shownCountry(code), optionKind: 'currency', options, answer };
     }
-    case 'languages': {
-      // "where is it the main language?" only for languages official in one country
-      if (rng.next() < 0.5) {
-        const code = fresh(UNIQUE_LANGUAGE_COUNTRIES);
-        const options = pickOptions(code, LANGUAGE_COUNTRIES, n, rng, () => true);
-        return { ask: 'geo.askLanguageOf', prompt: { show: 'language', code }, optionKind: 'country', options, answer: code };
-      }
-      const code = fresh(LANGUAGE_COUNTRIES);
-      const official = LANGUAGES_OF[code]!;
-      // no other official language of the country among the distractors
-      const options = pickOptions(official[0], LANGUAGES, n, rng, o => !official.includes(o));
-      return { ask: 'geo.askLanguage', prompt: { show: named ? 'flag+country' : 'flag', code }, optionKind: 'language', options, answer: official[0] };
+    case 'car-logos': {
+      // whose logo is it, or which logo is the brand's: at random
+      const code = fresh(CAR_BRANDS);
+      const options = choices(CAR_BRANDS, code, n, rng);
+      return rng.next() < 0.5
+        ? { ask: 'geo.askBrand', prompt: { show: 'logo', code }, optionKind: 'brand', options, answer: code }
+        : { ask: 'geo.askLogo', prompt: { show: 'brand', code }, optionKind: 'logo', options, answer: code };
     }
   }
 }

@@ -1,11 +1,13 @@
-// One screen for the geography quizzes (core/games/geoQuiz).
+// One screen for the fact quizzes (core/games/geoQuiz).
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { GameShell, type GameViews } from '../GameShell';
 import { getGame } from '../../core/games/registry';
 import type { GameId } from '../../core/types';
 import { flagOf, FLAG_ONLY_FROM, GEO, optionCount, type GeoEvent, type GeoOptionKind, type GeoState } from '../../core/games/geoQuiz/engine';
-import { CURRENCY_OF, LANGUAGES_OF } from '../../core/games/geoQuiz/facts';
+import { CURRENCY_OF } from '../../core/games/geoQuiz/facts';
+import { CAR_BRAND_NAME, type CarBrand } from '../../core/games/geoQuiz/cars';
+import { CAR_LOGOS } from './carLogos';
 import { GameIntro, StatusLine } from './common';
 import type { ScreenProps } from '../gameScreens';
 import './games.scss';
@@ -15,6 +17,15 @@ type Views = GameViews<GeoState, GeoEvent>;
 const CONTINENT_ICON: Record<string, string> = {
   europe: '🌍', africa: '🌍', asia: '🌏', oceania: '🌏', 'north-america': '🌎', 'south-america': '🌎',
 };
+
+function CarLogo({ brand, label }: { brand: string; label?: string }) {
+  const logo = CAR_LOGOS[brand as CarBrand];
+  return (
+    <svg className="car-logo" viewBox="0 0 24 24" role={label ? 'img' : undefined} aria-label={label} aria-hidden={label ? undefined : true}>
+      <path fill={logo.color} d={logo.path} />
+    </svg>
+  );
+}
 
 function OptionLabel({ kind, value }: { kind: GeoOptionKind; value: string }) {
   const { t } = useTranslation();
@@ -27,8 +38,12 @@ function OptionLabel({ kind, value }: { kind: GeoOptionKind; value: string }) {
       return <><span aria-hidden="true">{CONTINENT_ICON[value]}</span> {t(`continents.${value}`)}</>;
     case 'currency':
       return <>{t(`currencies.${value}`)}</>;
-    case 'language':
-      return <>{t(`languages.${value}`)}</>;
+    case 'brand':
+      return <>{CAR_BRAND_NAME[value as CarBrand]}</>;
+    case 'logo':
+      return <CarLogo brand={value} label={t('geo.logoOption')} />;
+    case 'country+flag':
+      return <><span className="geo-inline-flag" aria-hidden="true">{flagOf(value)}</span> {t(`countries.${value}`)}</>;
     default:
       return <>{t(`countries.${value}`)}</>;
   }
@@ -50,10 +65,11 @@ const Board: Views['Board'] = ({ state, dispatch }) => {
         {(prompt.show === 'country' || prompt.show === 'flag+country') && <p className="flags-country">{t(`countries.${prompt.code}`)}</p>}
         {prompt.show === 'capital' && <p className="flags-country">🏛️ {t(`capitals.${prompt.code}`)}</p>}
         {prompt.show === 'currency' && <p className="flags-country">💰 {t(`currencies.${CURRENCY_OF[prompt.code]}`)}</p>}
-        {prompt.show === 'language' && <p className="flags-country">🗣️ {t(`languages.${LANGUAGES_OF[prompt.code]![0]}`)}</p>}
+        {prompt.show === 'logo' && <div className="car-logo-prompt"><CarLogo brand={prompt.code} label={t('geo.thisLogo')} /></div>}
+        {prompt.show === 'brand' && <p className="flags-country">{CAR_BRAND_NAME[prompt.code]}</p>}
         <p className="game-prompt">{t(question.ask)}</p>
       </div>
-      <div className={`flags-options ${question.optionKind === 'flag' ? 'as-flags' : ''}`}>
+      <div className={`flags-options ${question.optionKind === 'flag' || question.optionKind === 'logo' ? 'as-flags' : ''}`}>
         {question.options.map(option => {
           const mark = feedback ? (option === question.answer ? 'right' : option === state.picked ? 'wrong' : '') : '';
           return (
@@ -94,12 +110,11 @@ const Details: Views['Details'] = ({ outcome }) => {
 
 /** i18n group of each quiz's rules: geo.<group>.rule1/rule2 */
 const RULES: Record<string, string> = {
-  'flags-game': 'flagToCountry', 'flags-reverse': 'countryToFlag', capitals: 'capitals', continents: 'continents',
-  currencies: 'currencies', languages: 'languages',
+  'flags-game': 'flags', capitals: 'capitals', continents: 'continents', currencies: 'currencies', 'car-logos': 'carLogos',
 };
 
 /** Quizzes that hide the country's name from level FLAG_ONLY_FROM */
-const FLAG_ONLY_GAMES: readonly GameId[] = ['capitals', 'continents', 'currencies', 'languages'];
+const FLAG_ONLY_GAMES: readonly GameId[] = ['capitals', 'continents', 'currencies'];
 
 function screenFor(gameId: GameId): React.FC<ScreenProps> {
   const Intro: Views['Intro'] = ({ onStart, level }) => {
@@ -122,9 +137,8 @@ function screenFor(gameId: GameId): React.FC<ScreenProps> {
   return Screen;
 }
 
-export const FlagToCountry = screenFor('flags-game');
-export const CountryToFlag = screenFor('flags-reverse');
+export const Flags = screenFor('flags-game');
 export const Capitals = screenFor('capitals');
 export const Continents = screenFor('continents');
 export const Currencies = screenFor('currencies');
-export const Languages = screenFor('languages');
+export const CarLogos = screenFor('car-logos');

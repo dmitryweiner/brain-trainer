@@ -1,7 +1,9 @@
-// The "pick the right shape" layout shared by Rotate the shape and Mirror.
+// The "pick the right shape" layout of Mirror (with a mirror on one side of
+// the target).
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Shape } from '../../core/games/shapes/polyomino';
+import type { MirrorSide } from '../../core/games/mirror/engine';
 import { ShapeView } from './ShapeView';
 
 export const ShapeChoice: React.FC<{
@@ -13,15 +15,18 @@ export const ShapeChoice: React.FC<{
   feedback: boolean;
   disabled: boolean;
   onPick: (index: number) => void;
-  /** draws a mirror line next to the target */
-  mirrorLine?: boolean;
-}> = ({ prompt, target, options, answer, picked, feedback, disabled, onPick, mirrorLine }) => {
+  /** draws a mirror on this side of the target */
+  mirrorSide?: MirrorSide;
+}> = ({ prompt, target, options, answer, picked, feedback, disabled, onPick, mirrorSide }) => {
   const { t } = useTranslation();
   return (
     <div className="rotate-shape">
       <p className="game-prompt">{prompt}</p>
-      <div className={`rotate-target ${mirrorLine ? 'with-mirror' : ''}`}>
-        <ShapeView shape={target} label={t('rotate.target')} />
+      <div className={`mirror-stage ${mirrorSide ? `mirror-${mirrorSide}` : ''}`}>
+        <div className="rotate-target">
+          <ShapeView shape={target} label={t('rotate.target')} />
+        </div>
+        {mirrorSide && <div className="mirror-glass" role="img" aria-label={t(`mirror.side.${mirrorSide}`)} />}
       </div>
       <div className="rotate-options">
         {options.map((shape, i) => (

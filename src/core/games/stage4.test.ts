@@ -11,7 +11,8 @@ import { whackEngine, whackLayout, WHACK } from './whackAMole/engine';
 import { corridor, gridSpacing, makePath, pointAt, project } from './traceLine/geometry';
 import { traceEngine, TRACE } from './traceLine/engine';
 import { isChiral, key, mirror, nearMiss, randomChiral, rotate, sameUpToRotation } from './shapes/polyomino';
-import { makeRound, rotateShapeEngine, cellsFor } from './rotateShape/engine';
+import { makeTurnedFitRound, rotateShapeEngine } from './rotateShape/engine';
+import { fitLayout } from './fitPiece/engine';
 import { litPanel, sequenceEngine, sequenceLayout, sequenceLevelStep, sequenceRating, sequenceSessionLevel, SEQUENCE } from './sequenceRecall/engine';
 import { digitSpanEngine, digitSpanRating, expected, shownDigit, DIGIT_SPAN } from './digitSpan/engine';
 import { correctSide, switchLayout, taskSwitchEngine, SWITCH } from './taskSwitch/engine';
@@ -19,7 +20,7 @@ import { boardsFor, memoryFlipEngine } from './memoryFlip/engine';
 import { emojiHuntEngine, huntRound } from './emojiHunt/engine';
 import { makeGeoEngine, makeQuestion, optionCount, timeBonus, type GeoKind } from './geoQuiz/engine';
 import { CAPITAL_COUNTRIES, CONTINENT_OF } from './geoQuiz/data';
-import { CURRENCY_CONFLICTS, CURRENCY_OF, LANGUAGES_OF } from './geoQuiz/facts';
+import { CURRENCY_CONFLICTS, CURRENCY_OF } from './geoQuiz/facts';
 import type { SupportedCountryCode } from './flags/data';
 import { isTarget, nBackEngine, nBackLayout, nBackRating, nBackSequence } from './nBack/engine';
 
@@ -201,16 +202,18 @@ describe('polyominoes', () => {
   });
 });
 
-describe('Rotate the shape', () => {
-  it('always has exactly one rotation of the target among the options', () => {
+describe('Fit the shape (rotate-shape)', () => {
+  it('exactly one piece fills the hole, and it is shown turned', () => {
     for (let level = 1; level <= 10; level++) {
       const rng = createRng(level);
       for (let i = 0; i < 10; i++) {
-        const round = makeRound(level, rng);
-        const matches = round.options.filter(o => sameUpToRotation(o, round.target));
+        const round = makeTurnedFitRound(level, rng);
+        const matches = round.options.filter(o => sameUpToRotation(o, round.hole));
         expect(matches).toHaveLength(1);
         expect(round.options[round.answer]).toBe(matches[0]);
-        expect(round.options.every(o => o.length === cellsFor(level))).toBe(true);
+        expect(round.options.every(o => o.length === fitLayout(level).cells)).toBe(true);
+        const symmetric = [1, 2, 3].every(k => key(rotate(round.hole, k)) === key(round.hole));
+        if (!symmetric) expect(key(round.options[round.answer])).not.toBe(key(round.hole));
       }
     }
   });
@@ -402,7 +405,7 @@ describe('geography quizzes', () => {
 
   it('every question has its answer among distinct options', () => {
     const rng = createRng(3);
-    for (const kind of ['flag-to-country', 'country-to-flag', 'capitals', 'continents', 'currencies', 'languages'] as GeoKind[]) {
+    for (const kind of ['flags', 'capitals', 'continents', 'currencies', 'car-logos'] as GeoKind[]) {
       for (const level of [1, 5, 10]) {
         for (let i = 0; i < 30; i++) {
           const q = makeQuestion(kind, level, [], rng);
@@ -433,30 +436,25 @@ describe('geography quizzes', () => {
     for (let i = 0; i < 300; i++) {
       const q = makeQuestion('currencies', 1 + (i % 10), [], rng);
       if (q.optionKind === 'currency') {
-        expect(q.answer).toBe(CURRENCY_OF[q.prompt.code]);
+        expect(q.answer).toBe(CURRENCY_OF[q.prompt.code as SupportedCountryCode]);
         for (const a of q.options) for (const b of q.options) if (a !== b) expect(clash(a, b), `${a}/${b}`).toBe(false);
       } else {
         expect(q.prompt.show).toBe('currency');
-        const currency = CURRENCY_OF[q.prompt.code];
+        const currency = CURRENCY_OF[q.prompt.code as SupportedCountryCode];
         expect(q.options.filter(c => clash(CURRENCY_OF[c as SupportedCountryCode], currency))).toEqual([q.answer]);
       }
     }
   });
 
-  it('language questions have exactly one right answer', () => {
-    const rng = createRng(6);
-    for (let i = 0; i < 300; i++) {
-      const q = makeQuestion('languages', 1 + (i % 10), [], rng);
-      const official = LANGUAGES_OF[q.prompt.code]!;
-      if (q.optionKind === 'language') {
-        expect(q.answer).toBe(official[0]);
-        expect(q.options.filter(l => official.includes(l))).toEqual([q.answer]);
-      } else {
-        expect(q.prompt.show).toBe('language');
-        expect(q.options.filter(c => LANGUAGES_OF[c as SupportedCountryCode]?.includes(official[0]))).toEqual([q.answer]);
-      }
-      expect(q.options).toHaveLength(optionCount(1 + (i % 10)));
+  it('mixes both directions in flags and car logos; flags beside countries named by capital or currency', () => {
+    const rng = createRng(8);
+    for (const [kind, kinds] of [['flags', ['country', 'flag']], ['car-logos', ['brand', 'logo']]] as const) {
+      const seen = new Set(Array.from({ length: 40 }, () => makeQuestion(kind, 3, [], rng).optionKind));
+      expect([...seen].sort()).toEqual([...kinds].sort());
     }
+    const capitalOf = Array.from({ length: 40 }, () => makeQuestion('capitals', 3, [], rng)).filter(q => q.prompt.show === 'capital');
+    expect(capitalOf.length).toBeGreaterThan(0);
+    expect(capitalOf.every(q => q.optionKind === 'country+flag')).toBe(true);
   });
 
   it('never repeats a country within a session', () => {

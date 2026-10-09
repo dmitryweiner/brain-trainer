@@ -33,7 +33,8 @@ export type GameId =
   | 'capitals'
   | 'continents'
   | 'currencies'
-  | 'languages';
+  | 'languages'
+  | 'car-logos';
 
 export type GameCategory = 'memory' | 'attention' | 'reaction' | 'spatial' | 'knowledge';
 

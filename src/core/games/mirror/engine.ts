@@ -1,10 +1,13 @@
-// Mirror: which option is the shape's mirror image? The others are the
-// shape itself turned (which no mirror produces, the shapes being chiral)
-// and near misses. From level 4 the mirror image is also turned.
+// Mirror: a mirror stands on one side of the shape; which option is its
+// reflection? The answer is the exact image in that mirror: a side mirror
+// flips left–right, one above or below flips upside down, so the image in the
+// other kind of mirror is a distractor, along with the shape turned and near
+// misses. Side mirrors only up to level 3; from level 4 any side (players
+// asked for mirrors not only on the right, 2026-10-09).
 import type { EngineContext, GameEngine, SessionOutcome, TimerRequest } from '../../types';
 import type { Rng } from '../../rng';
 import { average, clampLevel, counterCues, elapsed, levelCeiling, percent, speedFactor } from '../common';
-import { mirror, nearMiss, randomChiral, rotate, sameUpToRotation, type Shape } from '../shapes/polyomino';
+import { key, mirror, nearMiss, normalize, randomChiral, rotate, sameUpToRotation, type Shape } from '../shapes/polyomino';
 import { cellsFor } from '../rotateShape/engine';
 
 export const MIRROR = {
@@ -13,27 +16,55 @@ export const MIRROR = {
   options: 4,
 } as const;
 
+export type MirrorSide = 'left' | 'right' | 'top' | 'bottom';
+
 export interface MirrorRound {
   target: Shape;
+  side: MirrorSide;
   options: Shape[];
   answer: number;
+}
+
+/** The shape as seen in a mirror on `side` */
+export function reflect(shape: Shape, side: MirrorSide): Shape {
+  return side === 'left' || side === 'right' ? mirror(shape) : normalize(shape.map(([x, y]) => [x, -y] as const));
+}
+
+export function sidesFor(level: number): MirrorSide[] {
+  return clampLevel(level) <= 3 ? ['left', 'right'] : ['left', 'right', 'top', 'bottom'];
 }
 
 export function makeMirrorRound(level: number, rng: Rng): MirrorRound {
   const L = clampLevel(level);
   const target = randomChiral(cellsFor(L), rng);
-  const image = mirror(target);
-  // low levels: a plain left–right flip; then the image may also be turned
-  const answerShape = L <= 3 ? image : rotate(image, rng.int(0, 3));
-  const distractors: Shape[] = [];
-  const turns = rng.shuffle([1, 2, 3, 0]);
-  distractors.push(rotate(target, turns[0]));
-  while (distractors.length < MIRROR.options - 1) {
-    const near = L >= 6 ? nearMiss(image, rng) : null;
-    distractors.push(near ? rotate(near, rng.int(0, 3)) : rotate(target, turns[distractors.length]));
+  const side = rng.pick(sidesFor(L));
+  const image = reflect(target, side);
+  const otherAxis = reflect(target, side === 'left' || side === 'right' ? 'top' : 'left');
+  const candidates: Shape[] = [];
+  if (L >= 2) candidates.push(otherAxis);
+  if (L >= 6) {
+    const near = nearMiss(image, rng);
+    if (near) candidates.push(near);
   }
-  const options = rng.shuffle([answerShape, ...distractors]);
-  return { target, options, answer: options.findIndex(o => sameUpToRotation(o, image)) };
+  // the shape itself, as is and turned: no mirror shows it like that
+  candidates.push(...rng.shuffle([0, 1, 2, 3]).map(k => rotate(target, k)));
+  const seen = new Set([key(image)]);
+  const distractors: Shape[] = [];
+  for (const c of candidates) {
+    if (distractors.length >= MIRROR.options - 1) break;
+    if (seen.has(key(c))) continue;
+    seen.add(key(c));
+    distractors.push(c);
+  }
+  // a symmetric shape has few distinct turns: fill up with other shapes
+  while (distractors.length < MIRROR.options - 1) {
+    const other = rotate(randomChiral(target.length, rng), rng.int(0, 3));
+    if (seen.has(key(other)) || sameUpToRotation(other, target) || sameUpToRotation(other, image)) continue;
+    seen.add(key(other));
+    distractors.push(other);
+  }
+  const options = rng.shuffle([image, ...distractors]);
+  return { target, side, options, answer: options.indexOf(image) };
 }
 
 export interface MirrorState {

@@ -411,6 +411,26 @@ $lit: #43a047;
   padding: $spacing-xs;
 }
 
+// Car logos: big in the question, flag-sized in the options
+.car-logo-prompt {
+  display: flex;
+  justify-content: center;
+  margin: $spacing-sm 0 $spacing-md;
+
+  .car-logo { width: 120px; height: 120px; }
+}
+
+.flags-option .car-logo {
+  width: 1em;
+  height: 1em;
+}
+
+// a country's flag before its name in an option
+.geo-inline-flag {
+  font-size: 1.5em;
+  vertical-align: middle;
+}
+
 // N-Back
 .nback-board {
   width: min(calc(100vw - 32px), 360px, 50vh);
@@ -450,19 +470,41 @@ $lit: #43a047;
   line-height: 1;
 }
 
-// Mirror: a mirror line to the right of the target
-.rotate-target.with-mirror {
-  position: relative;
+// Mirror: a framed glass on one side of the target (physical sides, also in RTL)
+.mirror-stage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  direction: ltr;
+  margin-bottom: $spacing-md;
 
-  &::after {
-    content: '';
-    position: absolute;
-    top: 8%;
-    bottom: 8%;
-    inset-inline-end: -10px;
-    width: 4px;
-    border-radius: 2px;
-    background: linear-gradient(180deg, #90caf9, #e3f2fd, #90caf9);
+  .rotate-target { margin: 0; }
+
+  &.mirror-left { flex-direction: row-reverse; }
+  &.mirror-top { flex-direction: column-reverse; }
+  &.mirror-bottom { flex-direction: column; }
+}
+
+.mirror-glass {
+  flex: none;
+  width: 26px;
+  height: min(45vw, 200px);
+  border: 4px solid #90a4ae;
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, transparent 0 28%, rgba(255, 255, 255, 0.95) 28% 34%, transparent 34% 40%,
+      rgba(255, 255, 255, 0.7) 40% 43%, transparent 43%),
+    linear-gradient(180deg, #9fd0ee, #e6f4fc 45%, #b9def4 70%, #8cc4e8);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25), inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+
+  .mirror-top &, .mirror-bottom & {
+    width: min(45vw, 200px);
+    height: 26px;
+    background:
+      linear-gradient(60deg, transparent 0 30%, rgba(255, 255, 255, 0.95) 30% 33%, transparent 33% 37%,
+        rgba(255, 255, 255, 0.7) 37% 39%, transparent 39%),
+      linear-gradient(90deg, #9fd0ee, #e6f4fc 45%, #b9def4 70%, #8cc4e8);
   }
 }
 
@@ -501,7 +543,10 @@ $lit: #43a047;
 
   .maze-exit { fill: rgba($primary, 0.2); }
   .maze-ball { fill: #1e88e5; transition: cx 0.15s ease, cy 0.15s ease; }
+  .maze-ball.crashed { fill: $bad; }
 }
+
+.game-prompt.maze-lost { color: $bad; }
 
 .maze-pad {
   display: grid;

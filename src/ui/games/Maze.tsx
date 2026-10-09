@@ -52,10 +52,12 @@ const Board: Views['Board'] = ({ state, dispatch }) => {
   });
   const [bx, by] = center(state.ball);
   const [ex, ey] = center(size * size - 1);
+  const ending = state.phase === 'solved' ? state.runs[state.runs.length - 1]?.ending : undefined;
+  const lost = ending !== undefined && ending !== 'exit';
 
   return (
     <div className="maze">
-      <p className="game-prompt" role="status">{state.phase === 'solved' ? t('maze.solved') : t('maze.prompt')}</p>
+      <p className={`game-prompt ${lost ? 'maze-lost' : ''}`} role="status">{ending ? t(`maze.ending.${ending}`) : t('maze.prompt')}</p>
       <div className="maze-layout">
       <div className="square-board">
         <svg
@@ -75,7 +77,7 @@ const Board: Views['Board'] = ({ state, dispatch }) => {
           <rect x={ex - 0.5} y={ey - 0.5} width="1" height="1" className="maze-exit" />
           <polyline className="maze-trail" points={state.trail.map(i => center(i).join(',')).join(' ')} />
           <path className="maze-walls" d={walls.join('')} />
-          <circle className="maze-ball" cx={bx} cy={by} r="0.32" />
+          <circle className={`maze-ball ${lost ? 'crashed' : ''}`} cx={bx} cy={by} r="0.32" />
         </svg>
       </div>
       <div className="maze-pad">
@@ -107,7 +109,6 @@ const Details: Views['Details'] = ({ outcome }) => {
   return (
     <div className="results-details">
       <div className="stat-item"><span className="stat-label">{t('metrics.completed')}</span><span className="stat-value">{m.completed} / {m.mazes}</span></div>
-      <div className="stat-item"><span className="stat-label">{t('maze.economy')}</span><span className="stat-value">{outcome.accuracy}%</span></div>
       {m.mazeTimeMs !== undefined && (
         <div className="stat-item"><span className="stat-label">{t('metrics.mazeTimeMs')}</span><span className="stat-value">{(m.mazeTimeMs / 1000).toFixed(1)} {t('game.seconds')}</span></div>
       )}

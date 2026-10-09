@@ -14,7 +14,7 @@ type Views = GameViews<MirrorState, MirrorEvent>;
 const Intro: Views['Intro'] = ({ onStart, level }) => {
   const { t } = useTranslation();
   return (
-    <GameIntro gameId="mirror" level={level} onStart={onStart} rules={['mirror.rule1', level <= 3 ? 'mirror.rule2plain' : 'mirror.rule2turned', 'mirror.rule3']}>
+    <GameIntro gameId="mirror" level={level} onStart={onStart} rules={['mirror.rule1', level <= 3 ? 'mirror.rule2sides' : 'mirror.rule2any', 'mirror.rule3']}>
       <p className="intro-detail">{t('rotate.layout', { cells: cellsFor(level) })}</p>
     </GameIntro>
   );
@@ -32,7 +32,7 @@ const Board: Views['Board'] = ({ state, dispatch }) => {
       feedback={state.phase === 'feedback'}
       disabled={state.phase !== 'playing'}
       onPick={index => dispatch({ type: 'pick', index })}
-      mirrorLine
+      mirrorSide={state.current.side}
     />
   );
 };

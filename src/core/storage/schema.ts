@@ -33,6 +33,7 @@ export const GAME_IDS: readonly GameId[] = [
   'continents',
   'currencies',
   'languages',
+  'car-logos',
 ];
 
 export interface SessionEvent {

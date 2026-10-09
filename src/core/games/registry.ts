@@ -96,12 +96,11 @@ export const GAMES: readonly GameDefinition[] = [
   define({ id: 'rotate-shape', category: 'spatial', icon: '🧩', difficulty: 3, legacyMaxScore: 0, engine: rotateShapeEngine, rating: rotateShapeRating, ...LEVELS }),
   define({ id: 'mirror', category: 'spatial', icon: '🦋', difficulty: 3, legacyMaxScore: 0, engine: mirrorEngine, rating: mirrorRating, ...LEVELS }),
   define({ id: 'maze', category: 'spatial', icon: '🏁', difficulty: 2, legacyMaxScore: 0, engine: mazeEngine, rating: mazeRating, ...LEVELS }),
-  define({ id: 'flags-game', category: 'knowledge', icon: '🏳️', difficulty: 2, legacyMaxScore: 100, engine: makeGeoEngine('flag-to-country'), rating: geoRating, ...LEVELS }),
-  define({ id: 'flags-reverse', category: 'knowledge', icon: '🚩', difficulty: 2, legacyMaxScore: 0, engine: makeGeoEngine('country-to-flag'), rating: geoRating, ...LEVELS }),
+  define({ id: 'flags-game', category: 'knowledge', icon: '🏳️', difficulty: 2, legacyMaxScore: 100, engine: makeGeoEngine('flags'), rating: geoRating, ...LEVELS }),
   define({ id: 'capitals', category: 'knowledge', icon: '🏛️', difficulty: 3, legacyMaxScore: 0, engine: makeGeoEngine('capitals'), rating: geoRating, ...LEVELS }),
   define({ id: 'continents', category: 'knowledge', icon: '🌍', difficulty: 2, legacyMaxScore: 0, engine: makeGeoEngine('continents'), rating: geoRating, ...LEVELS }),
+  define({ id: 'car-logos', category: 'knowledge', icon: '🚗', difficulty: 2, legacyMaxScore: 0, engine: makeGeoEngine('car-logos'), rating: geoRating, ...LEVELS }),
   define({ id: 'currencies', category: 'knowledge', icon: '💰', difficulty: 3, legacyMaxScore: 0, engine: makeGeoEngine('currencies'), rating: geoRating, ...LEVELS }),
-  define({ id: 'languages', category: 'knowledge', icon: '🗣️', difficulty: 3, legacyMaxScore: 0, engine: makeGeoEngine('languages'), rating: geoRating, ...LEVELS }),
 ];
 
 /**
@@ -117,6 +116,10 @@ export const RETIRED_GAMES: readonly GameDefinition[] = [
   // "Fit the piece" became the second half of "Turn & fit" (rotate-shape)
   define({ id: 'track-dot', category: 'reaction', icon: '🎯', difficulty: 2, legacyMaxScore: 0, ...LEVELS, rating: (o, level) => (o.accuracy / 100) * levelCeiling(level) }),
   define({ id: 'fit-piece', category: 'spatial', icon: '🧩', difficulty: 3, legacyMaxScore: 0, ...LEVELS, rating: fitPieceRating }),
+  // removed 2026-10-09: "Find the flag" is back inside "Flags" (directions
+  // mixed at random); "Languages" was too easy (Kazakhstan → Kazakh)
+  define({ id: 'flags-reverse', category: 'knowledge', icon: '🚩', difficulty: 2, legacyMaxScore: 0, ...LEVELS, rating: geoRating }),
+  define({ id: 'languages', category: 'knowledge', icon: '🗣️', difficulty: 3, legacyMaxScore: 0, ...LEVELS, rating: geoRating }),
 ];
 
 const ALL = new Map<GameId, GameDefinition>([...GAMES, ...RETIRED_GAMES].map(g => [g.id, g]));

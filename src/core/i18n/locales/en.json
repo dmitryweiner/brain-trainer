@@ -213,7 +213,7 @@
     },
     "flags-game": {
       "title": "Flags of the World",
-      "description": "Whose flag is it?"
+      "description": "Whose flag? Which flag?"
     },
     "memory-matrix": {
       "title": "Memory Matrix",
@@ -232,7 +232,7 @@
       "description": "Precise movement"
     },
     "rotate-shape": {
-      "title": "Turn & Fit",
+      "title": "Fit the Shape",
       "description": "Spatial thinking"
     },
     "where-was": {
@@ -274,6 +274,10 @@
     "languages": {
       "title": "Languages",
       "description": "A country’s main language"
+    },
+    "car-logos": {
+      "title": "Car Logos",
+      "description": "Whose badge is it?"
     }
   },
   "flagsGame": {
@@ -783,11 +787,7 @@
     "progress": "Done"
   },
   "rotate": {
-    "rule1": "Two kinds of tasks, mixed.",
-    "rule2": "“Turn”: find the same shape, only rotated. A mirror copy is not it!",
-    "rule3": "“Fit”: find the piece that fills the hole in the square. Pieces may be turned.",
     "layout": "Shapes of {{cells}} cells",
-    "prompt": "Which option is the same shape, rotated?",
     "target": "The shape",
     "option": "Option {{n}}"
   },
@@ -901,29 +901,42 @@
     "boardOf": "Board {{n}} of {{total}}"
   },
   "mirror": {
-    "rule1": "The shape is at the top, a mirror on its right.",
-    "rule2plain": "Find its mirror image below.",
-    "rule2turned": "Find its mirror image. It may also be turned.",
-    "rule3": "The shape simply turned is not a mirror image!",
-    "prompt": "Which option is the shape seen in the mirror?"
+    "rule1": "A mirror stands next to the shape.",
+    "rule3": "A turned shape is not a reflection!",
+    "prompt": "Which option is the shape seen in the mirror?",
+    "rule2sides": "The mirror is at the side. Find the shape’s reflection in it.",
+    "rule2any": "The mirror may stand on any side: left, right, above or below. Find the reflection in that very mirror.",
+    "side": {
+      "left": "Mirror on the left",
+      "right": "Mirror on the right",
+      "top": "Mirror above",
+      "bottom": "Mirror below"
+    }
   },
   "fit": {
     "prompt": "Which piece fills the hole?",
-    "board": "The square with a hole"
+    "board": "The square with a hole",
+    "rule1": "A hole is cut out of the square.",
+    "rule2": "Find the piece that fills it.",
+    "rule3": "The pieces are shown turned: turn them in your mind. A mirror copy will not fit!"
   },
   "maze": {
     "rule1": "Roll the ball to the flag.",
-    "rule2": "Press the arrows or swipe: the ball moves one cell at a time.",
-    "rule3": "Shorter and faster is better. There are three mazes.",
+    "rule2": "Arrows or swipes move the ball one cell. It does not go back.",
+    "rule3": "Plan the way ahead: a wall or a dead end loses the maze. There are three mazes.",
     "layout": "{{size}}×{{size}} maze",
     "prompt": "Roll the ball to the flag",
-    "solved": "Way out found!",
     "up": "Up",
     "down": "Down",
     "left": "Left",
     "right": "Right",
     "mazeOf": "Maze {{n}} of {{total}}",
-    "economy": "Path economy"
+    "ending": {
+      "exit": "Way out found!",
+      "wall": "A wall! Maze lost",
+      "deadEnd": "A dead end! Maze lost",
+      "timeout": "Time is up"
+    }
   },
   "reaction": {
     "rule1": "The dino is running. When a cactus 🌵 appears, tap to jump over it!",
@@ -1106,14 +1119,6 @@
     "layout": "Answer options: {{options}}.",
     "flagOnly": "The country’s name is hidden — only the flag.",
     "speedRule": "Quick answers earn more points.",
-    "flagToCountry": {
-      "rule1": "Look at the flag.",
-      "rule2": "Pick the country it belongs to."
-    },
-    "countryToFlag": {
-      "rule1": "A country is named.",
-      "rule2": "Find its flag among the options."
-    },
     "capitals": {
       "rule1": "Two kinds of questions, mixed: name a country’s capital, or the country of a capital.",
       "rule2": "From level 5 the country is shown only by its flag."
@@ -1124,15 +1129,21 @@
     },
     "askCurrency": "What is this country’s currency?",
     "askCurrencyOf": "Which country uses this currency?",
-    "askLanguage": "What is this country’s main language?",
-    "askLanguageOf": "Where is this the main language?",
     "currencies": {
       "rule1": "Two kinds of questions, mixed: name a country’s currency, or the country of a currency.",
       "rule2": "From level 5 the country is shown only by its flag."
     },
-    "languages": {
-      "rule1": "Two kinds of questions, mixed: name a country’s main language, or the country of a language.",
-      "rule2": "From level 5 the country is shown only by its flag."
+    "askBrand": "Whose logo is it?",
+    "askLogo": "Which is this brand’s logo?",
+    "thisLogo": "The logo",
+    "logoOption": "Logo",
+    "flags": {
+      "rule1": "Two kinds of questions, mixed: whose flag it is, or which flag is a country’s.",
+      "rule2": "Pick the answer among the options."
+    },
+    "carLogos": {
+      "rule1": "Two kinds of questions, mixed: whose logo it is, or which logo is a brand’s.",
+      "rule2": "Pick the answer among the options."
     }
   },
   "currencies": {
@@ -1176,67 +1187,5 @@
     "bolivar": "Bolívar",
     "dong": "Dong",
     "rand": "Rand"
-  },
-  "languages": {
-    "catalan": "Catalan",
-    "arabic": "Arabic",
-    "pashto": "Pashto",
-    "persian": "Persian",
-    "albanian": "Albanian",
-    "armenian": "Armenian",
-    "spanish": "Spanish",
-    "german": "German",
-    "english": "English",
-    "azerbaijani": "Azerbaijani",
-    "bosnian": "Bosnian",
-    "serbian": "Serbian",
-    "croatian": "Croatian",
-    "bengali": "Bengali",
-    "dutch": "Dutch",
-    "french": "French",
-    "bulgarian": "Bulgarian",
-    "portuguese": "Portuguese",
-    "belarusian": "Belarusian",
-    "russian": "Russian",
-    "italian": "Italian",
-    "romansh": "Romansh",
-    "chinese": "Chinese",
-    "greek": "Greek",
-    "turkish": "Turkish",
-    "czech": "Czech",
-    "danish": "Danish",
-    "berber": "Berber",
-    "estonian": "Estonian",
-    "finnish": "Finnish",
-    "swedish": "Swedish",
-    "georgian": "Georgian",
-    "hungarian": "Hungarian",
-    "indonesian": "Indonesian",
-    "irish": "Irish",
-    "hebrew": "Hebrew",
-    "hindi": "Hindi",
-    "kurdish": "Kurdish",
-    "icelandic": "Icelandic",
-    "japanese": "Japanese",
-    "swahili": "Swahili",
-    "korean": "Korean",
-    "kazakh": "Kazakh",
-    "lithuanian": "Lithuanian",
-    "latvian": "Latvian",
-    "romanian": "Romanian",
-    "macedonian": "Macedonian",
-    "malay": "Malay",
-    "norwegian": "Norwegian",
-    "maori": "Māori",
-    "filipino": "Filipino",
-    "urdu": "Urdu",
-    "polish": "Polish",
-    "tamil": "Tamil",
-    "slovene": "Slovene",
-    "slovak": "Slovak",
-    "thai": "Thai",
-    "ukrainian": "Ukrainian",
-    "uzbek": "Uzbek",
-    "vietnamese": "Vietnamese"
   }
 }

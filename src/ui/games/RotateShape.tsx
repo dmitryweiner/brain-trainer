@@ -13,7 +13,7 @@ type Views = GameViews<RotateShapeState, RotateShapeEvent>;
 const Intro: Views['Intro'] = ({ onStart, level }) => {
   const { t } = useTranslation();
   return (
-    <GameIntro gameId="rotate-shape" level={level} onStart={onStart} rules={['rotate.rule1', 'rotate.rule2', 'rotate.rule3']}>
+    <GameIntro gameId="rotate-shape" level={level} onStart={onStart} rules={['fit.rule1', 'fit.rule2', 'fit.rule3']}>
       <p className="intro-detail">{t('rotate.layout', { cells: cellsFor(level) })}</p>
     </GameIntro>
   );
@@ -42,11 +42,9 @@ const Board: Views['Board'] = ({ state, dispatch }) => {
   const feedback = state.phase === 'feedback';
   return (
     <div className="rotate-shape">
-      <p className="game-prompt">{t(current.kind === 'fit' ? 'fit.prompt' : 'rotate.prompt')}</p>
+      <p className="game-prompt">{t('fit.prompt')}</p>
       <div className="rotate-target">
-        {current.kind === 'fit'
-          ? <HoleBoard board={current.board} hole={current.hole} filled={feedback} label={t('fit.board')} />
-          : <ShapeView shape={current.target} label={t('rotate.target')} />}
+        <HoleBoard board={current.board} hole={current.hole} filled={feedback} label={t('fit.board')} />
       </div>
       <div className="rotate-options">
         {current.options.map((shape, i) => (

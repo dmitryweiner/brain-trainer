@@ -13,7 +13,7 @@ import { DigitSpan } from './games/DigitSpan';
 import { TaskSwitch } from './games/TaskSwitch';
 import { MemoryFlip } from './games/MemoryFlip';
 import { EmojiHunt } from './games/EmojiHunt';
-import { Capitals, Continents, CountryToFlag, Currencies, FlagToCountry, Languages } from './games/GeoQuiz';
+import { CarLogos, Capitals, Continents, Currencies, Flags } from './games/GeoQuiz';
 import { NBack } from './games/NBack';
 import { WhereWas } from './games/WhereWas';
 import { Mirror } from './games/Mirror';
@@ -40,12 +40,11 @@ export const GAME_SCREENS: Partial<Record<GameId, GameScreen>> = {
   'dual-rule-reaction': TaskSwitch,
   'memory-flip': MemoryFlip,
   'emoji-hunt': EmojiHunt,
-  'flags-game': FlagToCountry,
-  'flags-reverse': CountryToFlag,
+  'flags-game': Flags,
   capitals: Capitals,
   continents: Continents,
   currencies: Currencies,
-  languages: Languages,
+  'car-logos': CarLogos,
   'n-back': NBack,
   'where-was': WhereWas,
   mirror: Mirror,

@@ -30,7 +30,7 @@ const GAMES = [
   'schulte', 'odd-one-out', 'emoji-hunt', 'dual-rule-reaction',
   'whack-a-mole', 'reaction-click', 'trace-line',
   'rotate-shape', 'mirror', 'maze',
-  'flags-game', 'flags-reverse', 'capitals', 'continents', 'currencies', 'languages',
+  'flags-game', 'capitals', 'continents', 'currencies', 'car-logos',
 ];
 const PROFILE_TABS = 3; // overview, games list, achievements (by position)
 

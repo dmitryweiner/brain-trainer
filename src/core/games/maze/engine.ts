@@ -1,10 +1,12 @@
 // Maze: move the ball from the top-left corner to the exit, one cell per
 // arrow or swipe (rolling to the next junction surprised players: one press
-// moved the ball many cells). Three mazes per session; the level sets the
+// moved the ball many cells). The way must be planned: hitting a wall loses
+// the maze, the ball does not go back, so a dead end loses it too (players
+// asked for both, 2026-10-09). Three mazes per session; the level sets the
 // size (5×5…12×12).
 import type { EngineContext, GameEngine, SessionOutcome, TimerRequest } from '../../types';
 import type { Rng } from '../../rng';
-import { clampLevel, counterCues, elapsed, levelCeiling, speedFactor } from '../common';
+import { clampLevel, counterCues, elapsed, levelCeiling, percent, speedFactor } from '../common';
 
 export const MAZE = {
   mazes: 3,
@@ -82,7 +84,11 @@ export function shortestPath(maze: Maze): number {
   return 0;
 }
 
+/** How a maze ended */
+export type MazeEnding = 'exit' | 'wall' | 'deadEnd' | 'timeout';
+
 export interface MazeRun {
+  ending: MazeEnding;
   completed: boolean;
   cellsMoved: number;
   shortest: number;
@@ -111,8 +117,10 @@ function start(state: MazeState, rng: Rng, now: number): MazeState {
   return { ...state, phase: 'playing', maze, ball: 0, trail: [0], cellsMoved: 0, shortest: shortestPath(maze), startedAt: now };
 }
 
-function finish(state: MazeState, now: number, completed: boolean): MazeState {
-  const run: MazeRun = { completed, cellsMoved: state.cellsMoved, shortest: state.shortest, timeMs: elapsed(now, state.startedAt) };
+function finish(state: MazeState, now: number, ending: MazeEnding): MazeState {
+  const run: MazeRun = {
+    ending, completed: ending === 'exit', cellsMoved: state.cellsMoved, shortest: state.shortest, timeMs: elapsed(now, state.startedAt),
+  };
   return { ...state, phase: 'solved', runs: [...state.runs, run], until: now + MAZE.doneMs };
 }
 
@@ -134,11 +142,15 @@ export const mazeEngine: GameEngine<MazeState, MazeEvent> = {
       return index >= MAZE.mazes ? { ...state, phase: 'done', index } : start({ ...state, index }, rng, now);
     }
     if (state.phase !== 'playing') return state;
-    if (event.type === 'timeout') return event.index === state.index ? finish(state, now, false) : state;
+    if (event.type === 'timeout') return event.index === state.index ? finish(state, now, 'timeout') : state;
     const ball = step(state.maze, state.ball, event.dir);
-    if (ball === null) return state;
+    if (ball === null) return finish(state, now, 'wall');
+    const from = state.trail[state.trail.length - 2];
+    if (ball === from) return state;
     const next = { ...state, ball, trail: [...state.trail, ball], cellsMoved: state.cellsMoved + 1 };
-    return ball === state.maze.size * state.maze.size - 1 ? finish(next, now, true) : next;
+    if (ball === state.maze.size * state.maze.size - 1) return finish(next, now, 'exit');
+    const onward = DIRS.filter(d => step(state.maze, ball, d) !== null && step(state.maze, ball, d) !== state.ball);
+    return onward.length === 0 ? finish(next, now, 'deadEnd') : next;
   },
 
   timers(state): TimerRequest<MazeEvent>[] {
@@ -154,27 +166,26 @@ export const mazeEngine: GameEngine<MazeState, MazeEvent> = {
 
   result(state): SessionOutcome {
     const done = state.runs.filter(r => r.completed);
-    const moved = done.reduce((a, r) => a + r.cellsMoved, 0);
+    // without going back every finished path is the shortest one
     const shortest = done.reduce((a, r) => a + r.shortest, 0);
     const time = done.reduce((a, r) => a + r.timeMs, 0);
-    // efficiency over finished mazes; unfinished ones count as zero
-    const efficiency = moved > 0 ? (shortest / moved) * (done.length / Math.max(1, state.runs.length)) : 0;
     return {
-      score: done.reduce((a, r) => a + r.shortest, 0),
-      accuracy: Math.min(100, Math.round(efficiency * 100)),
+      score: shortest,
+      accuracy: percent(done.length, state.runs.length),
       avgTimeMs: shortest > 0 ? Math.round(time / shortest) : 0,
       metrics: {
         completed: done.length,
         mazes: state.runs.length,
         size: state.maze.size,
-        extraCells: moved - shortest,
+        crashes: state.runs.filter(r => r.ending === 'wall').length,
+        deadEnds: state.runs.filter(r => r.ending === 'deadEnd').length,
         ...(done.length > 0 ? { mazeTimeMs: Math.round(time / done.length) } : {}),
       },
     };
   },
 };
 
-/** Path economy × speed per cell (≤0.35 s full, ≥1.5 s 60%) × the level's ceiling */
+/** Mazes finished × speed per cell (≤0.35 s full, ≥1.5 s 60%) × the level's ceiling */
 export function mazeRating(outcome: SessionOutcome, level: number): number {
   return (outcome.accuracy / 100) * speedFactor(outcome.avgTimeMs, 350, 1500, 0.6) * levelCeiling(level);
 }

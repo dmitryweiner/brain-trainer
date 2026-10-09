@@ -5,7 +5,7 @@ import { EngineRunner } from '../engine/runner';
 import { FakeScheduler } from '../testing/fakeScheduler';
 import { GAMES } from './registry';
 import { currentQuestion, whereLayout, whereWasEngine, WHERE_WAS } from './whereWas/engine';
-import { makeMirrorRound, mirrorEngine } from './mirror/engine';
+import { makeMirrorRound, mirrorEngine, MIRROR, reflect } from './mirror/engine';
 import { generateMaze, mazeEngine, mazeSize, OPEN, shortestPath, type Dir } from './maze/engine';
 import { fitLayout, makeFitRound } from './fitPiece/engine';
 import { mirror, sameUpToRotation, normalize } from './shapes/polyomino';
@@ -55,22 +55,31 @@ describe('Where was it', () => {
 });
 
 describe('Mirror', () => {
-  it('has exactly one mirror image among the options', () => {
+  const k = (sh: readonly (readonly [number, number])[]) => JSON.stringify(normalize(sh));
+
+  it('has exactly one exact image in the mirror among the options', () => {
     for (let L = 1; L <= 10; L++) {
       const rng = createRng(L);
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 20; i++) {
         const r = makeMirrorRound(L, rng);
-        const images = r.options.filter(o => sameUpToRotation(o, mirror(r.target)));
-        expect(images).toHaveLength(1);
-        expect(r.options[r.answer]).toBe(images[0]);
+        const image = k(reflect(r.target, r.side));
+        expect(r.options.filter(o => k(o) === image)).toHaveLength(1);
+        expect(k(r.options[r.answer])).toBe(image);
+        expect(new Set(r.options.map(k)).size).toBe(MIRROR.options);
       }
     }
   });
 
-  it('shows a plain flip at low levels', () => {
-    const r = makeMirrorRound(1, createRng(4));
-    const key = (s: readonly (readonly [number, number])[]) => JSON.stringify(normalize(s));
-    expect(key(r.options[r.answer])).toBe(key(mirror(r.target)));
+  it('side mirrors flip left–right, mirrors above or below flip upside down', () => {
+    const L: [number, number][] = [[0, 0], [0, 1], [0, 2], [1, 2]];
+    expect(k(reflect(L, 'right'))).toBe(k(mirror(L)));
+    expect(k(reflect(L, 'top'))).toBe(k([[0, 2], [0, 1], [0, 0], [1, 0]]));
+  });
+
+  it('mirrors stand at the sides up to level 3, anywhere from level 4', () => {
+    const sides = (L: number) => new Set(Array.from({ length: 60 }, (_, i) => makeMirrorRound(L, createRng(i)).side));
+    expect([...sides(2)].sort()).toEqual(['left', 'right']);
+    expect(sides(5).size).toBe(4);
   });
 
   it('plays a session', () => {
@@ -98,19 +107,37 @@ describe('Maze', () => {
     expect(shortestPath(maze)).toBeGreaterThanOrEqual(2 * (n - 1));
   });
 
-  it('moves one cell per press and stops at walls', () => {
+  it('moves one cell per press; a wall loses the maze', () => {
+    const st = mazeEngine.init(1, ctx(0, 5));
+    const open = (['up', 'right', 'down', 'left'] as Dir[]).filter(d => st.maze.cells[0] & OPEN[d]);
+    const wall = (['up', 'left'] as Dir[])[0];
+    const moved = mazeEngine.reduce(st, { type: 'move', dir: open[0] }, ctx(1));
+    expect(moved.trail).toEqual([0, moved.ball]);
+    const crashed = mazeEngine.reduce(st, { type: 'move', dir: wall }, ctx(1));
+    expect(crashed.phase).toBe('solved');
+    expect(crashed.runs).toMatchObject([{ ending: 'wall', completed: false }]);
+  });
+
+  it('does not go back the way it came', () => {
     let st = mazeEngine.init(1, ctx(0, 5));
-    for (const d of ['up', 'right', 'down', 'left'] as Dir[]) {
-      const next = mazeEngine.reduce(st, { type: 'move', dir: d }, ctx(1));
-      if (st.maze.cells[0] & OPEN[d]) {
-        expect(next.cellsMoved).toBe(1);
-        expect(next.trail).toEqual([0, next.ball]);
-        st = next;
-        break;
-      }
-      expect(next).toBe(st);
+    const dir = (['right', 'down'] as Dir[]).find(d => st.maze.cells[0] & OPEN[d])!;
+    st = mazeEngine.reduce(st, { type: 'move', dir }, ctx(1));
+    if (st.phase !== 'playing') return; // a dead end right away
+    expect(mazeEngine.reduce(st, { type: 'move', dir: dir === 'right' ? 'left' : 'up' }, ctx(2))).toBe(st);
+  });
+
+  it('a dead end loses the maze', () => {
+    // walk into the first dead end found by always taking the first way on
+    let st = mazeEngine.init(4, ctx(0, 7));
+    for (let i = 0; i < 400 && st.phase === 'playing'; i++) {
+      const back = st.trail[st.trail.length - 2];
+      const { size, cells } = st.maze;
+      const delta: Record<Dir, number> = { up: -size, right: 1, down: size, left: -1 };
+      const dir = (['up', 'right', 'down', 'left'] as Dir[]).find(d => cells[st.ball] & OPEN[d] && st.ball + delta[d] !== back)!;
+      st = mazeEngine.reduce(st, { type: 'move', dir }, ctx(i));
     }
-    expect(st.cellsMoved).toBe(1);
+    expect(st.runs[0].ending).toMatch(/deadEnd|exit/);
+    expect(st.runs[0].completed).toBe(st.runs[0].ending === 'exit');
   });
 
   it('a solver following the shortest path scores full efficiency', () => {
@@ -136,7 +163,7 @@ describe('Maze', () => {
       const dir = dirs.find(([, delta]) => s.ball + delta === step)![0];
       r.dispatch({ type: 'move', dir });
     });
-    expect(outcome.metrics).toMatchObject({ completed: 3, mazes: 3, extraCells: 0 });
+    expect(outcome.metrics).toMatchObject({ completed: 3, mazes: 3, crashes: 0, deadEnds: 0 });
     expect(outcome.accuracy).toBe(100);
   });
 });
